@@ -1,0 +1,45 @@
+@font-face { 
+	font-family: 'BBTreeGR'; 
+	src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_nine_@1.1/BBTreeGR.woff')format('woff'); 
+	font-weight: normal; 
+	font-style: normal; }
+@import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
+
+html {font-size:100%}
+body {
+	font-size:12px;
+	font-family: 'BBTreeGR', sans-serif;
+	line-height:1.6;
+	margin:0;
+	padding:0;
+	word-break: keep-all;
+	background-color:#FDF2E4 ;
+	height: 100vh;
+	box-sizing: border-box;
+	padding:2% 3%;
+}
+h1, h2, h3, h4, h5, h6 {font-size:1em; font-family:'Jua';}
+h1, h2, h3, h4, h5, h6, div, p, dl, dt, dd, ul, ol, li, form, fieldset, blockquote, address, table, thead, tbody, tfoot, tr, td, caption {
+	margin:0;
+	padding:0;
+}
+em,i {font-style: normal;}
+ul, ol, li {list-style:none;}
+a:link, a:visited {color: #3B3B3B; text-decoration:none;}
+strong, span, p {color: #3B3B3B; }
+
+button:focus,
+input:focus,
+select:focus {
+	outline: none;
+	outline-offset:unset;
+}
+button {
+	cursor: pointer;
+}
+
+*,
+*:after,
+*:before {
+    box-sizing: border-box;
+}
