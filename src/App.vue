@@ -25,7 +25,6 @@ export default {
 @import './assets/css/registration.css';
 @import './assets/css/daily-page.css';
 
-
 .sidebar {
   width: 20%;
 }
