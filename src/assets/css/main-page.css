@@ -1,0 +1,125 @@
+/* MAINCOLOR */
+/* 
+	배경색상: #FDF2E4 
+	메인색상: #348F6C
+	메인 글씨: #3B3B3B
+	서브배경 : #ffffff
+	버튼 색상: #E2C992
+	연한베이지: #FDF9F3
+*/
+
+.asset-list-form {
+	position: absolute;
+	width: 70%; height: 70%;
+	top: 15%;
+	left: 50%;
+	transform: translateX(-50%);
+}
+.asset-list-form em {
+	/* font-family: 'font-uto'; */
+	font-weight: 600;
+	color: #3b3b3b;
+}
+.asset-list-form span {
+	font-weight: 600;
+	color: #3b3b3b91;
+}
+/* 폰트 색상을 연하게 바꿈. */
+.asset-list-form > form > div {
+	border-radius: 20px;
+	/* background-color:#ffecd1c7 ; */
+	background-color: #348f6c67;
+	padding: 30px;
+	box-shadow: 0px 5px 24px -26px rgb(192, 192, 190)
+}
+.asset-list-form > form > div + div {
+	margin-top: 15px;
+}
+.asset-list-form > form em {
+		font-size: 2em;
+}
+
+/* 글자 에니메이션 */
+/* .asset-list-form > form li {
+
+} */
+.asset-list-form > form  b{
+	position: relative;
+	opacity: 0;
+	bottom: .5em;
+	animation: movingB  .5s ease-in-out forwards;
+}
+
+.asset-list-form > form  b:nth-child(1){
+	animation-delay: 0s;
+}
+.asset-list-form > form  b:nth-child(2){
+	animation-delay: 1s;
+}
+
+@keyframes movingB {
+	to {
+		opacity: 1;
+		bottom:0 ;
+	}
+}
+/* 총 자산 */
+.total-asset-cont,
+.cash-asset-cont,
+.credit-asset-cont ul > li {
+	display: flex;
+}
+.total-asset-cont  > * {display: block;}
+.total-asset-cont strong,
+.credit-asset-cont ul > li > span,
+.cash-asset-cont em {
+	width: 20%;
+	font-size: 2.6em;
+}
+
+.total-asset-cont b,
+.cash-asset-cont span,
+.credit-asset-cont ul > li > b,
+.cash-asset-cont b {
+	width: 80%;
+	text-align: right;
+	font-size: 2em;
+}
+
+/* 은행 */
+.credit-asset-cont, .cash-asset-cont {
+	/* background-color:#ffecd1c7 !important; */
+		background-color: #348f6c2f  !important;
+}
+.credit-asset-cont  em { display:block; padding-bottom: 10px;}
+.credit-asset-cont ul > li + li {margin-top: 10px;}
+.credit-asset-cont ul > li > span {font-size: 1.5em;}
+
+/* 현금 */
+.btn {
+	position: absolute;
+	height: 56px;
+	right: 30px; 
+	bottom: 35px;
+	border: 0;
+	font-weight: bold;
+	cursor: pointer;
+	width: 150px;
+	background-color: transparent;
+	padding: 0;
+	z-index: 10;
+	font-size: 5em;
+}
+.btn::after {
+	position: absolute;
+	left: 0;
+	top: 0;
+	content: "add";
+	width: 100%;
+	border-radius: 40px;
+	transition :  linear .29s;
+}
+.btn:hover::after {
+	background-color:#E2C992 ;
+	color: white;
+}
