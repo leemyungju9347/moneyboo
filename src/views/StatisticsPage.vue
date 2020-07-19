@@ -1,6 +1,8 @@
 <template>
   <div class="statistics-page-wrap">
-    <StatisticsViewForm></StatisticsViewForm>
+    <BarGraph></BarGraph>
+    <RoundGraph></RoundGraph>
+    <StatisticsList></StatisticsList>
   </div>
 </template>
 
@@ -9,9 +11,8 @@ import BarGraph from '@/components/statistics/BarGraph.vue';
 import RoundGraph from '@/components/statistics/RoundGraph.vue';
 import StatisticsList from '@/components/statistics/StatisticsList.vue';
 
-
 export default {
-   components: {
+  components: {
     BarGraph,
     RoundGraph,
     StatisticsList,
