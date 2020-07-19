@@ -1,8 +1,8 @@
 <template>
   <div class="daily-page-wrap">
     <DailyBalance></DailyBalance>
-    <DailyList></DailyList>
     <DailyListAdd></DailyListAdd>
+    <DailyList></DailyList>
   </div>
 </template>
 
@@ -19,5 +19,4 @@ export default {
   },
 };
 </script>
-
 <style></style>

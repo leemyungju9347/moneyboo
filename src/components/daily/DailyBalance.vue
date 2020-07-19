@@ -1,8 +1,8 @@
 <template>
   <div class="daily-balance">
-    <ul>
-      <li>수입<b>123,456원</b></li>
-      <li>지출<b>123,456원</b></li>
+    <ul class="daily-balance-cont font-jua">
+      <li>오늘의 수입<b>123,456원</b></li>
+      <li>오늘의 지출<b>123,456원</b></li>
     </ul>
   </div>
 </template>

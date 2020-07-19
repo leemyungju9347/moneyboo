@@ -18,8 +18,11 @@ export default new Vuex.Store({
       asset: getBankAsset() || 0,
     },
     category: getCategory() || '',
+    listData: [],
   },
-  mutations: {},
+  mutations: {
+    SET_DAILYLIST() {},
+  },
   actions: {},
   modules: {},
 });
