@@ -1,0 +1,167 @@
+/*------ Registration--------------------------------------------------------*/
+.registration-page-wrap > .regist-form {
+    float: left;
+    width:100%;
+    position: relative;
+    height: 100%;
+    width: 50%;
+    padding:95px 0 0 110px;
+    transition:all 0.5s ease;
+}
+.registration-page-wrap > .regist-form > .regist-form-cont {display:none;position: relative;}
+.registration-page-wrap > .regist-form > .regist-form-cont > form {position: relative;margin-top:100px;width:80%;}
+.registration-page-wrap > .login-form > .regist-form-cont > form {margin-top:110px;}
+.registration-page-wrap > .regist-form > .regist-form-cont > form > div {position: relative;width: 100%;}
+.registration-page-wrap > .regist-form > .regist-form-cont > form > div + div {margin-top: 25px;}
+.registration-page-wrap > .login-form > .regist-form-cont > form > div + div {margin-top: 30px;}
+.registration-page-wrap > .regist-form > .regist-form-cont > form > div > label {
+    position: absolute;
+    left:5px;
+    font-size: 1.5em;
+    font-family: 'Jua', sans-serif;
+    font-weight: 600;
+    color: #585858;
+}
+.registration-page-wrap > .regist-form > .regist-form-cont > form > div > input {
+    font-size: 1.8em;
+    font-weight: 600;
+    background-color: unset;
+    border:unset;
+    border-bottom: 2px solid rgba(133, 133, 133, 0.5);
+    /* border-bottom: 2px solid #598373; */
+    /* border-bottom: 2px solid #8bbeaa; */
+    border-bottom: 2px solid #99bbad;
+    /* border-bottom: 2px solid #9fb1a9; */
+    padding:10px 0;
+    padding-left:5px;
+    width: 100%;
+    font-family: 'Jua', sans-serif;
+}
+.registration-page-wrap > .regist-form > .regist-form-cont > form > div:focus-within > label{
+    visibility: hidden;
+}
+.registration-page-wrap > .regist-form > .regist-form-cont > form > div:focus-within > input {
+    border-bottom: 2px solid #598373;  
+}
+.registration-page-wrap > .regist-form > .regist-form-cont > form > p {
+    font-weight:600;
+    opacity: 0.5;
+    font-size: 1.15em;
+    position: absolute;
+    bottom:-40px;
+    left:-10px;
+    transition: all 0.3s ease;
+}
+.registration-page-wrap > .regist-form > .regist-form-cont > form > p > a {
+    display: block;
+    padding:5px 10px;
+    position: relative;
+}
+.registration-page-wrap > .regist-form > .regist-form-cont > form > .add-btn {
+    background-color: unset;
+    border: transparent;
+    background-size:cover;
+    position: absolute;
+    right:5px;
+    bottom:-120px;
+    cursor: pointer;
+    font-size: 2.5em;
+    opacity: 0.7; 
+    width:20%;
+    background-color:#f1ead3;
+    line-height:45px;
+    border-radius: 20px;
+}
+.registration-page-wrap > .regist-form > .regist-form-cont > form > .add-btn:hover{
+    background-color:#e7d396;
+}
+.registration-page-wrap > .regist-form > .regist-form-cont > form > button:hover::after{
+    /* right: 0;
+    opacity: 1; */
+}
+.registration-page-wrap > .regist-form > .regist-form-cont > form > button:hover{
+    /* background-color:rgb(70, 158, 124);
+    background-color:#d8c690;
+    background-color:#e7d396; */
+}
+
+.registration-page-wrap > .regist-form > .regist-form-cont > .reset-btn{
+    position: absolute;
+    font-size: 0;
+    right:50px;
+    top:-45px;
+    background: url(../images/return.png) no-repeat 0 0;
+    background-size: 100%;
+    border:none;
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+    opacity: 0.7;
+}
+/* .registration-page-wrap > .signup-form {background-color: rgb(226, 201, 146,0.7);} */
+/* .registration-page-wrap > .signup-form {background-color:rgb(189, 204, 206,0.6);} */
+/*연두(밝은거)*/
+.registration-page-wrap  >  .signup-form {background-color:#dbec9d;}
+/*연두(옅은거)*/
+.registration-page-wrap  >  .signup-form {background-color:#dbe9a9;}
+/* 캔디바 (블루계열) 색상 */
+.registration-page-wrap > .signup-form {background-color: #348f6c2f }
+/* .registration-page-wrap > .signup-form {background-color: #348f6c67; } */
+.registration-page-wrap > .signup-form > form {}
+/* .registration-page-wrap > .login-form {background-color: rgb(253, 249, 243);} */
+/*연두*/
+/* .registration-page-wrap > .login-form {background-color:#f6faea} */
+/* 캔디바 (블루계열) 색상 */
+/*이거임*/
+.registration-page-wrap > .login-form {background-color: #dde2e12f} 
+.registration-page-wrap > .login-form {background-color: #fff} 
+.registration-page-wrap > .regist-form > .regist-form-cont > h3 {font-size:3em;}
+
+.registration-page-wrap > .regist-form > .mask {
+    position: absolute;
+    top: 0;
+    left:0;
+    width: 100%;
+    height: 100%;
+    padding:0;
+}
+.registration-page-wrap > .regist-form > .mask > .icon{
+    content: '';
+    background: url('../images/user_register.png') no-repeat 0 0;
+    background-size: cover;
+    width:70px;
+    height:70px;
+    position: absolute;
+    left:50%;
+    top: 40%;
+    transform: translateX(-50%);
+    /* transform: translate(-50%,-50%); */
+    opacity: 0.4;
+    transition:opacity 0.5s ease-in;
+}
+.registration-page-wrap > .regist-form.active > .mask > .icon {top:30px}
+.registration-page-wrap > .regist-form > .mask.signup > .icon:after {
+    content: '';
+    background: url('../images/plus2.png') no-repeat 0 0;
+    background-size: cover;
+    width:20px;
+    height:20px;
+    position: absolute;
+    top: -5px;
+    right:-15px
+}
+
+
+.registration-page-wrap > .regist-form > .mask > strong {
+    position: absolute;
+    font-size:2.8em;
+    top:52%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0.4;
+    transition:all 0.5s ease-in;
+    font-weight: bold;
+}
+.registration-page-wrap > .regist-form.active > .mask > strong {display: none;}
+.registration-page-wrap > .regist-form > .mask:hover > .icon{opacity: 0.7;}
+.registration-page-wrap > .regist-form > .mask:hover > strong{opacity: 0.7;}

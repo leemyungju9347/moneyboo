@@ -2,8 +2,16 @@
 	font-family: 'BBTreeGR'; 
 	src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_nine_@1.1/BBTreeGR.woff')format('woff'); 
 	font-weight: normal; 
-	font-style: normal; }
+	font-style: normal; 
+}
 @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
+@font-face { 
+	font-family: 'IBMPlexSansKR-Text'; 
+	src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-07@1.0/IBMPlexSansKR-Text.woff') 
+	format('woff'); 
+	font-weight: normal; 
+	font-style: normal; 
+}
 
 html {font-size:100%}
 body {
@@ -17,6 +25,7 @@ body {
 	height: 100vh;
 	box-sizing: border-box;
 	padding:2% 3%;
+	color: #3B3B3B;
 }
 h1, h2, h3, h4, h5, h6 {font-size:1em; font-family:'Jua';}
 h1, h2, h3, h4, h5, h6, div, p, dl, dt, dd, ul, ol, li, form, fieldset, blockquote, address, table, thead, tbody, tfoot, tr, td, caption {
@@ -33,6 +42,14 @@ input:focus,
 select:focus {
 	outline: none;
 	outline-offset:unset;
+}
+input,
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+	transition: background-color 5000s ease-in-out 0s;
+	-webkit-text-fill-color: #585858 !important;
 }
 button {
 	cursor: pointer;
