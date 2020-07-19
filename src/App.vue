@@ -22,6 +22,7 @@ export default {
 @import './assets/css/common.css';
 @import './assets/css/mypage.css';
 @import './assets/css/setting-page.css';
+@import './assets/css/registration.css';
 
 .sidebar {
   width: 20%;
