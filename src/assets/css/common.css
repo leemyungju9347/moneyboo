@@ -27,44 +27,42 @@
 .no-header{overflow: hidden; height: unset; padding-top: 0; top:0; border-radius: 20px;}
 
 /* status-header ---------------------------------------------------------*/
+
 .status-header-wrap {
-  /* outline: 1px solid red; */
   position: absolute;
-  text-align: right;
   top: 15px;
   right: 15px;
+  z-index: 200;
   width: calc(80% - 24px);
   height: 64px;
-  z-index: 200;
-  background-color: #ffffff;
   border-radius: 20px 20px 0 0;
   border-bottom: 2px solid #f1f5f4;
+  background-color: #ffffff;
+  text-align: right;
 } 
-
 .status-form {
-  padding: 8px;
   display: inline-flex;
+  padding: 8px;
 }
-
 .status-icon-cont {
   padding-right: 12px;
 }
 .loading-bar-cont {
   width: 188px;
   height: 18px;
-  border: 2px solid #348f6c;
   margin-top: 12px;
+  border: 2px solid #348f6c;
   border-radius: 12px;
   text-align: right;
 }
 .loading-bar {
-  background-color: #348f6c;
-  border-radius: 10px;
   width: 170px;
   /* 186px 가 최대 */
   height: 16px;
-  margin: -0.5px 0 0 -1px;
   padding-right: 6px;
+  margin: -0.5px 0 0 -1px;
+  border-radius: 10px;
+  background-color: #348f6c;
   color: #fdf9f3;
   line-height: 14px;
 }
@@ -72,8 +70,31 @@
   display: block;
   width: 48px;
   height: 48px;
-  background: url('../images/emo_100.png') no-repeat center /100% 100%;
+  background: no-repeat center /100% 100%;
 }
+
+.status-icon-cont > i.emo-first {
+  background-image: url('../images/emo_0-15.png');
+}
+.status-icon-cont > i.emo-second {
+  background-image: url('../images/emo_16-30.png');
+}
+.status-icon-cont > i.emo-third {
+  background-image: url('../images/emo_31-50.png');
+}
+.status-icon-cont > i.emo-fourth {
+  background-image: url('../images/emo_51-65.png');
+}
+.status-icon-cont > i.emo-fifth {
+  background-image: url('../images/emo_66-80.png');
+}
+.status-icon-cont > i.emo-sixth {
+  background-image: url('../images/emo_81-99.png');
+}
+.status-icon-cont > i.emo-seventh {
+  background-image: url('../images/emo_100.png');
+}
+
 /* ------ Gnb 메뉴 -------------------------------------------------------- */
 .sidebar-wrap{width: 20%;}
 .side-gnb-form a, .side-gnb-form h1 {font-family: 'NanumSquare', sans-serif !important;font-weight: bold; }

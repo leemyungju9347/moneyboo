@@ -2,7 +2,7 @@
   <div class="status-form">
     <!-- 상태 아이콘 -->
     <div class="status-icon-cont">
-      <i></i>
+      <i class="emo-first"></i>
     </div>
     <!-- 로딩 바 -->
     <div class="loading-bar-cont">

@@ -2,24 +2,50 @@
   <div class="daily-list">
     <ul class="daily-list-cont">
       <li class="daily-list-day">
-        <strong>6.25 금요일</strong>
-        <em>수입 : 00원 </em>
-        <em>지출 : 00원 </em>
+        <strong class="font-uto">6.25 금요일</strong>
+        <em class="daily-list-income"
+          >수입 : <b class="list-income">20,000원</b></em
+        >
+        <em class="daily-list-expend"
+          >지출 : <b class="list-expend">35,000원</b></em
+        >
         <ul>
           <li>
             <i> 식비 </i>
-            <span> 은행이름 </span>
-            <b> 0 원 </b>
-            <b> 0 원 </b>
+            <span class="font-uto"> 농협 </span>
+            <b
+              ><a href="#/daily" title="수정하기" class="list-income"
+                >+ 20,000원</a
+              ></b
+            >
+            <!-- <b class="list-expend">
+              <a href="#/daily" title="수정하기" class="list-expend"></a>
+              - 0 원
+            </b> -->
+            <button class="btn list-delete">
+              <i class="fas fa-times"></i>
+            </button>
           </li>
-        </ul>
-        <ul>
           <li>
-            <i> 식비 </i>
-            <span> 은행이름 </span>
-            <b> 0 원 </b>
-            <b> 0 원 </b>
+            <i> 교통비 </i>
+            <span> 카카오뱅크 </span>
+            <!-- <b
+              ><a href="#/daily" title="수정하기" class="list-income"
+                >+ 0 원</a
+              ></b
+            > -->
+            <b class="list-expend">
+              <a href="#/daily" title="수정하기" class="list-expend"
+                >- 35,000 원</a
+              >
+            </b>
+            <button class="btn list-delete">
+              <i class="fas fa-times"></i>
+            </button>
           </li>
+          {{
+            listHistory
+          }}
         </ul>
       </li>
     </ul>
@@ -27,7 +53,13 @@
 </template>
 
 <script>
-export default {};
+export default {
+  computed: {
+    listHistory() {
+      return this.$store.state.listData;
+    },
+  },
+};
 </script>
 
 <style></style>
