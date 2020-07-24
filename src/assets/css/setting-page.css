@@ -23,7 +23,7 @@
 
 
 
-  /* ------ SetAsset.vue ------ */
+  /* ------ SettingPage.vue 공통 ------ */
   h3 {
     margin: 10px 0;
     font-size: 2em;
@@ -41,10 +41,10 @@
     color: rgba(59, 59, 59, 0.5);
     display: inline-block;
   }
-  
-  .set-asset {
-    /* outline: 1px solid red; */
-  }
+
+
+
+  /* ------ SetAsset.vue ------ */ 
   .set-asset > h3 {
     margin-bottom: 0;
   }
@@ -52,7 +52,6 @@
   .set-asset > form > * {
     margin: 20px 0 50px 0;
   }
-  .set-asset > form > .total-goal-cont {}
   .set-asset > form > .total-goal-cont > span {
     padding-left: 10px;
     font-size: 1.3em;
@@ -185,6 +184,9 @@
     flex-wrap: wrap;
     justify-content: center; */
   }
+  .set-category > .category-list-cont > form > ul > b.explanation{
+    margin: 10px 17px;
+  }
   .set-category > .category-list-cont > form > ul > li {
     margin: 10px;
     display: inline-block;
@@ -256,10 +258,39 @@
   .set-category > .category-list-cont > form > ul > li > label > button:hover{
     background-color:rgba(52, 143, 108, .3);
   }
-  .set-category > .category-list-cont > form > ul > li > label > button:focus {
+  .set-category > .category-list-cont > form > ul > li > label > button:focus{
     outline: none;
   }
   .set-category
+    > .category-list-cont
+    > form 
+    > ul
+    > li
+    > label
+    > input[type='radio']:checked
+    + div.click,
+    .set-category
+    > .category-list-cont
+    > form 
+    > ul
+    > li
+    > label
+    > input[type='radio']:checked
+    + div 
+    > span.click,
+    .set-category
+    > .category-list-cont
+    > form 
+    > ul
+    > li
+    > label
+    > input[type='radio']:checked
+    + div 
+    + button.click{
+    color: #fff;
+    background-color: #348f6c;
+  }
+  /* .set-category
     > .category-list-cont
     > form 
     > ul
@@ -296,7 +327,7 @@
     > i {
     color: #fff;
     background-color: #348f6c;
-  }
+  } */
   .set-category
     > .category-list-cont
     > form 
@@ -316,7 +347,13 @@
     margin-top: 10px;
     color: #fff;
     background-color: #348f6c;
+    opacity: .5;
+    cursor: default;
     float: right;
+  }
+  .set-category > .category-list-cont > form > button.click {
+    opacity: 1;
+    cursor: pointer;
   }
   
   /* --- 카테고리 추가 --- */
