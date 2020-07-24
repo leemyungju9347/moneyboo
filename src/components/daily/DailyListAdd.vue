@@ -1,8 +1,6 @@
 <template>
   <div class="daily-list-add">
     <form class="add-cont" @submit.prevent="submitList">
-      <!-- <vc-calendar />
-      <v-date-picker /> -->
       <button
         type="button"
         v-on:click="clickIncomeBtn()"
@@ -22,9 +20,13 @@
       <div>
         <!-- <button class="btn what-date" type="button">날짜</button> -->
         <DatePicker
-          class="btn what-date"
           v-model="date"
           color="green"
+          titlePosition="center"
+          :available-dates="{
+            start: new Date(2020, 0, 1),
+            end: new Date(),
+          }"
         ></DatePicker>
         <select v-model="selectCategory">
           <option disabled value="">분류</option>
@@ -48,14 +50,8 @@
 </template>
 
 <script>
-// import Monthly from '@/components/daily/Monthly.vue';
+import { saveListData } from '@/utils/cookies.js';
 import DatePicker from 'v-calendar/lib/components/date-picker.umd';
-// import Vue from 'vue';
-// import VCalendar from 'v-calendar';
-
-// Vue.use(VCalendar, {
-//   componentPrefix: 'vc', // Use <vc-calendar /> instead of <v-calendar />               // ...other defaults
-// });
 
 export default {
   components: { DatePicker },
@@ -91,14 +87,16 @@ export default {
         item: this.inputControl,
         category: this.selectCategory,
         bank: this.selectBank,
-        price: Number(this.price).toLocaleString(), // 세자리수 변환
+        // price: Number(this.price).toLocaleString(), // 세자리수 변환
+        price: this.price,
       };
 
-      console.log(listData);
-      this.$store.commit(
-        'SET_DAILYLIST',
-        this.$store.state.listData.push(listData),
-      );
+      // console.log(listData);
+      // this.$store.commit(
+      //   'SET_DAILYLIST',
+      //   this.$store.state.listData.push(listData),
+      // );
+      saveListData(listData);
       this.resetData(); // 인풋창의 데이터를 리셋해주는 함수
     },
     resetData() {
@@ -113,17 +111,13 @@ export default {
       // 저장되는 날짜를 한국기준으로 정리해서 저장.
       let month = date.getMonth();
       let todayDate = date.getDate();
-      let hh = date.getHours().toString();
-      let mm = date.getMinutes().toString();
-      let ss = date.getSeconds().toString();
 
-      return ` ${month + 1}.${todayDate} ${hh < 10 ? `0${hh}` : hh}:${
-        mm < 10 ? `0${mm}` : mm
-      }:${ss < 10 ? `0${ss}` : ss} `;
-      // 출력 형식 : 7.17 13:37:53  앞에서부터 월.일 시:분:초
+      return `${month + 1}.${todayDate}`;
+      // 출력 형식 : 7.17
     },
   },
 };
+// 1. 인풋창 숫자가 아닐때 처리해주기
 </script>
 
 <style></style>
