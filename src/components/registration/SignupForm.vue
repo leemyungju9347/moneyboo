@@ -2,43 +2,51 @@
   <!--회원가입 페이지  -->
   <div class="regist-form signup-form">
     <div class="regist-form-cont">
-      <h3>SIGN UP</h3>
-      <form action="" @submit.prevent="submitForm">
+      <h3>회원가입</h3>
+      <form class="form fade" action="" @submit.prevent="submitForm">
         <!-- 아이디 -->
         <div>
-          <label for="username" v-if="!username">ID</label>
+          <label for="username" v-if="!username">이메일</label>
           <input id="username" type="text" v-model="username" />
         </div>
         <!-- 닉네임 -->
         <div>
-          <label for="nickname" v-if="!nickname">NICKNAME</label>
+          <label for="nickname" v-if="!nickname">닉네임</label>
           <input id="nickname" type="text" v-model="nickname" />
         </div>
         <!-- 비밀번호 -->
         <div>
-          <label for="password" v-if="!password">PASSWORD</label>
+          <label for="password" v-if="!password">비밀번호</label>
           <input id="password" type="text" v-model="password" />
         </div>
-        <button class="add-btn font-jua">add</button>
+        <button class="add-btn font-jua">가입</button>
       </form>
-      <button class="reset-btn" @click.prevent="resetEvent()">
+      <button class="reset-btn" @click.prevent="resetBtnForm()">
         되돌아가기
       </button>
     </div>
     <a
       href=""
-      class="mask signup"
-      @click.prevent="clickEvent($event)"
-      @mouseover="overEvent($event)"
-      @mouseout="outEvent()"
+      class="mask mask-signup fade"
+      @click.prevent="clickSignupForm($event)"
+      @mouseover="overSignupForm($event)"
+      @mouseout="outSignupForm($event)"
     >
-      <i class="icon"></i>
-      <strong class="font-jua">SIGN UP</strong>
+      <i class="mask-icon mask-signup"></i>
+      <strong class="font-jua mask-signup">회원가입</strong>
     </a>
   </div>
 </template>
 <script>
 import firebase from 'firebase';
+import {
+  clickFormEvent,
+  globalMountedInSingup,
+  overFormEvent,
+  resetFormEvent,
+  outFormEvent,
+} from '@/js/register-event.js';
+
 export default {
   data() {
     return {
@@ -47,15 +55,14 @@ export default {
       nickname: '',
       password: '',
       // event
-      status: true,
-      outCheck: true,
     };
   },
-  /*
-    outCheck 변수가 true이면 마우스 아웃을 실행하고
-    false일때 클릭이벤트를 실행해서 width가 줄어드는 것을 방지한다.
-  */
+  mounted() {
+    // 이벤트 함수를 담당하는 js 함수에 element를 넘겨줘서 쉽게 dom을 제어할 수 있도록 함.
+    globalMountedInSingup(this.$el);
+  },
   methods: {
+    // 회원가입 양식 제출
     submitForm() {
       firebase
         .auth()
@@ -71,96 +78,21 @@ export default {
           },
         );
     },
-    clickEvent(event) {
-      //event.target === a.mask
-      // this.$el
-      const loginCont = document.querySelector(
-        '.login-form > .regist-form-cont',
-      );
-      const signupCont = document.querySelector(
-        '.signup-form > .regist-form-cont',
-      );
-      const signupForm = document.querySelector('.signup-form');
-      const loginForm = document.querySelector('.login-form');
-      const loginMask = document.querySelector('.login-form > .mask');
-      const signupMask = document.querySelector('.signup-form > .mask');
-
-      this.status = !this.status;
-      this.outCheck = !this.outCheck;
-      // console.log('위치는 클릭', this.outCheck);
-      console.log(event.target);
-      if (!status) {
-        signupForm.style.width = `${50 + 30}%`;
-        loginForm.style.width = `${50 - 30}%`;
-
-        loginForm.classList.add('active');
-
-        signupMask.style.display = 'none';
-        signupCont.style.display = 'block';
-
-        loginCont.style.display = 'none';
-        loginMask.style.display = 'block';
-      }
+    // 회원가입 페이지 클릭 이벤트
+    clickSignupForm(event) {
+      clickFormEvent(event.target);
     },
-    resetEvent() {
-      const loginCont = document.querySelector(
-        '.login-form > .regist-form-cont',
-      );
-      const signupCont = document.querySelector(
-        '.signup-form > .regist-form-cont',
-      );
-      const signupForm = document.querySelector('.signup-form');
-      const loginForm = document.querySelector('.login-form');
-      const loginMask = document.querySelector('.login-form > .mask');
-      const signupMask = document.querySelector('.signup-form > .mask');
-
-      this.status = true;
-      this.outCheck = true;
-      // console.log('위치는 리셋', this.outCheck);
-
-      if (this.status) {
-        signupForm.style.width = `${50}%`;
-        loginForm.style.width = `${50}%`;
-
-        loginForm.classList.remove('active');
-        signupForm.classList.remove('active');
-
-        signupMask.style.display = 'block';
-        signupCont.style.display = 'none';
-
-        loginCont.style.display = 'none';
-        loginMask.style.display = 'block';
-      }
+    // 마우스오버 이벤트
+    overSignupForm(event) {
+      overFormEvent(event.target);
     },
-    // 문제점 마우스 오버 이벤트, 마우스 아웃 이벤트를 했을때
-    // 클릭 이벤트를 하면 width가 줄어듦..
-    overEvent(event) {
-      // console.log(this);
-      // const signupForm = document.querySelector('.signup-form');
-      const loginForm = document.querySelector('.login-form');
-      const loginMask = document.querySelector('.login-form > .mask');
-      // console.log(this.$el);
-      // console.log('위치는 오버', this.outCheck);
-      // console.log('타겟임', event.target);
-      if (event.relatedTarget === loginMask) {
-        console.log(event.relatedTarget);
-      }
-      // console.log(event.relatedTarget);
-      this.$el.style.width = `${50 + 5}%`;
-      loginForm.style.width = `${50 - 5}%`;
+    // 리셋 버튼
+    resetBtnForm() {
+      resetFormEvent('signup');
     },
-    outEvent() {
-      const signupForm = document.querySelector('.signup-form');
-      const loginForm = document.querySelector('.login-form');
-
-      // outCheck가 true일때만 마우스 아웃 이벤트를 실행해라.
-      if (this.outCheck) {
-        signupForm.style.width = `${50}%`;
-        loginForm.style.width = `${50}%`;
-      }
-      // console.log('위치는 아웃', this.outCheck);
-
-      // console.log(this.$el);
+    // 마우스 아웃 이벤트
+    outSignupForm(event) {
+      outFormEvent(event);
     },
   },
 };

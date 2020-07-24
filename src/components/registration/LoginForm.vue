@@ -2,16 +2,16 @@
   <!-- 로그인 페이지 -->
   <div class="regist-form login-form">
     <div class="regist-form-cont">
-      <h3>SIGN IN</h3>
-      <form class="form" action="" @submit.prevent="submitForm">
+      <h3>로그인</h3>
+      <form class="form fade" action="" @submit.prevent="submitForm">
         <!-- 아이디 -->
         <div>
-          <label for="username" v-if="!username">ID</label>
+          <label for="username" v-if="!username">아이디</label>
           <input id="username" type="text" v-model="username" />
         </div>
         <!-- 비밀번호 -->
         <div>
-          <label for="password" v-if="!password">PASSWORD</label>
+          <label for="password" v-if="!password">비밀번호</label>
           <input
             id="password"
             type="text"
@@ -20,28 +20,35 @@
           />
         </div>
         <!-- 회원정보 까먹었을때 찾는 버튼 -->
-        <p><a href="" class="font-jua">Forgat password?</a></p>
-        <button class="add-btn font-jua">add</button>
+        <p><a href="" class="font-jua">비밀번호 찾기</a></p>
+        <button class="add-btn font-jua">로그인</button>
       </form>
-      <button class="reset-btn" @click.prevent="resetEvent()">
+      <button class="reset-btn" @click.prevent="resetBtnForm()">
         되돌아가기
       </button>
     </div>
 
     <a
       href=""
-      class="mask login"
-      @click.prevent="clickEvent()"
-      @mouseover="overEvent()"
-      @mouseout="outEvent()"
+      class="mask mask-login fade"
+      @mouseover="overLoginForm($event)"
+      @click.prevent="clickSignupForm($event)"
+      @mouseout="outLoginForm()"
     >
-      <i class="icon"></i>
-      <strong class="font-jua">SIGN IN</strong>
+      <i class="mask-icon mask-login"></i>
+      <strong class="font-jua mask-login">로그인</strong>
     </a>
   </div>
 </template>
 <script>
 import firebase from 'firebase';
+import {
+  clickFormEvent,
+  globalMountedInLogin,
+  overFormEvent,
+  resetFormEvent,
+  outFormEvent,
+} from '@/js/register-event.js';
 export default {
   data() {
     return {
@@ -49,11 +56,14 @@ export default {
       username: '',
       password: '',
       // event
-      status: true,
-      outCheck: true,
     };
   },
+  mounted() {
+    // 이벤트 함수를 담당하는 js 함수에 element를 넘겨줘서 쉽게 dom을 제어할 수 있도록 함.
+    globalMountedInLogin(this.$el);
+  },
   methods: {
+    // 로그인 양식 제출
     submitForm() {
       firebase
         .auth()
@@ -70,77 +80,21 @@ export default {
       this.username = '';
       this.password = '';
     },
-    clickEvent() {
-      const htmlElm = document.querySelector('html');
-      const loginCont = htmlElm.querySelector(
-        '.login-form > .regist-form-cont',
-      );
-      const signupCont = htmlElm.querySelector(
-        '.signup-form > .regist-form-cont',
-      );
-      const signupForm = htmlElm.querySelector('.signup-form');
-      const loginForm = htmlElm.querySelector('.login-form');
-      const loginMask = htmlElm.querySelector('.login-form > .mask');
-      const signupMask = htmlElm.querySelector('.signup-form > .mask');
-
-      this.status = !this.status;
-      this.outCheck = !this.outCheck;
-      if (!this.status) {
-        loginForm.style.width = `${50 + 30}%`;
-        signupForm.style.width = `${50 - 30}%`;
-
-        signupForm.classList.add('active');
-
-        loginCont.style.display = 'block';
-        loginMask.style.display = 'none';
-        signupCont.style.display = 'none';
-        signupMask.style.display = 'block';
-      }
+    // 클릭 이벤트
+    clickSignupForm(event) {
+      clickFormEvent(event.target);
     },
-    resetEvent() {
-      const loginCont = document.querySelector(
-        '.login-form > .regist-form-cont',
-      );
-      const signupCont = document.querySelector(
-        '.signup-form > .regist-form-cont',
-      );
-      const signupForm = document.querySelector('.signup-form');
-      const loginForm = document.querySelector('.login-form');
-      const loginMask = document.querySelector('.login-form > .mask');
-      const signupMask = document.querySelector('.signup-form > .mask');
-
-      this.status = true;
-      this.outCheck = true;
-      if (this.status) {
-        signupForm.style.width = `${50}%`;
-        loginForm.style.width = `${50}%`;
-
-        loginForm.classList.remove('active');
-        signupForm.classList.remove('active');
-
-        signupMask.style.display = 'block';
-        signupCont.style.display = 'none';
-
-        loginCont.style.display = 'none';
-        loginMask.style.display = 'block';
-      }
+    // 마우스오버 이벤트
+    overLoginForm(event) {
+      overFormEvent(event.target);
     },
-    overEvent() {
-      const signupForm = document.querySelector('.signup-form');
-      const loginForm = document.querySelector('.login-form');
-
-      console.log('로그인에 오버됐다!!');
-      signupForm.style.width = `${50 - 5}%`;
-      loginForm.style.width = `${50 + 5}%`;
+    // 리셋 버튼
+    resetBtnForm() {
+      resetFormEvent('login');
     },
-    outEvent() {
-      const signupForm = document.querySelector('.signup-form');
-      const loginForm = document.querySelector('.login-form');
-
-      if (this.outCheck) {
-        signupForm.style.width = `${50}%`;
-        loginForm.style.width = `${50}%`;
-      }
+    // 마우스 아웃 이벤트
+    outLoginForm() {
+      outFormEvent();
     },
   },
 };
