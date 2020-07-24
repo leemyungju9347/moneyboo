@@ -92,10 +92,10 @@ export default {
       };
 
       // console.log(listData);
-      // this.$store.commit(
-      //   'SET_DAILYLIST',
-      //   this.$store.state.listData.push(listData),
-      // );
+      this.$store.commit(
+        'SET_DAILYLIST',
+        this.$store.state.listData.push(listData),
+      );
       saveListData(listData);
       this.resetData(); // 인풋창의 데이터를 리셋해주는 함수
     },

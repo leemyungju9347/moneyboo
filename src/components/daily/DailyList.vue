@@ -40,12 +40,6 @@
 import { addComma } from '@/utils/filters';
 
 export default {
-  created: {
-    // listHistory() {
-    //   let liii = this.$store.state.listData;
-    //   liii.splice()
-    // },
-  },
   data() {
     return {
       listArray: this.$store.state.listData,
