@@ -1,8 +1,10 @@
 <template>
   <div class="statistics-page-wrap">
-    <BarGraph></BarGraph>
-    <RoundGraph></RoundGraph>
-    <StatisticsList></StatisticsList>
+    <div class="statistics-cont">
+      <BarGraph></BarGraph>
+      <RoundGraph></RoundGraph>
+      <StatisticsList></StatisticsList>
+    </div>
   </div>
 </template>
 
