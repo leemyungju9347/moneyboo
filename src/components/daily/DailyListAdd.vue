@@ -1,6 +1,7 @@
 <template>
   <div class="daily-list-add">
     <form class="add-cont" @submit.prevent="submitList">
+      {{ date }}
       <button
         type="button"
         v-on:click="clickIncomeBtn()"
@@ -43,7 +44,7 @@
           v-model="price"
           placeholder="내역을 0 단위로 입력해주세요. ex 10,000"
         />
-        <button class="btn list-add-btn">등록</button>
+        <button class="btn big list-add-btn">등록</button>
       </div>
     </form>
   </div>
@@ -52,9 +53,26 @@
 <script>
 import { saveListData } from '@/utils/cookies.js';
 import DatePicker from 'v-calendar/lib/components/date-picker.umd';
+import { createId } from '@/utils/filters.js';
+import { eventBus } from '@/main.js';
 
 export default {
   components: { DatePicker },
+  created() {
+    eventBus.$on('editList', data => {
+      // 리스트에서 edit 버튼을 누른다면,
+      console.log(data);
+      let dd = new Date(` 2020, ${data.date}`);
+      // 데이터는 연결이 잘 되는데, 달력에 연결이 안된다...
+      this.date = dd.toString();
+      this.price = data.price;
+      this.inputControl = data.item;
+      this.selectCategory = data.category;
+      this.selectBank = data.bank;
+      this.edit = true;
+      this.editId = data.id;
+    });
+  },
   data() {
     return {
       date: new Date(),
@@ -62,6 +80,9 @@ export default {
       selectCategory: '',
       selectBank: '',
       price: null,
+      edit: false,
+      editId: '',
+      // num: 1,
     };
   },
   methods: {
@@ -82,16 +103,32 @@ export default {
         alert('값을 선택, 입력해 주세요.');
         return;
       }
-      const listData = {
-        date: this.conversionDate(this.date), // 한국날짜로 변환
-        item: this.inputControl,
-        category: this.selectCategory,
-        bank: this.selectBank,
-        // price: Number(this.price).toLocaleString(), // 세자리수 변환
-        price: this.price,
-      };
+      let listData = {};
+      if (this.edit === true) {
+        listData = {
+          id: this.editId,
+          date: this.conversionDate(this.date), // 한국날짜로 변환
+          item: this.inputControl,
+          category: this.selectCategory,
+          bank: this.selectBank,
+          price: this.price,
+        };
+      } else {
+        listData = {
+          id: createId('l', this.date),
+          date: this.conversionDate(this.date), // 한국날짜로 변환
+          item: this.inputControl,
+          category: this.selectCategory,
+          bank: this.selectBank,
+          price: this.price,
+        };
+      }
 
-      // console.log(listData);
+      // if (this.id) {
+      //   console.log('수정한 리스트 저장한다!');
+      // }
+
+      console.log(listData);
       // this.$store.commit(
       //   'SET_DAILYLIST',
       //   this.$store.state.listData.push(listData),
@@ -108,6 +145,8 @@ export default {
       this.price = null;
     },
     conversionDate(date) {
+      console.log(date);
+
       // 저장되는 날짜를 한국기준으로 정리해서 저장.
       let month = date.getMonth();
       let todayDate = date.getDate();

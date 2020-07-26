@@ -20,6 +20,14 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 firebase.analytics();
 
+export const eventBus = new Vue({
+  methods: {
+    editList(data) {
+      this.$emit('editList', data);
+    },
+  },
+});
+
 new Vue({
   router,
   store,

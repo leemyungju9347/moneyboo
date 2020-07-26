@@ -2,6 +2,9 @@
   <div class="daily-list">
     <ul class="daily-list-cont">
       {{
+        listArray.length
+      }}
+      {{
         listArray
       }}
       <li class="daily-list-day" v-for="date in sortListDate()" :key="date">
@@ -17,13 +20,22 @@
             <i>{{ list.category }}</i>
             <span class="font-uto"> {{ list.bank }} </span>
             <b v-if="list.item === 'income'"
-              ><a href="#/daily" title="수정하기" class="list-income"
-                >+ {{ addComma(list.price) }} 원</a
+              ><a
+                href="#/daily"
+                title="수정하기"
+                class="list-income"
+                @click.prevent="editList(list)"
+                >+ {{ editCommaPrice(list.price) }} 원</a
               ></b
             >
             <b class="list-expend" v-else>
-              <a href="#/daily" title="수정하기" class="list-expend">
-                - {{ addComma(list.price) }} 원</a
+              <a
+                href="#/daily"
+                title="수정하기"
+                class="list-expend"
+                @click.prevent="editList(list)"
+              >
+                - {{ editCommaPrice(list.price) }} 원</a
               >
             </b>
             <button class="btn list-delete">
@@ -37,18 +49,17 @@
 </template>
 
 <script>
+import { deleteCookie } from '@/utils/cookies';
 import { addComma } from '@/utils/filters';
-
+import { eventBus } from '@/main';
 export default {
-  created: {
-    // listHistory() {
-    //   let liii = this.$store.state.listData;
-    //   liii.splice()
-    // },
+  created() {
+    this.listArray = this.$store.state.listData;
   },
   data() {
     return {
-      listArray: this.$store.state.listData,
+      listArray: '',
+      // listArray: [],
       listDateArray: [],
       // 왜 새로고침을 해야 반영이 될까? ( 쿠키에 저장하기만하고 스토어에 저장 안할때)
     };
@@ -75,9 +86,20 @@ export default {
         return b - a;
       });
       // 중복값 제거
+      // for (let i = 1; i < dateArray.length; i++) {
+      //   if (dateArray[i] == dateArray[i - 1]) {
+      //     // 값이 같다면 지워라
+      //     console.log(dateArray[i]);
+
+      //     this.listDateArray = dateArray.splice(i, 1);
+      //   }
+      // }
+      // 중복값 제거 ( 중복값 세개이상일때 예외처리 해야함)
       for (let i = 1; i <= dateArray.length; i++) {
         if (dateArray[i] == dateArray[i - 1]) {
           // 값이 같다면 지워라
+          console.log(dateArray[i]);
+
           this.listDateArray = dateArray.splice(i, 1);
         }
       }
@@ -108,9 +130,14 @@ export default {
       }
       return addComma(totalPrice);
     },
-    // 숫자에 콤마 붙여주는 함수
-    addComma(price) {
-      return Number(price).toLocaleString();
+    editList(data) {
+      console.log('수정해야할 리스트');
+      console.log(data);
+      eventBus.editList(data);
+      deleteCookie(data);
+    },
+    editCommaPrice(price) {
+      return addComma(price);
     },
   },
 };
