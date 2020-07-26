@@ -30,14 +30,24 @@ function saveCategory(newCategory) {
 
 // DailyListAdd.vue
 function saveListData(newList) {
-  // let array = JSON.stringify(newList);
-  if (!getListData()) {
+  if (!checkListData()) {
     document.cookie = `listData = ${JSON.stringify(newList)}`;
-  } else if (getListData()) {
-    document.cookie = `listData = ${getListData()}${JSON.stringify(newList)}`;
+    // document.cookie = `listData = ${newnewList}`;
+    // document.cookie = `listData = ${newList}`;
+  } else if (checkListData()) {
+    // document.cookie = `listData = ${getListData()}${newList}`;
+    // document.cookie = `listData = ${getListData()}${newnewList}`;
+    document.cookie = `listData = ${checkListData()}${JSON.stringify(newList)}`;
   }
 }
-//  이렇게 되면 배열안에 객체가 아니라서, 이상하게 for문을 돌게된다.
+
+// 리스트를 저장할때 확인하는 함수
+function checkListData() {
+  return document.cookie.replace(
+    /(?:(?:^|.*;\s*)listData\s*=\s*([^;]*).*$)|^.*$/,
+    '$1',
+  );
+}
 
 // store에서 사용.
 function getTotal() {
@@ -64,11 +74,19 @@ function getCategory() {
     '$1',
   );
 }
+
 function getListData() {
-  return document.cookie.replace(
-    /(?:(?:^|.*;\s*)listData\s*=\s*([^;]*).*$)|^.*$/,
-    '$1',
-  );
+  let listData = checkListData();
+  let sortListData = listData.split(/{/).map(a => a.replace(/}/g, ''));
+  sortListData.splice('', 1);
+  for (let i = 0; i < sortListData.length; i++) {
+    sortListData[i] = eval('({' + sortListData[i] + '})');
+  }
+  return sortListData;
+}
+
+function deleteCookie(value) {
+  document.cookie = `${value}=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
 }
 
 export {
@@ -82,4 +100,5 @@ export {
   getBankAsset,
   getCategory,
   getListData,
+  deleteCookie,
 };
