@@ -3,9 +3,8 @@ import Vuex from 'vuex';
 import {
   getTotal,
   getCash,
-  getBankAsset,
-  getCategory,
-  // getListData,
+  // getBankAsset,
+  getListData,
 } from '../utils/cookies.js';
 
 Vue.use(Vuex);
@@ -15,12 +14,16 @@ export default new Vuex.Store({
     total: getTotal() || '',
     cash: getCash() || '',
     bankAsset: {
-      bank: getBankAsset() || '',
-      asset: getBankAsset() || 0,
+      bank: [],
+      asset: [],
+      id: [],
     },
-    category: getCategory() || '',
-    // listData: getListData() || [],
-    listData: [],
+    categorys: {
+      name: [],
+      icon: [],
+      id: [],
+    },
+    listData: getListData() || [],
   },
   mutations: {
     SET_DAILYLIST() {},

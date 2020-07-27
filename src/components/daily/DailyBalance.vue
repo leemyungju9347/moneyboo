@@ -13,6 +13,7 @@
 </template>
 
 <script>
+import { addComma } from '@/utils/filters';
 export default {
   data() {
     return {
@@ -40,7 +41,7 @@ export default {
           totalPrice += ppp;
         }
       }
-      return this.addComma(totalPrice);
+      return addComma(totalPrice);
     },
     // 오늘의 지출 확인 함수
     expendToday(date) {
@@ -52,7 +53,7 @@ export default {
           totalPrice += ppp;
         }
       }
-      return this.addComma(totalPrice);
+      return addComma(totalPrice);
     },
     // 숫자에 콤마 붙여주는 함수
     addComma(price) {

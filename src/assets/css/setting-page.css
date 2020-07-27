@@ -97,7 +97,7 @@
   }
   .set-asset > form > .credit-goal-cont > ul > li > button.edit{
     border:none;
-    border-radius: 2px;
+    /* border-radius: 2px; */
     padding:2px 3px;
     background-color:rgba(226, 201, 146, 0.4) /*#e2c992*/;
     font-size:12px;
@@ -111,7 +111,7 @@
   }
   .set-asset > form > .credit-goal-cont > ul > li > button.remove{
     border: none;
-    border-radius: 2px;
+    /* border-radius: 2px; */
     padding: 1px 3px;
     background-color: rgba(226, 201, 146, .3) /*#e2c992*/;
     font-size:11px;
@@ -341,7 +341,7 @@
     }
   .set-category > .category-list-cont > form > button {
     border: none;
-    border-radius: 3px;
+    /* border-radius: 3px; */
     width: 50px;
     height: 30px;
     margin-top: 10px;
@@ -431,7 +431,7 @@
   }
   .set-category > .category-edit-cont > form > button {
     border: none;
-    border-radius: 3px;
+    /* border-radius: 3px; */
     width: 50px;
     height: 30px;
     margin-top: 10px;

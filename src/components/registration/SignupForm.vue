@@ -1,9 +1,9 @@
 <template>
   <!--회원가입 페이지  -->
   <div class="regist-form signup-form">
-    <div class="regist-form-cont">
+    <div class="regist-form-cont fade">
       <h3>회원가입</h3>
-      <form class="form fade" action="" @submit.prevent="submitForm">
+      <form class="form" action="" @submit.prevent="submitForm">
         <!-- 아이디 -->
         <div>
           <label for="username" v-if="!username">이메일</label>
@@ -19,7 +19,7 @@
           <label for="password" v-if="!password">비밀번호</label>
           <input id="password" type="text" v-model="password" />
         </div>
-        <button class="add-btn font-jua">가입</button>
+        <button class="btn big signup add-btn font-jua">가입</button>
       </form>
       <button class="reset-btn" @click.prevent="resetBtnForm()">
         되돌아가기

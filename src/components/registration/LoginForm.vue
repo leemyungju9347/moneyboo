@@ -1,9 +1,9 @@
 <template>
   <!-- 로그인 페이지 -->
   <div class="regist-form login-form">
-    <div class="regist-form-cont">
+    <div class="regist-form-cont fade">
       <h3>로그인</h3>
-      <form class="form fade" action="" @submit.prevent="submitForm">
+      <form class="form" action="" @submit.prevent="submitForm">
         <!-- 아이디 -->
         <div>
           <label for="username" v-if="!username">아이디</label>
@@ -21,7 +21,7 @@
         </div>
         <!-- 회원정보 까먹었을때 찾는 버튼 -->
         <p><a href="" class="font-jua">비밀번호 찾기</a></p>
-        <button class="add-btn font-jua">로그인</button>
+        <button class="btn big login add-btn font-jua">로그인</button>
       </form>
       <button class="reset-btn" @click.prevent="resetBtnForm()">
         되돌아가기

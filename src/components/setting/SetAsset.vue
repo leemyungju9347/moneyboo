@@ -27,8 +27,11 @@
         <strong>은행 별 자산 입력</strong>
         <button @click.prevent="clickAddBank()">+</button>
         <ul>
-          <li v-for="(bankList, index) in banks" :key="index">
-            <select name="bank" v-model="saveAsset.bank">
+          <li
+            v-for="(bankList, index) in saveAsset.banks"
+            :key="saveAsset.banks[index].id"
+          >
+            <select name="bank" v-model="saveAsset.banks[index].bank">
               <option value="">은행선택</option>
               <option value="경남은행">경남은행</option>
               <option value="광주은행">광주은행</option>
@@ -56,10 +59,13 @@
             <input
               type="text"
               placeholder="해당 은행의 총 목표 금액을 입력해 주세요"
-              v-model="saveAsset.asset"
+              v-model="saveAsset.banks[index].asset"
             />
             <!-- <button class="edit">수정</button> -->
-            <button class="remove" @click.prevent="clickRemoveBank(bankList)">
+            <button
+              class="btn small remove"
+              @click.prevent="clickRemoveBank(bankList)"
+            >
               ✕
             </button>
           </li>
@@ -68,6 +74,7 @@
       <!-- {{ banks }} -->
       <!-- {{ saveAsset }} -->
       <button
+        class="btn small"
         v-if="
           this.$store.state.total === '' &&
             this.$store.state.cash === '' &&
@@ -79,6 +86,7 @@
         설정
       </button>
       <button
+        class="btn small"
         v-if="
           this.$store.state.total !== '' ||
             this.$store.state.cash !== '' ||
@@ -94,36 +102,41 @@
 </template>
 
 <script>
-import { saveTotal, saveCash, saveBankAsset } from '@/utils/cookies.js';
+import {
+  saveTotal,
+  saveCash,
+  saveBankAsset,
+  getBanksCookie,
+} from '@/utils/cookies.js';
+import { makeID } from '@/utils/filters.js';
 
 export default {
   data() {
     return {
-      banks: [{ bank: '', asset: 0 }],
+      // banks: [{ bank: '', asset: 0, id: '' }],
       saveAsset: {
         total: this.$store.state.total,
         cash: this.$store.state.cash,
-        bank: '',
-        asset: 0,
-        // banks: [{ bank: '', asset: 0 }],
+        banks: [{ bank: '', asset: 0, id: makeID('bank') }],
       },
     };
   },
   created() {
+    // // 페이지 로딩 시 기본적으로 은행 별 자산 입력 칸 하나 생성시켜줌.
+    // this.saveAsset.banks.push({ bank: '', asset: 0, id: makeID('bank') });
+
     // --- cookie에 bank+asset를 합쳐 저장 해 놓은 것을 분리해서 data에 넣어줌. ---
-    // cookie에 저장된 bankAsset 불러와 변수 선언.
-    let getbankasset = this.$store.state.bankAsset.bank;
-    // bank(문자(한글+영어)만 추출)
-    this.saveAsset.bank = getbankasset.replace(/[0-9]/g, '');
-    // asset(숫자만 추출)
-    this.saveAsset.asset = getbankasset.replace(/[^0-9]/g, '');
+    getBanksCookie(this.saveAsset);
+
+    for (let i = 0; i < this.$store.state.bankAsset.bank.length; i++) {
+      this.saveAsset.banks[i].bank = this.$store.state.bankAsset.bank[i];
+      this.saveAsset.banks[i].asset = this.$store.state.bankAsset.asset[i];
+      this.saveAsset.banks[i].id = this.$store.state.bankAsset.id[i];
+    }
   },
   methods: {
     clickAddBank() {
-      // this.banks.push({ bank: '', asset: 0 });
-      // this.setAsset.push({ bank: '' });
-      // this.setAsset.push({ asset: 0 });
-      this.banks.push({ bank: '', asset: 0 });
+      this.saveAsset.banks.push({ bank: '', asset: 0, id: makeID('bank') });
     },
     clickRemoveBank(bankList) {
       this.banks.$remove(bankList);
@@ -133,9 +146,8 @@ export default {
       saveTotal(this.saveAsset.total);
       // 현금 목표 금액 저장
       saveCash(this.saveAsset.cash);
-      // 은행 별 자산 저장(은행명+자산금액 묶어서)
-      let bankAsset = `${this.saveAsset.bank}${this.saveAsset.asset}`;
-      saveBankAsset(bankAsset);
+      // 은행 별 자산 저장(은행명+자산금액+id 묶어서)
+      saveBankAsset(this.saveAsset.banks);
     },
   },
 };
