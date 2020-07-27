@@ -102,8 +102,13 @@
 </template>
 
 <script>
-import { saveTotal, saveCash, saveBankAsset } from '@/utils/cookies.js';
-import { makeID, getBanksCookie } from '@/utils/filters.js';
+import {
+  saveTotal,
+  saveCash,
+  saveBankAsset,
+  getBanksCookie,
+} from '@/utils/cookies.js';
+import { makeID } from '@/utils/filters.js';
 
 export default {
   data() {
@@ -112,33 +117,26 @@ export default {
       saveAsset: {
         total: this.$store.state.total,
         cash: this.$store.state.cash,
-        // bank: '',
-        // asset: 0,
-        // banks: [],
         banks: [{ bank: '', asset: 0, id: makeID('bank') }],
       },
     };
   },
   created() {
-    // 페이지 로딩 시 기본적으로 은행 별 자산 입력 칸 하나 생성시켜줌.
+    // // 페이지 로딩 시 기본적으로 은행 별 자산 입력 칸 하나 생성시켜줌.
     // this.saveAsset.banks.push({ bank: '', asset: 0, id: makeID('bank') });
 
     // --- cookie에 bank+asset를 합쳐 저장 해 놓은 것을 분리해서 data에 넣어줌. ---
     getBanksCookie(this.saveAsset);
-    console.log(this.saveAsset.banks);
+
+    for (let i = 0; i < this.$store.state.bankAsset.bank.length; i++) {
+      this.saveAsset.banks[i].bank = this.$store.state.bankAsset.bank[i];
+      this.saveAsset.banks[i].asset = this.$store.state.bankAsset.asset[i];
+      this.saveAsset.banks[i].id = this.$store.state.bankAsset.id[i];
+    }
   },
   methods: {
     clickAddBank() {
-      // this.banks.push({ bank: '', asset: 0 });
-      // this.setAsset.push({ bank: '' });
-      // this.setAsset.push({ asset: 0 });
-      console.log(this.saveAsset);
-
-      let bankID = makeID('bank');
-
-      this.saveAsset.banks.push({ bank: '', asset: 0, id: bankID });
-      console.log(this.saveAsset.banks);
-      console.log(this.saveAsset.banks.length);
+      this.saveAsset.banks.push({ bank: '', asset: 0, id: makeID('bank') });
     },
     clickRemoveBank(bankList) {
       this.banks.$remove(bankList);
@@ -148,10 +146,7 @@ export default {
       saveTotal(this.saveAsset.total);
       // 현금 목표 금액 저장
       saveCash(this.saveAsset.cash);
-      // 은행 별 자산 저장(은행명+자산금액 묶어서)
-      // let bankAsset = `${this.saveAsset.bank}${this.saveAsset.asset}`;
-      // let bankAsset = ;
-      // for (let i = 0; i < this.saveAsset.banks.length; i++) {}
+      // 은행 별 자산 저장(은행명+자산금액+id 묶어서)
       saveBankAsset(this.saveAsset.banks);
     },
   },
