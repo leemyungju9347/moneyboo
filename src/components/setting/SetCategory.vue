@@ -467,8 +467,8 @@
 </template>
 
 <script>
-import { saveCategory /*getCategory*/ } from '@/utils/cookies.js';
-import { getCategoryCookie, makeID } from '@/utils/filters.js';
+import { saveCategory, getCategoryCookie } from '@/utils/cookies.js';
+import { makeID } from '@/utils/filters.js';
 
 export default {
   data() {
@@ -479,24 +479,21 @@ export default {
         icon: '',
         id: '',
       },
-      // 저장 된 카테고리 개수
-      categoryNum: '',
       // 불러온 카테고리명
-      showCategoryName: [],
+      showCategoryName: this.$store.state.categorys.name,
       // 불러온 카테고리 아이콘명
-      showCategoryIcon: [],
-      showCategoryId: [],
+      showCategoryIcon: this.$store.state.categorys.icon,
+      // 불러온 카테고리 id
+      showCategoryId: this.$store.state.categorys.id,
+      // 카테고리 클릭 여부 확인용
       categoryCardClick: false,
     };
   },
   created() {
+    console.log(this.$store.state.categorys.name);
+
     // 페이지 로딩될 때마다 cookie에 저장된 카테고리 불러옴.
-    getCategoryCookie(
-      this.categoryNum,
-      this.showCategoryName,
-      this.showCategoryIcon,
-      this.showCategoryId,
-    );
+    getCategoryCookie();
   },
   methods: {
     clickAddCategory() {
