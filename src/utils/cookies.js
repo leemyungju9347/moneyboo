@@ -9,7 +9,7 @@ function saveCash(cash) {
 }
 
 function saveBankAsset(bankAsset) {
-  document.cookie = `bankAsset = ${bankAsset}`;
+  document.cookie = `bankAsset = ${JSON.stringify(bankAsset)}`;
 }
 
 // SetCategory.vue
