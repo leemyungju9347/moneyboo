@@ -9,7 +9,10 @@
             >추가 된 카테고리가 보여지는 공간입니다.</b
           >
           <!-- script를 작성하면 li의 '관리비'등의 이름을 {{}}로 줘서 data랑 연동되도록 하면 되겠다 -->
-          <li v-for="(category, index) in showCategoryIcon" :key="index">
+          <li
+            v-for="(category, index) in showCategoryIcon"
+            :key="showCategoryId[index]"
+          >
             <label
               ><input type="radio" name="category" />
               <!-- 추후에 span 옆에 선택한 아이콘도 넣어줄 것 -->
@@ -35,6 +38,7 @@
         </ul>
 
         <button
+          class="btn small"
           :class="{ click: categoryCardClick === true }"
           @click.prevent="clickCategoryEdit()"
         >
@@ -450,7 +454,7 @@
         </ul>
 
         <!-- 위의 수정 버튼을 누르면 '추가'버튼이 '수정'으로 바뀌도록 할 것 -->
-        <button @click.prevent="clickAddCategory()">
+        <button class="btn small" @click.prevent="clickAddCategory()">
           추가
         </button>
         <!-- <button>수정</button> -->
@@ -464,72 +468,48 @@
 
 <script>
 import { saveCategory /*getCategory*/ } from '@/utils/cookies.js';
+import { getCategoryCookie, makeID } from '@/utils/filters.js';
 
 export default {
   data() {
     return {
-      // 새로 입력한 카테고리
+      // 새로 입력한 카테고리 & 수정할 카테고리
       inputCategory: {
         name: '',
         icon: '',
+        id: '',
       },
-      // cookie에서 불러온 저장되어있던 카테코리 (개발 중 확인용- 완성하면 삭제할 것임)
-      // saveCategory: '',
-      // 불러온 카테고리 (이름+아이콘주소)(개발 중 확인용- 완성하면 삭제할 것임)
-      // categorys: [],
       // 저장 된 카테고리 개수
       categoryNum: '',
       // 불러온 카테고리명
       showCategoryName: [],
       // 불러온 카테고리 아이콘명
       showCategoryIcon: [],
+      showCategoryId: [],
       categoryCardClick: false,
     };
   },
   created() {
-    // // 카테고리 기본 셋팅(category를 수정하지 않은 처음에만 적용되게 함.)
-    // if (getCategory === '') {
-    //   document.cookie = `category = {관리비fas fa-wallet}{쇼핑fas fa-shopping-cart}{식비fas fa-utensils}{주유비fas fa-gas-pump}{적금fas fa-piggy-bank}`;
-    // }
-
-    // ----------- cookie에 저장 된 카테고리 목록들 불러와서 화면에 나타내줌 (해당 코드들 다른 페이지에서도 사용되니까 자주 사용되는 코드 모아놓는 페이지에 넣어놓고 불러다 쓰면 될 듯) -----------
-    // *** 1. cookie에 저장 된 카테고리 목록 불러옴 ***
-    let cookieCategory = this.$store.state.category;
-    this.saveCategory = cookieCategory; // 이건 개발 중 화면에서 확인하기 위한 용도로 저장한 것.
-    console.log(cookieCategory);
-
-    // *** 2. 각 카테고리 별로 분할 ***
-    // (cookie에서 불러온 카테고리 배열 속 카테고리들을 감싸고 있던 {}를 삭제해줌.)
-    let categoryArr = cookieCategory
-      .split(/{/)
-      .map(ele => ele.replace(/}/g, ''));
-    // (바로 위에서 splice(/{/)을 통해 나눠줬을 때, 첫 번째 {로 나눈 부분에서 그 앞에 빈배열이 생성되었음. 따라서 이 빈배열을 삭제해 줘야함.)
-    categoryArr.splice('', 1);
-    // (저장된 카테고리들 개수를 데이터에 저장해줌.)
-    this.categoryNum = categoryArr.length;
-    // 카테고리명+아이콘주소가 합쳐져있는 배열 데이터에 저장.(v-for를 돌릴 때 사용할 것)
-    this.categorys = categoryArr;
-
-    // *** 3. 카테고리명과 아이콘주소를 모은 각각의 배열 생성 ***
-    for (let i = 0; i < categoryArr.length; i++) {
-      this.showCategoryName.push(
-        categoryArr[i].slice(0, categoryArr[i].indexOf('fas')),
-      );
-      this.showCategoryIcon.push(
-        categoryArr[i].slice(
-          categoryArr[i].indexOf('fas'),
-          categoryArr[i].length,
-        ),
-      );
-    }
+    // 페이지 로딩될 때마다 cookie에 저장된 카테고리 불러옴.
+    getCategoryCookie(
+      this.categoryNum,
+      this.showCategoryName,
+      this.showCategoryIcon,
+      this.showCategoryId,
+    );
   },
   methods: {
     clickAddCategory() {
-      let newCategory = `${this.inputCategory.name}${this.inputCategory.icon}`;
+      // cookie에 저장할 때 함께 저장할 각각의 id생성.
+      this.inputCategory.id = makeID('category');
+
+      // cookies.js에 있는 saveCategory()함수 실행.
+      let newCategory = `${this.inputCategory.name}|${this.inputCategory.icon}|${this.inputCategory.id}`;
       console.log(newCategory);
       saveCategory(newCategory);
     },
     clickCategoryCard() {
+      // 화면에 보이는 카테고리 클릭할 때마다 ture, false값을 줘서 [수정]버튼 활성, 비활성화 되게 해줌. + 클릭한 해당 카테고리의 배경색, 글자색 변경하기 위한 :class 주는 용도.
       if (this.categoryCardClick === false) {
         this.categoryCardClick = true;
       } else {
