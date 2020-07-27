@@ -5,7 +5,7 @@ import {
   getCash,
   getBankAsset,
   getCategory,
-  // getListData,
+  getListData,
 } from '../utils/cookies.js';
 
 Vue.use(Vuex);
@@ -19,8 +19,7 @@ export default new Vuex.Store({
       asset: getBankAsset() || 0,
     },
     category: getCategory() || '',
-    // listData: getListData() || [],
-    listData: [],
+    listData: getListData() || [],
   },
   mutations: {
     SET_DAILYLIST() {},
