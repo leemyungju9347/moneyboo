@@ -117,13 +117,7 @@ export default {
       saveAsset: {
         total: this.$store.state.total,
         cash: this.$store.state.cash,
-        // bank: '',
-        // asset: 0,
-        // banks: [],
         banks: [{ bank: '', asset: 0, id: makeID('bank') }],
-        showBankassetBank: this.$store.state.bankAsset.bank,
-        showBankassetAsset: this.$store.state.bankAsset.asset,
-        showBankassetId: this.$store.state.bankAsset.id,
       },
     };
   },
