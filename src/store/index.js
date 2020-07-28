@@ -11,8 +11,8 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    total: getTotal() || '',
-    cash: getCash() || '',
+    totalGoal: getTotal() || '',
+    cashGoal: getCash() || '',
     bankAsset: {
       bank: [],
       asset: [],
