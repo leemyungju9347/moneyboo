@@ -4,6 +4,12 @@ import {
   getTotal,
   getCash,
   // getBankAsset,
+  getBanksCookieBank,
+  getBanksCookieAsset,
+  getBanksCookieId,
+  getCategoryCookieName,
+  getCategoryCookieIcon,
+  getCategoryCookieId,
   getListData,
 } from '../utils/cookies.js';
 
@@ -11,17 +17,23 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    total: getTotal() || '',
-    cash: getCash() || '',
+    totalGoal: getTotal() || '',
+    cashGoal: getCash() || '',
     bankAsset: {
-      bank: [],
-      asset: [],
-      id: [],
+      bank: getBanksCookieBank() || [],
+      asset: getBanksCookieAsset() || [],
+      id: getBanksCookieId() || [],
+      // bank: [],
+      // asset: [],
+      // id: [],
     },
     categorys: {
-      name: [],
-      icon: [],
-      id: [],
+      name: getCategoryCookieName() || [],
+      icon: getCategoryCookieIcon() || [],
+      id: getCategoryCookieId() || [],
+      // name: [],
+      // icon: [],
+      // id: [],
     },
     listData: getListData() || [],
   },

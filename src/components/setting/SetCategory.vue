@@ -490,10 +490,12 @@ export default {
     };
   },
   created() {
-    console.log(this.$store.state.categorys.name);
-
+    // console.log(this.$store.state.categorys.name);
+    // console.log(this.showCategoryName);
     // 페이지 로딩될 때마다 cookie에 저장된 카테고리 불러옴.
-    getCategoryCookie();
+    // if (this.showCategoryName.length === 0) {
+    //   getCategoryCookie();
+    // }
   },
   methods: {
     clickAddCategory() {
