@@ -17,7 +17,10 @@
         >
         <ul v-for="list in listArray" :key="list.index">
           <li v-if="list.date == date">
-            <i>{{ list.category }}</i>
+            <i
+              class="category-icon"
+              :class="convertIntoIcon(list.category)"
+            ></i>
             <span class="font-uto"> {{ list.bank }} </span>
             <b v-if="list.item === 'income'"
               ><a
@@ -38,7 +41,10 @@
                 - {{ editCommaPrice(list.price) }} 원</a
               >
             </b>
-            <button class="btn list-delete">
+            <button
+              class="btn list-delete"
+              @click.prevent="deleteListData(list)"
+            >
               <i class="fas fa-times"></i>
             </button>
           </li>
@@ -49,12 +55,13 @@
 </template>
 
 <script>
-import { deleteCookie } from '@/utils/cookies';
+import { deleteListCookie, getCategoryCookie } from '@/utils/cookies';
 import { addComma } from '@/utils/filters';
 import { eventBus } from '@/main';
 export default {
   created() {
     this.listArray = this.$store.state.listData;
+    getCategoryCookie();
   },
   data() {
     return {
@@ -62,6 +69,7 @@ export default {
       // listArray: [],
       listDateArray: [],
       // 왜 새로고침을 해야 반영이 될까? ( 쿠키에 저장하기만하고 스토어에 저장 안할때)
+      categorys: this.$store.state.categorys,
     };
   },
   methods: {
@@ -85,22 +93,13 @@ export default {
       dateArray.sort(function(a, b) {
         return b - a;
       });
-      // 중복값 제거
-      // for (let i = 1; i < dateArray.length; i++) {
-      //   if (dateArray[i] == dateArray[i - 1]) {
-      //     // 값이 같다면 지워라
-      //     console.log(dateArray[i]);
-
-      //     this.listDateArray = dateArray.splice(i, 1);
-      //   }
-      // }
       // 중복값 제거 ( 중복값 세개이상일때 예외처리 해야함)
-      for (let i = 1; i <= dateArray.length; i++) {
-        if (dateArray[i] == dateArray[i - 1]) {
+      for (let i = 0; i < dateArray.length; i++) {
+        if (dateArray[i] === dateArray[i - 1]) {
           // 값이 같다면 지워라
-          console.log(dateArray[i]);
-
-          this.listDateArray = dateArray.splice(i, 1);
+          dateArray.splice(i, 1);
+          // 위에서 splice 로 중복값을 지워줬기 때문에 i값도 빼줘야 dateArray를 순차적으로 돌수있다.
+          i--;
         }
       }
       // 중복값이 없다면 this.listDateArray 에 할당후 함수를 빠져나가라.
@@ -108,24 +107,30 @@ export default {
     },
     // 하루 수입 확인 함수
     checkDayIncome(date) {
-      let ddd = this.listArray;
+      let copyListArray = this.listArray;
       let totalPrice = 0;
-      for (let i = 0; i < ddd.length; i++) {
-        if (ddd[i].item === 'income' && ddd[i].date === date) {
-          let ppp = Number(ddd[i].price);
-          totalPrice += ppp;
+      for (let i = 0; i < copyListArray.length; i++) {
+        if (
+          copyListArray[i].item === 'income' &&
+          copyListArray[i].date === date
+        ) {
+          let stringToNumber = Number(copyListArray[i].price);
+          totalPrice += stringToNumber;
         }
       }
       return addComma(totalPrice);
     },
     // 하루 지출 확인 함수
     checkDayExpend(date) {
-      let ddd = this.listArray;
+      let copyListArray = this.listArray;
       let totalPrice = 0;
-      for (let i = 0; i < ddd.length; i++) {
-        if (ddd[i].item === 'expend' && ddd[i].date === date) {
-          let ppp = Number(ddd[i].price);
-          totalPrice += ppp;
+      for (let i = 0; i < copyListArray.length; i++) {
+        if (
+          copyListArray[i].item === 'expend' &&
+          copyListArray[i].date === date
+        ) {
+          let stringToNumber = Number(copyListArray[i].price);
+          totalPrice += stringToNumber;
         }
       }
       return addComma(totalPrice);
@@ -134,10 +139,25 @@ export default {
       console.log('수정해야할 리스트');
       console.log(data);
       eventBus.editList(data);
-      deleteCookie(data);
+      // deleteCookie(data);
     },
     editCommaPrice(price) {
       return addComma(price);
+    },
+    convertIntoIcon(category) {
+      let copyCategorys = this.categorys;
+      let categoryIconNum = 0;
+      for (let i = 0; i < copyCategorys.name.length; i++) {
+        if (copyCategorys.name[i] == category) {
+          categoryIconNum = i;
+        }
+      }
+      return copyCategorys.icon[categoryIconNum];
+    },
+    deleteListData(list) {
+      // console.log();
+
+      deleteListCookie(list);
     },
   },
 };
