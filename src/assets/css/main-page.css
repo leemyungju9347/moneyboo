@@ -7,6 +7,7 @@
 	left: 50%;
 	transform: translate(-50%,-50%);
 }
+
 .asset-list-form em {
 	font-weight: 600;
 	color: #3b3b3b;
@@ -15,54 +16,40 @@
 	font-weight: 600;
 	color: #3b3b3b91;
 }
-
+.asset-list-form > form {
+	height: 100%;
+}
 .asset-list-form > form > div {
 	border-radius: 20px;
 	padding: 30px;
-	box-shadow: 0px 5px 24px -26px rgb(192, 192, 190)
-}
-.asset-list-form > form > div + div {
-	margin-top: 15px;
-}
-.asset-list-form > form em {
-		font-size: 2em;
+	box-sizing: border-box;
+	box-shadow: 0px 5px 24px -26px rgb(192, 192, 190);
 }
 
-/* ani-money */
-.ani-money{
-	position: relative;
-	opacity: 0;
-	bottom: .5em;
-	animation: moving .5s ease-in-out forwards;
-}
-.ani-money:nth-child(1){
-	animation-delay: 0s;
-}
-.ani-money:nth-child(2){
-	animation-delay: .2s;
-}
-
-@keyframes moving {
-	to {
-		opacity: 1;
-		bottom:0 ;
-	}
-/* 
-	0% {transform: translateY(13px);opacity: 1;}
-	35% {transform: translateY(19px);opacity: 1;}
-	75% {transform: translateY(-6px);opacity: 1;}
-	100% {transform: translateY(0); opacity: 1;} */
-}
-
-/* 총 자산 */
 .total-asset-cont,
 .cash-asset-cont,
 .credit-asset-cont ul > li {
 	display: flex;
 }
 
+.credit-asset-cont,
+.cash-asset-cont {
+		background-color: #348f6c2f ;
+}
+
+.asset-list-form > form > div + div {
+	margin-top: 15px;
+}
+
+.asset-list-form > form em {
+		font-size: 2em;
+}
+
+
+/* 총 자산 ---------------------------------------------------------------*/
 .total-asset-cont {
 	background-color: #348f6c67;
+	height: 18%;
 }
 .total-asset-cont b{
 	padding-top: 7px;
@@ -86,17 +73,26 @@
 	font-size: 2em;
 }
 
-/* 은행 */
-.credit-asset-cont,
-.cash-asset-cont {
-		background-color: #348f6c2f ;
-}
 
+/* 은행 ----------------------------------------------------------------*/
+.asset-list-form > form > div.credit-asset-cont{
+	height: 40%; 
+	padding-right: 10px 
+}
+.credit-asset-cont > ul {
+	overflow-y: scroll;
+	height:80% ;padding-right: 10px;
+}
 .credit-asset-cont  em { display:block; padding-bottom: 10px;}
 .credit-asset-cont ul > li + li {margin-top: 10px;}
 .credit-asset-cont ul > li > span {font-size: 1.5em;}
 
-/* btn main */
+
+/* 현금 ---------------------------------------------------------------*/
+.asset-list-form > form > div.cash-asset-cont{height: 18%;}
+
+
+/* btn main -----------------------------------------------------------*/
 .btn.main {
 	position: absolute;
 	right: 30px; 
@@ -116,3 +112,5 @@
 .btn.main:hover {
 	background-color: rgb(206, 172, 118);
 }
+
+/* ani-money */
