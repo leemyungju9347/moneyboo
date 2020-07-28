@@ -130,7 +130,7 @@ export default {
     // cookie에 저장 된 은행 별 자산 불러옴.
     for (let i = 0; i < this.$store.state.bankAsset.bank.length; i++) {
       // 1) cookie에 저장된 은행 수만큼 화면에 상자 생기게 해줌.
-      this.saveAsset.banks.push({ bank: '', asset: 0, id: makeID('bank') });
+      this.saveAsset.banks.push({ bank: '', asset: 0, id: '' });
       // 2) 은행명, 은행별 자산, 은행별 아이디 각각 넣어줌.
       this.saveAsset.banks[i].bank = this.$store.state.bankAsset.bank[i];
       this.saveAsset.banks[i].asset = this.$store.state.bankAsset.asset[i];
