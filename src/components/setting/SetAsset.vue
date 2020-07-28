@@ -106,29 +106,32 @@ import {
   saveTotal,
   saveCash,
   saveBankAsset,
-  getBanksCookie,
+  // getBanksCookie,
 } from '@/utils/cookies.js';
 import { makeID } from '@/utils/filters.js';
 
 export default {
   data() {
     return {
-      // banks: [{ bank: '', asset: 0, id: '' }],
       saveAsset: {
-        total: this.$store.state.total,
-        cash: this.$store.state.cash,
-        banks: [{ bank: '', asset: 0, id: makeID('bank') }],
+        total: this.$store.state.totalGoal,
+        cash: this.$store.state.cashGoal,
+        banks: [],
+        // banks: [{ bank: '', asset: 0, id: makeID('bank') }],
       },
     };
   },
   created() {
-    // // 페이지 로딩 시 기본적으로 은행 별 자산 입력 칸 하나 생성시켜줌.
-    // this.saveAsset.banks.push({ bank: '', asset: 0, id: makeID('bank') });
+    // 페이지 로딩 시 기본적으로 은행 별 자산 입력 칸 하나 생성시켜줌.
+    if (this.saveAsset.banks === []) {
+      this.saveAsset.banks.push({ bank: '', asset: 0, id: makeID('bank') });
+    }
 
-    // --- cookie에 bank+asset를 합쳐 저장 해 놓은 것을 분리해서 data에 넣어줌. ---
-    getBanksCookie(this.saveAsset);
-
+    // cookie에 저장 된 은행 별 자산 불러옴.
     for (let i = 0; i < this.$store.state.bankAsset.bank.length; i++) {
+      // 1) cookie에 저장된 은행 수만큼 화면에 상자 생기게 해줌.
+      this.saveAsset.banks.push({ bank: '', asset: 0, id: '' });
+      // 2) 은행명, 은행별 자산, 은행별 아이디 각각 넣어줌.
       this.saveAsset.banks[i].bank = this.$store.state.bankAsset.bank[i];
       this.saveAsset.banks[i].asset = this.$store.state.bankAsset.asset[i];
       this.saveAsset.banks[i].id = this.$store.state.bankAsset.id[i];
