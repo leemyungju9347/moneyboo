@@ -139,24 +139,6 @@ function getCategoryCookie() {
   categoryArr.splice('', 1);
 
   return categoryArr;
-
-  // // *** 3. 카테고리명과 아이콘주소를 모은 각각의 배열 생성 ***
-  // for (let i = 0; i < categoryArr.length; i++) {
-  //   let iconId = categoryArr[i].slice(
-  //     categoryArr[i].indexOf('|') + 1,
-  //     categoryArr[i].legnth,
-  //   );
-
-  //   store.state.categorys.name.push(
-  //     categoryArr[i].slice(0, categoryArr[i].indexOf('|')),
-  //   );
-  //   store.state.categorys.icon.push(
-  //     iconId.replace(iconId.substr(iconId.indexOf('|'), iconId.length), ''),
-  //   );
-  //   store.state.categorys.id.push(
-  //     iconId.slice(iconId.indexOf('|') + 1, iconId.length),
-  //   );
-  // }
 }
 function getCategoryCookieName() {
   let categoryArr = getCategoryCookie();
