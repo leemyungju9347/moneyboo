@@ -31,13 +31,15 @@
         ></DatePicker>
         <select v-model="selectCategory">
           <option disabled value="">분류</option>
-          <option>식비</option>
-          <option>교통비</option>
+          <option v-for="(name, index) in categorys.name" :key="index">{{
+            name
+          }}</option>
         </select>
         <select class="add-bank" v-model="selectBank">
           <option disabled value="">은행</option>
-          <option>농협</option>
-          <option>기업은행</option>
+          <option v-for="(name, index) in bankAsset.bank" :key="index">{{
+            name
+          }}</option>
         </select>
         <input
           type="text"
@@ -51,7 +53,11 @@
 </template>
 
 <script>
-import { saveListData } from '@/utils/cookies.js';
+import {
+  saveListData,
+  getCategoryCookie,
+  getBanksCookie,
+} from '@/utils/cookies.js';
 import DatePicker from 'v-calendar/lib/components/date-picker.umd';
 import { createId } from '@/utils/filters.js';
 import { eventBus } from '@/main.js';
@@ -72,6 +78,8 @@ export default {
       this.edit = true;
       this.editId = data.id;
     });
+    getCategoryCookie();
+    getBanksCookie(this.saveAsset);
   },
   data() {
     return {
@@ -83,6 +91,13 @@ export default {
       edit: false,
       editId: '',
       // num: 1,
+      categorys: this.$store.state.categorys,
+      saveAsset: {
+        total: this.$store.state.totalGoal,
+        cash: this.$store.state.cashGoal,
+        banks: [],
+      },
+      bankAsset: this.$store.state.bankAsset,
     };
   },
   methods: {
@@ -93,6 +108,14 @@ export default {
     clickExpendBtn() {
       this.inputControl = 'expend';
     },
+    // checkEmptyList() {},
+    // checkPriceNumber() {
+    //   // 숫자가 아니면 alert 창을 띄워라
+    //   if (isNaN(this.price)) {
+    //     alert('숫자만 입력해주세요');
+    //     return;
+    //   }
+    // },
     submitList() {
       if (
         // 하나라도 값이 입력되지 않으면, alert창으로 입력해야함을 알려야 한다.
@@ -103,6 +126,13 @@ export default {
         alert('값을 선택, 입력해 주세요.');
         return;
       }
+      // 숫자가 아니라면, alert 창으로 숫자만 입력해야함을 알린다.
+      if (isNaN(this.price)) {
+        alert('숫자만 입력해주세요');
+        this.price = null;
+        return;
+      }
+      // 값이 하나라도 빌 경우를 확인해주는 함수
       let listData = {};
       if (this.edit === true) {
         listData = {

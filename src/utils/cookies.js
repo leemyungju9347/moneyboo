@@ -220,8 +220,37 @@ function getListData() {
   return sortListData;
 }
 
-function deleteCookie(value) {
-  document.cookie = `${value}=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+function deleteListCookie(value) {
+  let listData = checkListData();
+  // JSON.parse(listData);
+  console.log(value);
+  console.log(listData);
+
+  let sortListData = listData.split(/{/).map(a => a.replace(/}/g, ''));
+  sortListData.splice('', 1);
+  for (let i = 0; i < sortListData.length; i++) {
+    sortListData[i] = eval('({' + sortListData[i] + '})');
+    console.log(sortListData[i]);
+
+    if (sortListData[i].id == value.id) {
+      console.log(i);
+      sortListData.splice([i], 1);
+    }
+    // sortListData = JSON.stringify(sortListData[i]);
+    // sortListData = toString(sortListData[i]);
+  }
+
+  console.log(sortListData);
+
+  // document.cookie = `${JSON.stringify(
+  //   value,
+  // )}=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+  document.cookie = `listData=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+  // saveListData(sortListData[0]);
+  // console.log(value);
+
+  // let delList = `${value}=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+  // console.log(delList);
 }
 
 export {
@@ -243,5 +272,5 @@ export {
   getCategoryCookieIcon,
   getCategoryCookieId,
   getListData,
-  deleteCookie,
+  deleteListCookie,
 };

@@ -142,8 +142,25 @@
 .daily-list-day li:first-child {
   padding-top: 0;
 }
-.daily-list-day li i {
-  width: 20%;
+.daily-list-day li i.category-icon.fas{
+  width: 15%;
+  color: #e2c992;
+  /* color: #348f6c; */
+  font-size: 1.8em;
+  position: relative;
+}
+.daily-list-day li i.category-icon.fas::after{
+  display: block;
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  height: 40px;
+  width: 40px;
+  /* border-radius: 50%; */
+  border: 2px solid #e2c992;
+  /* border: 2px solid #348f6c; */
 }
 .daily-list-day li span {
   width: 20%;
@@ -155,7 +172,7 @@
   padding: 5px 10px;
 }
 .daily-list-day li .list-delete {
-  width: 5%;
+  width: 10%;
   padding: 0;
   border: none;
   background: none;
