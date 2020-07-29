@@ -37,9 +37,7 @@ export default new Vuex.Store({
     },
     listData: getListData() || [],
   },
-  mutations: {
-    SET_DAILYLIST() {},
-  },
+  mutations: {},
   actions: {},
   modules: {},
 });

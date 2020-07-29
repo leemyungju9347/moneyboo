@@ -1,13 +1,19 @@
 <template>
-  <div class="daily-list">
+  <div class="daily-list" :class="{ 'list-empty': listArray.length == 0 }">
     <ul class="daily-list-cont">
-      {{
-        listArray.length
-      }}
-      {{
+      <!-- {{
         listArray
-      }}
-      <li class="daily-list-day" v-for="date in sortListDate()" :key="date">
+      }} -->
+
+      <li v-if="listArray.length == 0">
+        등록한 내역이 없습니다.
+      </li>
+      <li
+        v-else
+        class="daily-list-day"
+        v-for="date in sortListDate()"
+        :key="date"
+      >
         <strong class="font-uto">{{ date }}</strong>
         <em class="daily-list-income"
           >수입 : <b class="list-income">{{ checkDayIncome(date) }}원</b></em
@@ -15,13 +21,17 @@
         <em class="daily-list-expend"
           >지출 : <b class="list-expend">{{ checkDayExpend(date) }}원</b></em
         >
-        <ul v-for="list in listArray" :key="list.index">
-          <li v-if="list.date == date">
+        <ul>
+          <!-- eslint-disable vue/no-use-v-if-with-v-for,vue/no-confusing-v-for-v-if -->
+          <!-- <li v-for="list in propsdata" :key="list.id" v-if="list.date == date"> -->
+          <li v-for="list in listArray" :key="list.id" v-if="list.date == date">
             <i
               class="category-icon"
               :class="convertIntoIcon(list.category)"
             ></i>
+            <!-- <p class="list-text">{{ list.text }}</p> -->
             <span class="font-uto"> {{ list.bank }} </span>
+            <p class="list-text">{{ list.text }}</p>
             <b v-if="list.item === 'income'"
               ><a
                 href="#/daily"
@@ -41,6 +51,7 @@
                 - {{ editCommaPrice(list.price) }} 원</a
               >
             </b>
+            <!-- <p class="list-text">{{ list.text }}</p> -->
             <button
               class="btn list-delete"
               @click.prevent="deleteListData(list)"
@@ -55,21 +66,35 @@
 </template>
 
 <script>
-import { deleteListCookie, getCategoryCookie } from '@/utils/cookies';
+import { deleteListCookie } from '@/utils/cookies';
 import { addComma } from '@/utils/filters';
 import { eventBus } from '@/main';
 export default {
   created() {
-    this.listArray = this.$store.state.listData;
-    getCategoryCookie();
+    // 스토어의 전체 리스트를 불러온다.
+    let allList = this.$store.state.listData;
+    // 카테고리 할당
+    this.categorys = this.$store.state.categorys;
+
+    // 이번달 확인 후 모든 리스트에서 달이 같은 리스트를 불러온 뒤, 해당달의 내역이라면 listArray에 push해 준다.
+    let Month = new Date().getMonth() + 1;
+    for (let i = 0; i < allList.length; i++) {
+      let checkMonth = allList[i].date.split('.');
+      if (checkMonth[0] == Month) {
+        this.listArray.push(allList[i]);
+      }
+    }
   },
+  // props: ['propsdata'],
   data() {
     return {
-      listArray: '',
+      listArray: [],
       // listArray: [],
       listDateArray: [],
       // 왜 새로고침을 해야 반영이 될까? ( 쿠키에 저장하기만하고 스토어에 저장 안할때)
-      categorys: this.$store.state.categorys,
+      // categorys: this.$store.state.categorys,
+      categorys: [],
+      // 이번달데이터: [],
     };
   },
   methods: {
@@ -156,9 +181,19 @@ export default {
     },
     deleteListData(list) {
       // console.log();
-
       deleteListCookie(list);
     },
+    // 이번달만추리기() {
+    //   let copyList = this.listArray;
+    //   let Month = new Date().getMonth() + 1;
+    //   for (let i = 0; i < copyList.length; i++) {
+    //     let checkMonth = copyList[i].date.split('.');
+    //     if (checkMonth[0] == Month) {
+    //       this.이번달데이터.push(copyList[i]);
+    //       console.log(copyList[i]);
+    //     }
+    //   }
+    // },
   },
 };
 </script>

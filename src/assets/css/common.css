@@ -87,6 +87,7 @@ button.btn.small {
   text-align: right;
 }
 .loading-bar {
+  position: relative;
   width: 0px;
   /* 186px 가 최대 */
   height: 14px;
@@ -95,37 +96,21 @@ button.btn.small {
   border-radius: 10px;
   background-color: #348f6c;
   color: #fdf9f3;
-  line-height: 14px;
-}
-.loading-bar.emo-first {
-  width: 0;
-  background-color: #fef2e4;
-  color: #348F6C;
-}
-.loading-bar.emo-second {
-  width: 30px;
+  /* line-height: 14px; */
   transition: all 1s ease 1s;
 }
-.loading-bar.emo-third {
-  width: 70px;
-  transition: all 1s ease 1s;
+
+.loading-bar .bar-number {
+  position: absolute;
+  top: -2px;
+  right: 6px;
 }
-.loading-bar.emo-fourth {
-  width: 100px;
-  transition: all 1s ease 1s;
+
+.loading-bar .bar-number.low-bar {
+  right: -30px;
+  color: #348f6c;
 }
-.loading-bar.emo-fifth {
-  width: 140px;
-  transition: all 1s ease 1s;
-}
-.loading-bar.emo-sixth {
-  width: 170px;
-  transition: all 1s ease 1s;
-}
-.loading-bar.emo-seventh {
-  width: 184px;
-  transition: all 1s ease 1s;
-}
+
 .status-icon-cont > i {
   display: block;
   width: 48px;
