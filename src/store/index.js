@@ -1,8 +1,9 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import {
-  getTotal,
-  getCash,
+  getTotalGoal,
+  getCashGoal,
+  getCashAsset,
   // getBankAsset,
   getBanksCookieBank,
   getBanksCookieAsset,
@@ -17,8 +18,9 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    totalGoal: getTotal() || '',
-    cashGoal: getCash() || '',
+    totalGoal: getTotalGoal() || '',
+    cashGoal: getCashGoal() || '',
+    cashAsset: getCashAsset() || '',
     bankAsset: {
       bank: getBanksCookieBank() || [],
       asset: getBanksCookieAsset() || [],

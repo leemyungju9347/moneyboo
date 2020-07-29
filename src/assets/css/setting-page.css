@@ -394,9 +394,9 @@
     background-color: #fff;
   }
   .set-category > .category-edit-cont > form > ul {
-    /* height:190px; */
+    height:190px;
     margin-top: 10px;
-    /* overflow: scroll; */
+    overflow-y: scroll;
 
     /* display: flex;
     flex-wrap: wrap; */

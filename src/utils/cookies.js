@@ -2,13 +2,17 @@
 // import { makeID } from '@/utils/filters.js';
 
 // SetAsset.vue
-function saveTotal(total) {
+function saveTotalGoal(total) {
   console.log(total);
   document.cookie = `totalGoal = ${total}`;
 }
 
-function saveCash(cash) {
+function saveCashGoal(cash) {
   document.cookie = `cashGoal = ${cash}`;
+}
+
+function saveCashAsset(cash) {
+  document.cookie = `cashAsset = ${cash}`;
 }
 
 function saveBankAsset(bankAsset) {
@@ -53,15 +57,21 @@ function checkListData() {
 }
 
 // store에서 사용.
-function getTotal() {
+function getTotalGoal() {
   return document.cookie.replace(
     /(?:(?:^|.*;\s*)totalGoal\s*=\s*([^;]*).*$)|^.*$/,
     '$1',
   );
 }
-function getCash() {
+function getCashGoal() {
   return document.cookie.replace(
     /(?:(?:^|.*;\s*)cashGoal\s*=\s*([^;]*).*$)|^.*$/,
+    '$1',
+  );
+}
+function getCashAsset() {
+  return document.cookie.replace(
+    /(?:(?:^|.*;\s*)cashAsset\s*=\s*([^;]*).*$)|^.*$/,
     '$1',
   );
 }
@@ -181,35 +191,6 @@ function getCategoryCookieId() {
   return categoryId;
 }
 
-// function getCategoryCookie() {
-//   // *** 1. cookie에 저장 된 카테고리 목록 불러옴 ***
-//   let cookieCategory = getCategory();
-
-//   // *** 2. 각 카테고리 별로 분할 ***
-//   // (cookie에서 불러온 카테고리 배열 속 카테고리들을 감싸고 있던 {}를 삭제해줌.)
-//   let categoryArr = cookieCategory.split(/{/).map(ele => ele.replace(/}/g, ''));
-//   // (바로 위에서 splice(/{/)을 통해 나눠줬을 때, 첫 번째 {로 나눈 부분에서 그 앞에 빈배열이 생성되었음. 따라서 이 빈배열을 삭제해 줘야함.)
-//   categoryArr.splice('', 1);
-
-//   // *** 3. 카테고리명과 아이콘주소를 모은 각각의 배열 생성 ***
-//   for (let i = 0; i < categoryArr.length; i++) {
-//     let iconId = categoryArr[i].slice(
-//       categoryArr[i].indexOf('|') + 1,
-//       categoryArr[i].legnth,
-//     );
-
-//     store.state.categorys.name.push(
-//       categoryArr[i].slice(0, categoryArr[i].indexOf('|')),
-//     );
-//     store.state.categorys.icon.push(
-//       iconId.replace(iconId.substr(iconId.indexOf('|'), iconId.length), ''),
-//     );
-//     store.state.categorys.id.push(
-//       iconId.slice(iconId.indexOf('|') + 1, iconId.length),
-//     );
-//   }
-// }
-
 function getListData() {
   let listData = checkListData();
   let sortListData = listData.split(/{/).map(a => a.replace(/}/g, ''));
@@ -254,13 +235,15 @@ function deleteListCookie(value) {
 }
 
 export {
-  saveTotal,
-  saveCash,
+  saveTotalGoal,
+  saveCashGoal,
+  saveCashAsset,
   saveBankAsset,
   saveCategory,
   saveListData,
-  getTotal,
-  getCash,
+  getTotalGoal,
+  getCashGoal,
+  getCashAsset,
   getBankAsset,
   getBanksCookie,
   getBanksCookieBank,

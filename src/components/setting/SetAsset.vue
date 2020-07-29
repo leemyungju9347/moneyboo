@@ -10,7 +10,7 @@
         <input
           type="text"
           placeholder="총 목표 금액을 입력해 주세요"
-          v-model="saveAsset.total"
+          v-model="saveAsset.totalGoal"
         />
       </div>
 
@@ -19,7 +19,16 @@
         <input
           type="text"
           placeholder="현금 목표 금액을 입력해 주세요"
-          v-model="saveAsset.cash"
+          v-model="saveAsset.cashGoal"
+        />
+      </div>
+
+      <div action="" class="money-asset-cont">
+        <strong>현금 자산</strong>
+        <input
+          type="text"
+          placeholder="현금 자산을 입력해 주세요"
+          v-model="saveAsset.cashAsset"
         />
       </div>
 
@@ -108,8 +117,9 @@
 
 <script>
 import {
-  saveTotal,
-  saveCash,
+  saveTotalGoal,
+  saveCashGoal,
+  saveCashAsset,
   saveBankAsset,
   // getBanksCookie,
 } from '@/utils/cookies.js';
@@ -119,8 +129,9 @@ export default {
   data() {
     return {
       saveAsset: {
-        total: this.$store.state.totalGoal,
-        cash: this.$store.state.cashGoal,
+        totalGoal: this.$store.state.totalGoal,
+        cashGoal: this.$store.state.cashGoal,
+        cashAsset: this.$store.state.cashAsset,
         banks: [],
         // banks: [{ bank: '', asset: 0, id: makeID('bank') }],
       },
@@ -181,9 +192,11 @@ export default {
     },
     clickSaveAsset() {
       // 총 목표 금액 저장
-      saveTotal(this.saveAsset.total);
+      saveTotalGoal(this.saveAsset.totalGoal);
       // 현금 목표 금액 저장
-      saveCash(this.saveAsset.cash);
+      saveCashGoal(this.saveAsset.cashGoal);
+      // 현금 자산 저장
+      saveCashAsset(this.saveAsset.cashAsset);
       // 은행 별 자산 저장(은행명+자산금액+id 묶어서)
       saveBankAsset(this.saveAsset.banks);
     },
