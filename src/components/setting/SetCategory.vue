@@ -45,7 +45,7 @@
         <button
           class="btn small"
           :class="{ click: categoryCardClick === true }"
-          @click.prevent="clickCategoryEdit()"
+          @click="clickCategoryEdit()"
         >
           수정
         </button>
@@ -459,7 +459,7 @@
         </ul>
 
         <!-- 위의 수정 버튼을 누르면 '추가'버튼이 '수정'으로 바뀌도록 할 것 -->
-        <button class="btn small" @click.prevent="clickAddCategory()">
+        <button class="btn small" @click="clickAddCategory()">
           추가
         </button>
         <!-- <button>수정</button> -->

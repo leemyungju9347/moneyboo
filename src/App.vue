@@ -9,6 +9,7 @@
 <script>
 import Sidebar from '@/views/Sidebar.vue';
 import StatusHeader from '@/views/StatusHeader.vue';
+
 export default {
   components: {
     Sidebar,
