@@ -25,6 +25,11 @@
 
       <div action="" class="credit-goal-cont">
         <strong>은행 별 자산 입력</strong>
+        <b
+          class="explanation"
+          v-if="this.$store.state.bankAsset.bank.length !== 0"
+          >( 현재 {{ bankNum }}개의 은행 자산이 저장되어 있습니다. )</b
+        >
         <button @click.prevent="clickAddBank()">+</button>
         <ul>
           <li
@@ -119,27 +124,57 @@ export default {
         banks: [],
         // banks: [{ bank: '', asset: 0, id: makeID('bank') }],
       },
+      bankNum: 0,
     };
   },
   created() {
+    // ***********코드 연구중....**********
+    console.log(this.saveAsset.banks);
+    let saveAssetBank = this.saveAsset.banks;
+    console.log(saveAssetBank);
+    console.log(saveAssetBank.length);
+    console.log(...this.saveAsset.banks);
+    console.log(typeof this.saveAsset.banks);
+    console.log(this.saveAsset.banks.length);
+    console.log(JSON.parse(JSON.stringify(this.saveAsset.banks)));
+    this.$root.log = function log() {
+      for (let i = 0; i < saveAssetBank.length; i++) {
+        console.log('hgello');
+        console.log(saveAssetBank.length);
+        if (typeof saveAssetBanks === 'object') {
+          try {
+            saveAssetBank[i] = JSON.parse(JSON.stringify(saveAssetBank));
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      }
+      console.log(...saveAssetBank);
+    };
+    // ************************
+
     // 페이지 로딩 시 기본적으로 은행 별 자산 입력 칸 하나 생성시켜줌.
     if (this.saveAsset.banks === []) {
-      this.saveAsset.banks.push({ bank: '', asset: 0, id: makeID('bank') });
+      this.saveAsset.banks.push({ bank: '', asset: '', id: '' });
     }
 
     // cookie에 저장 된 은행 별 자산 불러옴.
     for (let i = 0; i < this.$store.state.bankAsset.bank.length; i++) {
       // 1) cookie에 저장된 은행 수만큼 화면에 상자 생기게 해줌.
-      this.saveAsset.banks.push({ bank: '', asset: 0, id: '' });
+      this.saveAsset.banks.push({ bank: '', asset: '', id: '' });
       // 2) 은행명, 은행별 자산, 은행별 아이디 각각 넣어줌.
       this.saveAsset.banks[i].bank = this.$store.state.bankAsset.bank[i];
       this.saveAsset.banks[i].asset = this.$store.state.bankAsset.asset[i];
       this.saveAsset.banks[i].id = this.$store.state.bankAsset.id[i];
+      console.log(this.$store.state.bankAsset.id[i]);
     }
+
+    // 저장된 은행 수 data에 넣어줌.
+    this.bankNum = this.$store.state.bankAsset.bank.length;
   },
   methods: {
     clickAddBank() {
-      this.saveAsset.banks.push({ bank: '', asset: 0, id: makeID('bank') });
+      this.saveAsset.banks.push({ bank: '', asset: '', id: makeID('bank') });
     },
     clickRemoveBank(bankList) {
       this.banks.$remove(bankList);

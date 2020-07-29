@@ -1,6 +1,6 @@
   /* ------ SettingPage.vue ------ */
   .setting-page-wrap {
-    overflow:scroll;
+    overflow-y:scroll;
   }
   .setting-page-wrap:after {
     content: '';
@@ -58,7 +58,11 @@
   }
   
   .set-asset > form > .credit-goal-cont {
+    /* margin-bottom: 20px; */
     position: relative;
+  }
+  .set-asset > form > .credit-goal-cont > b.explanation{
+    margin-bottom: 0;
   }
   .set-asset > form > .credit-goal-cont > button {
     border: none;
@@ -71,6 +75,13 @@
     position: absolute;
     top: 5px;
     right: 2%;
+  }
+  .set-asset > form > .credit-goal-cont > ul{
+    /* max-height: 170px; */
+    margin: 5px 0;
+    padding: 10px 10px 2px 10px;
+    background-color: rgba(226, 201, 146, 0.2) /*#e2c992*/;
+    /* overflow-y: scroll; */
   }
   .set-asset > form > .credit-goal-cont > ul > li {
     width: 100%;
@@ -174,11 +185,16 @@
     display: block;
     clear: both;
   }
+  .set-category > .category-list-cont > form > b.explanation{
+    margin: 30px 0 0;
+  }
   .set-category > .category-list-cont > form > ul {
     border-radius: 5px;
-    margin-top: 30px;
+    /* max-height: 90px; */
+    margin-top: 5px;
     background-color: rgba(226, 201, 146, 0.2);
     /* background-color: #fdf9f3; */
+    /* overflow-y: scroll; */
 
     /* display: flex;
     flex-wrap: wrap;
@@ -378,9 +394,9 @@
     background-color: #fff;
   }
   .set-category > .category-edit-cont > form > ul {
-    height:190px;
+    /* height:190px; */
     margin-top: 10px;
-    overflow: scroll;
+    /* overflow: scroll; */
 
     /* display: flex;
     flex-wrap: wrap; */
