@@ -467,7 +467,7 @@
 </template>
 
 <script>
-import { saveCategory, getCategoryCookie } from '@/utils/cookies.js';
+import { saveCategory } from '@/utils/cookies.js';
 import { makeID } from '@/utils/filters.js';
 
 export default {

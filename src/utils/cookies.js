@@ -1,5 +1,5 @@
-import store from '@/store/index';
-import { makeID } from '@/utils/filters.js';
+// import store from '@/store/index';
+// import { makeID } from '@/utils/filters.js';
 
 // SetAsset.vue
 function saveTotal(total) {
