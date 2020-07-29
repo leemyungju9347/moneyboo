@@ -1,6 +1,7 @@
 <template>
   <div class="daily-list-add">
-    <form class="add-cont" @submit.prevent="submitList">
+    <!-- <form class="add-cont" @submit.prevent="submitList"> -->
+    <form class="add-cont" @submit="submitList">
       {{ date }}
       <button
         type="button"
@@ -37,29 +38,37 @@
         </select>
         <select class="add-bank" v-model="selectBank">
           <option disabled value="">은행</option>
+          <option>현금</option>
           <option v-for="(name, index) in bankAsset.bank" :key="index">{{
             name
           }}</option>
         </select>
         <input
+          class="price-box"
           type="text"
           v-model="price"
-          placeholder="내역을 0 단위로 입력해주세요. ex 10,000"
+          placeholder="금액을 입력해주세요."
         />
-        <button class="btn big list-add-btn">등록</button>
+        <input
+          class="text-box"
+          type="text"
+          v-model="listText"
+          placeholder="상세내역을 입력해주세요."
+        />
+        <button class="btn small list-add-btn">
+          <i class="fas fa-plus"></i>
+        </button>
+        <!-- <button class="btn small list-add-btn">등록</button> -->
       </div>
     </form>
   </div>
 </template>
 
 <script>
-import {
-  saveListData,
-  getCategoryCookie,
-  getBanksCookie,
-} from '@/utils/cookies.js';
+import { saveListData } from '@/utils/cookies.js';
 import DatePicker from 'v-calendar/lib/components/date-picker.umd';
-import { createId } from '@/utils/filters.js';
+// import DatePicker from '@/js/v-calendar.js';
+import { makeID } from '@/utils/filters.js';
 import { eventBus } from '@/main.js';
 
 export default {
@@ -77,9 +86,11 @@ export default {
       this.selectBank = data.bank;
       this.edit = true;
       this.editId = data.id;
+      this.listText = data.text;
     });
-    getCategoryCookie();
-    getBanksCookie(this.saveAsset);
+    this.categorys = this.$store.state.categorys;
+    // getCategoryCookie();
+    // getBanksCookie(this.saveAsset);
   },
   data() {
     return {
@@ -88,15 +99,17 @@ export default {
       selectCategory: '',
       selectBank: '',
       price: null,
+      listText: '',
       edit: false,
       editId: '',
       // num: 1,
-      categorys: this.$store.state.categorys,
-      saveAsset: {
-        total: this.$store.state.totalGoal,
-        cash: this.$store.state.cashGoal,
-        banks: [],
-      },
+      // categorys: this.$store.state.categorys,
+      // saveAsset: {
+      //   total: this.$store.state.totalGoal,
+      //   cash: this.$store.state.cashGoal,
+      //   banks: [],
+      // },
+      categorys: [],
       bankAsset: this.$store.state.bankAsset,
     };
   },
@@ -142,28 +155,23 @@ export default {
           category: this.selectCategory,
           bank: this.selectBank,
           price: this.price,
+          text: this.listText,
         };
       } else {
         listData = {
-          id: createId('l', this.date),
+          id: makeID('l'),
           date: this.conversionDate(this.date), // 한국날짜로 변환
           item: this.inputControl,
           category: this.selectCategory,
           bank: this.selectBank,
           price: this.price,
+          text: this.listText,
         };
       }
-
-      // if (this.id) {
-      //   console.log('수정한 리스트 저장한다!');
-      // }
-
       console.log(listData);
-      // this.$store.commit(
-      //   'SET_DAILYLIST',
-      //   this.$store.state.listData.push(listData),
-      // );
+      // 쿠키저장
       saveListData(listData);
+      // this.$emit('addListData', listData);
       this.resetData(); // 인풋창의 데이터를 리셋해주는 함수
     },
     resetData() {
@@ -173,9 +181,11 @@ export default {
       this.selectCategory = '';
       this.selectBank = '';
       this.price = null;
+      this.listText = '';
     },
     conversionDate(date) {
       console.log(date);
+      console.log(new Date());
 
       // 저장되는 날짜를 한국기준으로 정리해서 저장.
       let month = date.getMonth();
