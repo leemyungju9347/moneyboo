@@ -37,7 +37,6 @@ export default {
       // The data for our dataset
       data: {
         // 이름.
-        // labels: ['January', 'Febuary', 'March', 'April', 'May', 'June', 'July'],
         labels: ['1월', '2월', '3월', '4월', '5월', '6월', '7월'],
         datasets: [
           {
@@ -51,22 +50,6 @@ export default {
               'rgb(178,223,219,0.3)',
               'rgb(178,223,219,0.3)',
               'rgb(178,223,219,0.3)',
-              //2
-              // 'rgb(207, 216, 220)',
-              // 'rgb(197, 202, 233)',
-              // 'rgb(209, 196, 233)',
-              // 'rgb(255, 205, 210)',
-              // 'rgb(255, 224, 178)',
-              // 'rgb(240, 244, 195)',
-              // 'rgb(178, 235, 242)',
-              // 3
-              // 'rgb(232, 236, 241)',
-              // 'rgb(228, 233, 237)',
-              // 'rgb(210, 215, 211)',
-              // 'rgb(149, 165, 166)',
-              // 'rgb(191, 191, 191)',
-              // 'rgb(171, 183, 183)',
-              // 'rgb(228, 233, 237)',
             ],
             borderColor: 'rgb(178,223,219)',
             maxBarThickness: 40,
@@ -76,8 +59,6 @@ export default {
           },
         ],
       },
-
-      // Configuration options go here
       options: {
         responsive: true,
         maintainAspectRatio: false,

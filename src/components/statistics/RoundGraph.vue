@@ -30,6 +30,11 @@
 import Chart from 'chart.js';
 
 export default {
+  data() {
+    return {
+      dailyList: this.$store.state.listData,
+    };
+  },
   mounted() {
     const ctx = document.getElementById('r-graph');
 

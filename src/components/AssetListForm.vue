@@ -30,6 +30,8 @@
 
 <script>
 import { addComma } from '@/utils/filters.js';
+// settingPage에서 값을 입력한후 MainPage들어 올때 새로고침을 해야만 반영된다.
+// 매인 페이지 들어올때 바로 값이 입력되도록 해야 한다.
 
 export default {
   data() {
