@@ -21,12 +21,18 @@
     </div>
 
     <!-- setting페이지로 연결버튼 -->
-    <button>Setting</button>
+    <button @click="clickMove()">Setting</button>
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+  methods: {
+    clickMove() {
+      this.$router.push('/setting');
+    },
+  },
+};
 </script>
 
 <style></style>

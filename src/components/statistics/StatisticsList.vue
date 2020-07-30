@@ -8,45 +8,20 @@
           <b>화장품</b>
           <span>200,000 원</span>
         </li>
-        <li>
-          <b>식비</b>
-          <span>100,000원</span>
-        </li>
-        <li>
-          <b>공과금</b>
-          <span>100,000원</span>
-        </li>
-        <li>
-          <b>교통비</b>
-          <span>100,000원</span>
-        </li>
-        <li>
-          <b>식비</b>
-          <span>100,000원</span>
-        </li>
-        <li>
-          <b>식비</b>
-          <span>100,000원</span>
-        </li>
-        <li>
-          <b>식비</b>
-          <span>100,000원</span>
-        </li>
-        <li>
-          <b>식비</b>
-          <span>100,000원</span>
-        </li>
-        <li>
-          <b>식비</b>
-          <span>100,000원</span>
-        </li>
       </ul>
+      {{ dailyList }}
     </div>
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      dailyList: this.$store.state.listData,
+    };
+  },
+};
 </script>
 
 <style></style>

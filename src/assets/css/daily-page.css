@@ -58,6 +58,7 @@
   text-align: center;
   padding-top: 10px;
 }
+
 /* .daily-list-add ul {
   position: relative;
   text-align: center;
@@ -71,21 +72,36 @@
 } */
 
 .daily-list-add select, .daily-list-add .what-date {
-  padding:4px 2%;
-  margin-right: 1px;
+  /* padding:4px 2%; */
+  padding: 10px 6vw;
+  margin: 0 2px;
   border:none;
   background-color: #3f9c79;
   color: #ffffff;
+  border-radius: 10px;
 }
 /* .daily-list-add select.add-bank {
   padding: 4px 2.5%;
 } */
 .daily-list-add input {
-  width: 34vw;
   padding:4px 2%;
-  margin-left: 10px;
+  margin: 0 2px;
   border:none;
   border-bottom: 2px solid #3f9c79;
+  background-color: #fdfaf3;
+  border-radius: 10px;
+}
+.daily-list-add input.price-box {
+  margin-top: 5px;
+  width: 20vw;
+}
+.daily-list-add input.text-box {
+  margin-top: 10px;
+  width: 20vw;
+}
+/* 달력 플러그인  */
+.daily-list-add input.vc-appearance-none {
+  width: 20vw;
 }
 .daily-list-add .list-add-btn {
   padding:4px 2%;
@@ -93,8 +109,16 @@
   border: none;
   border-radius: 5px;
   background-color: #e2c992;
-  color: #ffffda;
+  /* background-color: #3f9c79; */
+  color: #fdfaf3;
+  /* background-color: #f0fbf7; */
+  /* color: #3f9c79; */
+  height: 40px;
 }
+
+/* .daily-list-add .list-add-btn > i {
+  color: ;
+} */
 
 /* daily-list */
 
@@ -102,12 +126,19 @@
   padding: 20px 50px;
   box-shadow: 5px 5px 5px 5px #f9fafc;
 }
+.daily-list.list-empty {
+  font-size: 1.6em;
+  /* color: #9c9c9c; */
+  color: #e2c992;
+  text-align: center;
+  box-shadow: none;
+}
 .daily-list .daily-list-day {
   padding: 10px 0;
   border-bottom: 2px solid #f1f5f4;
 }
 .daily-list .daily-list-day ul {
-  margin-top: 24px;
+  margin: 24px 0 14px;
 }
 .daily-list .daily-list-day strong,
 .daily-list .daily-list-day em {
@@ -135,27 +166,46 @@
   text-align: center;
 }
 .daily-list-day li {
-  padding-top: 8px;
+  padding-top: 26px;
   /* display: flex;
   justify-content: space-between; */
 }
 .daily-list-day li:first-child {
   padding-top: 0;
 }
-.daily-list-day li i {
-  width: 20%;
+.daily-list-day li i.category-icon.fas{
+  width: 15%;
+  color: #e2c992;
+  /* color: #348f6c; */
+  font-size: 1.5em;
+  position: relative;
 }
+/* .daily-list-day li i.category-icon.fas::after{
+  display: block;
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  height: 40px;
+  width: 40px;
+  border: 2px solid #e2c992;
+} */
 .daily-list-day li span {
   width: 20%;
 }
 .daily-list-day li b {
-  width: 50%;
+  width: 20%;
 }
 .daily-list-day li b a {
   padding: 5px 10px;
 }
+.daily-list-day li p {
+  width: 30%;
+  color: #3f9c79;
+}
 .daily-list-day li .list-delete {
-  width: 5%;
+  width: 10%;
   padding: 0;
   border: none;
   background: none;

@@ -1,14 +1,18 @@
-import store from '@/store/index';
-import { makeID } from '@/utils/filters.js';
+// import store from '@/store/index';
+// import { makeID } from '@/utils/filters.js';
 
 // SetAsset.vue
-function saveTotal(total) {
+function saveTotalGoal(total) {
   console.log(total);
   document.cookie = `totalGoal = ${total}`;
 }
 
-function saveCash(cash) {
+function saveCashGoal(cash) {
   document.cookie = `cashGoal = ${cash}`;
+}
+
+function saveCashAsset(cash) {
+  document.cookie = `cashAsset = ${cash}`;
 }
 
 function saveBankAsset(bankAsset) {
@@ -72,15 +76,21 @@ function checkListData() {
 }
 
 // store에서 사용.
-function getTotal() {
+function getTotalGoal() {
   return document.cookie.replace(
     /(?:(?:^|.*;\s*)totalGoal\s*=\s*([^;]*).*$)|^.*$/,
     '$1',
   );
 }
-function getCash() {
+function getCashGoal() {
   return document.cookie.replace(
     /(?:(?:^|.*;\s*)cashGoal\s*=\s*([^;]*).*$)|^.*$/,
+    '$1',
+  );
+}
+function getCashAsset() {
+  return document.cookie.replace(
+    /(?:(?:^|.*;\s*)cashAsset\s*=\s*([^;]*).*$)|^.*$/,
     '$1',
   );
 }
@@ -91,39 +101,53 @@ function getBankAsset() {
   );
 }
 // ------ cookie에 저장 된 '은행 별 자산'들 불러와서 화면에 나타내줌 ------
-function getBanksCookie(saveAsset) {
+function getBanksCookie() {
   // cookie에 저장된 bankAsset 불러와 변수 선언.
   let getbankasset = getBankAsset();
   let bankArr = getbankasset
     .split(/{/)
     .map(ele => ele.replace(/}/g, ''))
     .splice(1, getbankasset.length);
+  return bankArr;
+}
+function getBanksCookieBank() {
+  let bankArr = getBanksCookie();
 
-  // 각 은행 별 자산 속 bank, asset, id에 알맞은 값 넣어줌.
+  let storeBankArr = [];
   for (let i = 0; i < bankArr.length; i++) {
-    // cookie에 저장 된 은행 별 자산 개수만큼 화면에 찍어냄.
-    saveAsset.banks.push({ bank: '', asset: 0, id: makeID('bank') });
-
-    // cookie에 객체로 저장된 값을 bank, asset, id로 분리.
     let bank = bankArr[i].slice(
       bankArr[i].indexOf('bank') + 7,
       bankArr[i].indexOf('asset') - 3,
     );
+    storeBankArr.push(bank);
+  }
+  return storeBankArr;
+}
+function getBanksCookieAsset() {
+  let bankArr = getBanksCookie();
+
+  let storeAssetArr = [];
+  for (let i = 0; i < bankArr.length; i++) {
     let asset = bankArr[i].slice(
       bankArr[i].indexOf('asset') + 8,
       bankArr[i].indexOf('id') - 3,
     );
+    storeAssetArr.push(asset);
+  }
+  return storeAssetArr;
+}
+function getBanksCookieId() {
+  let bankArr = getBanksCookie();
+
+  let storeIdArr = [];
+  for (let i = 0; i < bankArr.length; i++) {
     let id = bankArr[i].slice(
       bankArr[i].indexOf('id') + 5,
       bankArr[i].indexOf('-') + 5,
     );
-
-    store.state.bankAsset.bank.push(bank);
-    store.state.bankAsset.asset.push(asset);
-    store.state.bankAsset.id.push(id);
+    storeIdArr.push(id);
   }
-
-  console.log(store.state.bankAsset);
+  return storeIdArr;
 }
 
 function getCategory() {
@@ -143,23 +167,47 @@ function getCategoryCookie() {
   // (바로 위에서 splice(/{/)을 통해 나눠줬을 때, 첫 번째 {로 나눈 부분에서 그 앞에 빈배열이 생성되었음. 따라서 이 빈배열을 삭제해 줘야함.)
   categoryArr.splice('', 1);
 
+  return categoryArr;
+}
+function getCategoryCookieName() {
+  let categoryArr = getCategoryCookie();
+
+  let categoryName = [];
+  // *** 3. 카테고리명과 아이콘주소를 모은 각각의 배열 생성 ***
+  for (let i = 0; i < categoryArr.length; i++) {
+    categoryName.push(categoryArr[i].slice(0, categoryArr[i].indexOf('|')));
+  }
+  return categoryName;
+}
+function getCategoryCookieIcon() {
+  let categoryArr = getCategoryCookie();
+
+  let categoryIcon = [];
   // *** 3. 카테고리명과 아이콘주소를 모은 각각의 배열 생성 ***
   for (let i = 0; i < categoryArr.length; i++) {
     let iconId = categoryArr[i].slice(
       categoryArr[i].indexOf('|') + 1,
       categoryArr[i].legnth,
     );
-
-    store.state.categorys.name.push(
-      categoryArr[i].slice(0, categoryArr[i].indexOf('|')),
-    );
-    store.state.categorys.icon.push(
+    categoryIcon.push(
       iconId.replace(iconId.substr(iconId.indexOf('|'), iconId.length), ''),
     );
-    store.state.categorys.id.push(
-      iconId.slice(iconId.indexOf('|') + 1, iconId.length),
-    );
   }
+  return categoryIcon;
+}
+function getCategoryCookieId() {
+  let categoryArr = getCategoryCookie();
+
+  let categoryId = [];
+  // *** 3. 카테고리명과 아이콘주소를 모은 각각의 배열 생성 ***
+  for (let i = 0; i < categoryArr.length; i++) {
+    let iconId = categoryArr[i].slice(
+      categoryArr[i].indexOf('|') + 1,
+      categoryArr[i].legnth,
+    );
+    categoryId.push(iconId.slice(iconId.indexOf('|') + 1, iconId.length));
+  }
+  return categoryId;
 }
 
 function getListData() {
@@ -172,25 +220,63 @@ function getListData() {
   return sortListData;
 }
 
-function deleteCookie(value) {
-  document.cookie = `${value}=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+function deleteListCookie(value) {
+  let listData = checkListData();
+  // JSON.parse(listData);
+  console.log(value);
+  console.log(listData);
+
+  let sortListData = listData.split(/{/).map(a => a.replace(/}/g, ''));
+  sortListData.splice('', 1);
+  for (let i = 0; i < sortListData.length; i++) {
+    sortListData[i] = eval('({' + sortListData[i] + '})');
+    console.log(sortListData[i]);
+
+    if (sortListData[i].id == value.id) {
+      console.log(i);
+      sortListData.splice([i], 1);
+    }
+    // sortListData = JSON.stringify(sortListData[i]);
+    // sortListData = toString(sortListData[i]);
+  }
+
+  console.log(sortListData);
+
+  // document.cookie = `${JSON.stringify(
+  //   value,
+  // )}=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+  document.cookie = `listData=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+  // saveListData(sortListData[0]);
+  // console.log(value);
+
+  // let delList = `${value}=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+  // console.log(delList);
 }
 
 export {
-  saveTotal,
-  saveCash,
+  saveTotalGoal,
+  saveCashGoal,
+  saveCashAsset,
   saveBankAsset,
   saveCategory,
   saveListData,
-  getTotal,
-  getCash,
+  getTotalGoal,
+  getCashGoal,
+  getCashAsset,
   getBankAsset,
   getBanksCookie,
+  getBanksCookieBank,
+  getBanksCookieAsset,
+  getBanksCookieId,
   getCategory,
   getCategoryCookie,
+  getCategoryCookieName,
+  getCategoryCookieIcon,
+  getCategoryCookieId,
   getListData,
   deleteCookie,
   saveAuth,
   getUserEmail,
   getAuthUid,
+  deleteListCookie,
 };

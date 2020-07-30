@@ -12,15 +12,21 @@
       </li>
     </ul>
     <!--😁 firestore 출력 결과 -->
-
+  <div class="daily-list" :class="{ 'list-empty': listArray.length == 0 }">
     <ul class="daily-list-cont">
-      {{
-        listArray.length
-      }}
-      {{
+      <!-- {{
         listArray
-      }}
-      <li class="daily-list-day" v-for="date in sortListDate()" :key="date">
+      }} -->
+
+      <li v-if="listArray.length == 0">
+        등록한 내역이 없습니다.
+      </li>
+      <li
+        v-else
+        class="daily-list-day"
+        v-for="date in sortListDate()"
+        :key="date"
+      >
         <strong class="font-uto">{{ date }}</strong>
         <em class="daily-list-income"
           >수입 : <b class="list-income">{{ checkDayIncome(date) }}원</b></em
@@ -28,10 +34,17 @@
         <em class="daily-list-expend"
           >지출 : <b class="list-expend">{{ checkDayExpend(date) }}원</b></em
         >
-        <ul v-for="list in listArray" :key="list.index">
-          <li v-if="list.date == date">
-            <i>{{ list.category }}</i>
+        <ul>
+          <!-- eslint-disable vue/no-use-v-if-with-v-for,vue/no-confusing-v-for-v-if -->
+          <!-- <li v-for="list in propsdata" :key="list.id" v-if="list.date == date"> -->
+          <li v-for="list in listArray" :key="list.id" v-if="list.date == date">
+            <i
+              class="category-icon"
+              :class="convertIntoIcon(list.category)"
+            ></i>
+            <!-- <p class="list-text">{{ list.text }}</p> -->
             <span class="font-uto"> {{ list.bank }} </span>
+            <p class="list-text">{{ list.text }}</p>
             <b v-if="list.item === 'income'"
               ><a
                 href="#/daily"
@@ -51,7 +64,11 @@
                 - {{ editCommaPrice(list.price) }} 원</a
               >
             </b>
-            <button class="btn list-delete">
+            <!-- <p class="list-text">{{ list.text }}</p> -->
+            <button
+              class="btn list-delete"
+              @click.prevent="deleteListData(list)"
+            >
               <i class="fas fa-times"></i>
             </button>
           </li>
@@ -62,7 +79,7 @@
 </template>
 
 <script>
-import { deleteCookie } from '@/utils/cookies';
+import { deleteListCookie } from '@/utils/cookies';
 import { addComma } from '@/utils/filters';
 import { eventBus } from '@/main';
 import { getUsersRef } from '@/api/firebase';
@@ -96,16 +113,33 @@ export default {
         this.listExpendDataArr.push(element);
       });
     });
+    // 스토어의 전체 리스트를 불러온다.
+    let allList = this.$store.state.listData;
+    // 카테고리 할당
+    this.categorys = this.$store.state.categorys;
+
+    // 이번달 확인 후 모든 리스트에서 달이 같은 리스트를 불러온 뒤, 해당달의 내역이라면 listArray에 push해 준다.
+    let Month = new Date().getMonth() + 1;
+    for (let i = 0; i < allList.length; i++) {
+      let checkMonth = allList[i].date.split('.');
+      if (checkMonth[0] == Month) {
+        this.listArray.push(allList[i]);
+      }
+    }
   },
+  // props: ['propsdata'],
   data() {
     return {
-      listArray: '',
+      listArray: [],
       // listArray: [],
       listDateArray: [],
       currentUid: this.$store.state.uid, // 현재 로그인한 유저 uid
       listIncomeDataArr: [], // 수입 데이터 담아올 배열
       listExpendDataArr: [], // 지출 데이터 담아올 배열
       // 왜 새로고침을 해야 반영이 될까? ( 쿠키에 저장하기만하고 스토어에 저장 안할때)
+      // categorys: this.$store.state.categorys,
+      categorys: [],
+      // 이번달데이터: [],
     };
   },
   methods: {
@@ -137,22 +171,13 @@ export default {
       dateArray.sort(function(a, b) {
         return b - a;
       });
-      // 중복값 제거
-      // for (let i = 1; i < dateArray.length; i++) {
-      //   if (dateArray[i] == dateArray[i - 1]) {
-      //     // 값이 같다면 지워라
-      //     console.log(dateArray[i]);
-
-      //     this.listDateArray = dateArray.splice(i, 1);
-      //   }
-      // }
       // 중복값 제거 ( 중복값 세개이상일때 예외처리 해야함)
-      for (let i = 1; i <= dateArray.length; i++) {
-        if (dateArray[i] == dateArray[i - 1]) {
+      for (let i = 0; i < dateArray.length; i++) {
+        if (dateArray[i] === dateArray[i - 1]) {
           // 값이 같다면 지워라
-          console.log(dateArray[i]);
-
-          this.listDateArray = dateArray.splice(i, 1);
+          dateArray.splice(i, 1);
+          // 위에서 splice 로 중복값을 지워줬기 때문에 i값도 빼줘야 dateArray를 순차적으로 돌수있다.
+          i--;
         }
       }
       // 중복값이 없다면 this.listDateArray 에 할당후 함수를 빠져나가라.
@@ -160,24 +185,30 @@ export default {
     },
     // 하루 수입 확인 함수
     checkDayIncome(date) {
-      let ddd = this.listArray;
+      let copyListArray = this.listArray;
       let totalPrice = 0;
-      for (let i = 0; i < ddd.length; i++) {
-        if (ddd[i].item === 'income' && ddd[i].date === date) {
-          let ppp = Number(ddd[i].price);
-          totalPrice += ppp;
+      for (let i = 0; i < copyListArray.length; i++) {
+        if (
+          copyListArray[i].item === 'income' &&
+          copyListArray[i].date === date
+        ) {
+          let stringToNumber = Number(copyListArray[i].price);
+          totalPrice += stringToNumber;
         }
       }
       return addComma(totalPrice);
     },
     // 하루 지출 확인 함수
     checkDayExpend(date) {
-      let ddd = this.listArray;
+      let copyListArray = this.listArray;
       let totalPrice = 0;
-      for (let i = 0; i < ddd.length; i++) {
-        if (ddd[i].item === 'expend' && ddd[i].date === date) {
-          let ppp = Number(ddd[i].price);
-          totalPrice += ppp;
+      for (let i = 0; i < copyListArray.length; i++) {
+        if (
+          copyListArray[i].item === 'expend' &&
+          copyListArray[i].date === date
+        ) {
+          let stringToNumber = Number(copyListArray[i].price);
+          totalPrice += stringToNumber;
         }
       }
       return addComma(totalPrice);
@@ -186,7 +217,7 @@ export default {
       console.log('수정해야할 리스트');
       console.log(data);
       eventBus.editList(data);
-      deleteCookie(data);
+      // deleteCookie(data);
     },
     editCommaPrice(price) {
       return addComma(price);
@@ -202,6 +233,31 @@ export default {
       return `${month + 1}.${todayDate}`;
       // 출력 형식 : 7.17
     },
+    convertIntoIcon(category) {
+      let copyCategorys = this.categorys;
+      let categoryIconNum = 0;
+      for (let i = 0; i < copyCategorys.name.length; i++) {
+        if (copyCategorys.name[i] == category) {
+          categoryIconNum = i;
+        }
+      }
+      return copyCategorys.icon[categoryIconNum];
+    },
+    deleteListData(list) {
+      // console.log();
+      deleteListCookie(list);
+    },
+    // 이번달만추리기() {
+    //   let copyList = this.listArray;
+    //   let Month = new Date().getMonth() + 1;
+    //   for (let i = 0; i < copyList.length; i++) {
+    //     let checkMonth = copyList[i].date.split('.');
+    //     if (checkMonth[0] == Month) {
+    //       this.이번달데이터.push(copyList[i]);
+    //       console.log(copyList[i]);
+    //     }
+    //   }
+    // },
   },
 };
 </script>

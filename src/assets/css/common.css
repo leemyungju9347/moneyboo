@@ -87,16 +87,30 @@ button.btn.small {
   text-align: right;
 }
 .loading-bar {
-  width: 170px;
+  position: relative;
+  width: 0px;
   /* 186px 가 최대 */
-  height: 16px;
-  padding-right: 6px;
-  margin: -0.5px 0 0 -1px;
+  height: 14px;
+  /* padding-right: 6px; */
+  /* margin: -0.5px 0 0 -1px; */
   border-radius: 10px;
   background-color: #348f6c;
   color: #fdf9f3;
-  line-height: 14px;
+  /* line-height: 14px; */
+  transition: all 1s ease 1s;
 }
+
+.loading-bar .bar-number {
+  position: absolute;
+  top: -2px;
+  right: 6px;
+}
+
+.loading-bar .bar-number.low-bar {
+  right: -30px;
+  color: #348f6c;
+}
+
 .status-icon-cont > i {
   display: block;
   width: 48px;

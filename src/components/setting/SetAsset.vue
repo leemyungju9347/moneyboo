@@ -10,7 +10,7 @@
         <input
           type="text"
           placeholder="총 목표 금액을 입력해 주세요"
-          v-model="saveAsset.total"
+          v-model="saveAsset.totalGoal"
         />
       </div>
 
@@ -19,12 +19,26 @@
         <input
           type="text"
           placeholder="현금 목표 금액을 입력해 주세요"
-          v-model="saveAsset.cash"
+          v-model="saveAsset.cashGoal"
+        />
+      </div>
+
+      <div action="" class="money-asset-cont">
+        <strong>현금 자산</strong>
+        <input
+          type="text"
+          placeholder="현금 자산을 입력해 주세요"
+          v-model="saveAsset.cashAsset"
         />
       </div>
 
       <div action="" class="credit-goal-cont">
         <strong>은행 별 자산 입력</strong>
+        <b
+          class="explanation"
+          v-if="this.$store.state.bankAsset.bank.length !== 0"
+          >( 현재 {{ bankNum }}개의 은행 자산이 저장되어 있습니다. )</b
+        >
         <button @click.prevent="clickAddBank()">+</button>
         <ul>
           <li
@@ -103,49 +117,86 @@
 
 <script>
 import {
-  saveTotal,
-  saveCash,
+  saveTotalGoal,
+  saveCashGoal,
+  saveCashAsset,
   saveBankAsset,
-  getBanksCookie,
+  // getBanksCookie,
 } from '@/utils/cookies.js';
 import { makeID } from '@/utils/filters.js';
 
 export default {
   data() {
     return {
-      // banks: [{ bank: '', asset: 0, id: '' }],
       saveAsset: {
-        total: this.$store.state.total,
-        cash: this.$store.state.cash,
-        banks: [{ bank: '', asset: 0, id: makeID('bank') }],
+        totalGoal: this.$store.state.totalGoal,
+        cashGoal: this.$store.state.cashGoal,
+        cashAsset: this.$store.state.cashAsset,
+        banks: [],
+        // banks: [{ bank: '', asset: 0, id: makeID('bank') }],
       },
+      bankNum: 0,
     };
   },
   created() {
-    // // 페이지 로딩 시 기본적으로 은행 별 자산 입력 칸 하나 생성시켜줌.
-    // this.saveAsset.banks.push({ bank: '', asset: 0, id: makeID('bank') });
+    // ***********코드 연구중....**********
+    console.log(this.saveAsset.banks);
+    let saveAssetBank = this.saveAsset.banks;
+    console.log(saveAssetBank);
+    console.log(saveAssetBank.length);
+    console.log(...this.saveAsset.banks);
+    console.log(typeof this.saveAsset.banks);
+    console.log(this.saveAsset.banks.length);
+    console.log(JSON.parse(JSON.stringify(this.saveAsset.banks)));
+    this.$root.log = function log() {
+      for (let i = 0; i < saveAssetBank.length; i++) {
+        console.log('hgello');
+        console.log(saveAssetBank.length);
+        if (typeof saveAssetBanks === 'object') {
+          try {
+            saveAssetBank[i] = JSON.parse(JSON.stringify(saveAssetBank));
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      }
+      console.log(...saveAssetBank);
+    };
+    // ************************
 
-    // --- cookie에 bank+asset를 합쳐 저장 해 놓은 것을 분리해서 data에 넣어줌. ---
-    getBanksCookie(this.saveAsset);
+    // 페이지 로딩 시 기본적으로 은행 별 자산 입력 칸 하나 생성시켜줌.
+    if (this.saveAsset.banks === []) {
+      this.saveAsset.banks.push({ bank: '', asset: '', id: '' });
+    }
 
+    // cookie에 저장 된 은행 별 자산 불러옴.
     for (let i = 0; i < this.$store.state.bankAsset.bank.length; i++) {
+      // 1) cookie에 저장된 은행 수만큼 화면에 상자 생기게 해줌.
+      this.saveAsset.banks.push({ bank: '', asset: '', id: '' });
+      // 2) 은행명, 은행별 자산, 은행별 아이디 각각 넣어줌.
       this.saveAsset.banks[i].bank = this.$store.state.bankAsset.bank[i];
       this.saveAsset.banks[i].asset = this.$store.state.bankAsset.asset[i];
       this.saveAsset.banks[i].id = this.$store.state.bankAsset.id[i];
+      console.log(this.$store.state.bankAsset.id[i]);
     }
+
+    // 저장된 은행 수 data에 넣어줌.
+    this.bankNum = this.$store.state.bankAsset.bank.length;
   },
   methods: {
     clickAddBank() {
-      this.saveAsset.banks.push({ bank: '', asset: 0, id: makeID('bank') });
+      this.saveAsset.banks.push({ bank: '', asset: '', id: makeID('bank') });
     },
     clickRemoveBank(bankList) {
       this.banks.$remove(bankList);
     },
     clickSaveAsset() {
       // 총 목표 금액 저장
-      saveTotal(this.saveAsset.total);
+      saveTotalGoal(this.saveAsset.totalGoal);
       // 현금 목표 금액 저장
-      saveCash(this.saveAsset.cash);
+      saveCashGoal(this.saveAsset.cashGoal);
+      // 현금 자산 저장
+      saveCashAsset(this.saveAsset.cashAsset);
       // 은행 별 자산 저장(은행명+자산금액+id 묶어서)
       saveBankAsset(this.saveAsset.banks);
     },

@@ -1,9 +1,16 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import {
-  getTotal,
-  getCash,
+  getTotalGoal,
+  getCashGoal,
+  getCashAsset,
   // getBankAsset,
+  getBanksCookieBank,
+  getBanksCookieAsset,
+  getBanksCookieId,
+  getCategoryCookieName,
+  getCategoryCookieIcon,
+  getCategoryCookieId,
   getListData,
   getUserEmail,
   getAuthUid,
@@ -13,26 +20,31 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    total: getTotal() || '',
-    cash: getCash() || '',
+    totalGoal: getTotalGoal() || '',
+    cashGoal: getCashGoal() || '',
+    cashAsset: getCashAsset() || '',
     bankAsset: {
-      bank: [],
-      asset: [],
-      id: [],
+      bank: getBanksCookieBank() || [],
+      asset: getBanksCookieAsset() || [],
+      id: getBanksCookieId() || [],
+      // bank: [],
+      // asset: [],
+      // id: [],
     },
     categorys: {
-      name: [],
-      icon: [],
-      id: [],
+      name: getCategoryCookieName() || [],
+      icon: getCategoryCookieIcon() || [],
+      id: getCategoryCookieId() || [],
+      // name: [],
+      // icon: [],
+      // id: [],
     },
     listData: getListData() || [],
     //Registration
     email: getUserEmail() || '',
     uid: getAuthUid() || '',
   },
-  mutations: {
-    SET_DAILYLIST() {},
-  },
+  mutations: {},
   actions: {},
   modules: {},
 });

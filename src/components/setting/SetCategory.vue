@@ -4,6 +4,11 @@
     <div class="category-list-cont">
       <h3 class="font-jua">수입 / 지출 카테고리</h3>
       <form action="">
+        <b
+          class="explanation"
+          v-if="this.$store.state.categorys.name.length !== 0"
+          >( 현재 {{ categoryNum }}개의 카테고리가 저장되어 있습니다. )</b
+        >
         <ul>
           <b class="explanation" v-if="showCategoryName == ''"
             >추가 된 카테고리가 보여지는 공간입니다.</b
@@ -40,7 +45,7 @@
         <button
           class="btn small"
           :class="{ click: categoryCardClick === true }"
-          @click.prevent="clickCategoryEdit()"
+          @click="clickCategoryEdit()"
         >
           수정
         </button>
@@ -454,7 +459,7 @@
         </ul>
 
         <!-- 위의 수정 버튼을 누르면 '추가'버튼이 '수정'으로 바뀌도록 할 것 -->
-        <button class="btn small" @click.prevent="clickAddCategory()">
+        <button class="btn small" @click="clickAddCategory()">
           추가
         </button>
         <!-- <button>수정</button> -->
@@ -467,7 +472,7 @@
 </template>
 
 <script>
-import { saveCategory, getCategoryCookie } from '@/utils/cookies.js';
+import { saveCategory } from '@/utils/cookies.js';
 import { makeID } from '@/utils/filters.js';
 
 export default {
@@ -479,6 +484,8 @@ export default {
         icon: '',
         id: '',
       },
+      // cookie에 저장 된 category 개수
+      categoryNum: '',
       // 불러온 카테고리명
       showCategoryName: this.$store.state.categorys.name,
       // 불러온 카테고리 아이콘명
@@ -490,10 +497,7 @@ export default {
     };
   },
   created() {
-    console.log(this.$store.state.categorys.name);
-
-    // 페이지 로딩될 때마다 cookie에 저장된 카테고리 불러옴.
-    getCategoryCookie();
+    this.categoryNum = this.$store.state.categorys.name.length;
   },
   methods: {
     clickAddCategory() {
