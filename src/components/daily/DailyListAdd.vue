@@ -70,6 +70,8 @@ import DatePicker from 'v-calendar/lib/components/date-picker.umd';
 // import DatePicker from '@/js/v-calendar.js';
 import { makeID } from '@/utils/filters.js';
 import { eventBus } from '@/main.js';
+import { getUsersRef } from '@/api/firebase';
+import firebase from 'firebase';
 
 export default {
   components: { DatePicker },
@@ -168,6 +170,72 @@ export default {
           text: this.listText,
         };
       }
+      // if (this.id) {
+      //   console.log('수정한 리스트 저장한다!');
+      // }
+
+      // 😁 ---------------------------------------------------------------- firestore 저장
+      // 현재 로그인한 유저 uid (store에 저장된 쿠키 값)
+      const currentUid = this.$store.state.uid;
+
+      /*
+        <데이터 구조>
+        users (collection)
+          - currentUid (document)
+            - moneyboo (sub collection)
+              - daily (doc)
+                - listAdd (sub sub collection)
+                  - 7.29 (doc)
+                    - income (field title) = array
+                      [{listData}][0] (field)
+                      [{listData}][1] (field)
+                      [{listData}][2] (field)
+                    - expend 
+                      [{listData}][0]
+                      [{listData}][1]
+                      [{listData}][2]
+                  - 7.30
+                  - 7.31
+      */
+
+      /* 
+        신규사용자 문제!!!
+        - 처음 회원가입 하고 로그인하면 field의 income을  찾지 못함 예외처리 해줄것
+        - 새로운 사용자는 추가해도 문서가 안생김...일단 나중에 처리하자
+
+
+        만약 listData === 0 이면 set으로 데이터 등록 해준뒤에 update문으로 갱신?
+      */
+
+      // 😁 문서 구분할때 오늘 날짜 기준으로 분류했습니다.
+      // 진아씨가 코드 짜기 편한대로 변형해주시거나 수정하시면 돼요!
+
+      let today = new Date();
+
+      const dailyListAddRef = getUsersRef()
+        .doc(currentUid)
+        .collection('moneyboo')
+        .doc('daily')
+        .collection('listAdd');
+
+      // 😁 listData 배열을 income과 expend로 나누어서 보관하기 위해 조건을 줬습니다
+      // 혹시나 다른 방법 생각나시거나 간단하게 조건 줄 수 있는 방법 알게되시면 알려주세요!
+      if (listData.item === 'income') {
+        dailyListAddRef.doc(this.conversionDate(today)).update({
+          income: firebase.firestore.FieldValue.arrayUnion(listData),
+        });
+      } else {
+        dailyListAddRef.doc(this.conversionDate(today)).update({
+          expend: firebase.firestore.FieldValue.arrayUnion(listData),
+        });
+      }
+
+      console.log(listData);
+      // console.log(listData.date);
+      // this.$store.commit(
+      //   'SET_DAILYLIST',
+      //   this.$store.state.listData.push(listData),
+      // );
       console.log(listData);
       // 쿠키저장
       saveListData(listData);

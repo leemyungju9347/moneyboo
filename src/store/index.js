@@ -12,6 +12,8 @@ import {
   getCategoryCookieIcon,
   getCategoryCookieId,
   getListData,
+  getUserEmail,
+  getAuthUid,
 } from '../utils/cookies.js';
 
 Vue.use(Vuex);
@@ -38,6 +40,9 @@ export default new Vuex.Store({
       // id: [],
     },
     listData: getListData() || [],
+    //Registration
+    email: getUserEmail() || '',
+    uid: getAuthUid() || '',
   },
   mutations: {},
   actions: {},
