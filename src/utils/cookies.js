@@ -48,6 +48,25 @@ function saveListData(newList) {
   }
 }
 
+// Registration.vue
+function saveAuth(name, value) {
+  document.cookie = `${name}=${value}`;
+}
+
+function getUserEmail() {
+  return document.cookie.replace(
+    /(?:(?:^|.*;\s*)user_email\s*=\s*([^;]*).*$)|^.*$/,
+    '$1',
+  );
+}
+
+function getAuthUid() {
+  return document.cookie.replace(
+    /(?:(?:^|.*;\s*)user_uid\s*=\s*([^;]*).*$)|^.*$/,
+    '$1',
+  );
+}
+
 // 리스트를 저장할때 확인하는 함수
 function checkListData() {
   return document.cookie.replace(
@@ -271,5 +290,9 @@ export {
   getCategoryCookieIcon,
   getCategoryCookieId,
   getListData,
+  deleteCookie,
+  saveAuth,
+  getUserEmail,
+  getAuthUid,
   deleteListCookie,
 };
