@@ -4,6 +4,7 @@
     <!-- 로고 -->
     <div class="logo-cont">
       <h1><a href="">머니부</a></h1>
+      <strong>{{ useremail }}</strong>
     </div>
     <!-- GNB 메뉴 -->
     <div class="gnb-list-cont">
@@ -73,6 +74,7 @@ export default {
           link: '',
         },
       ],
+      useremail: this.$store.state.email,
     };
   },
   methods: {

@@ -1,5 +1,18 @@
 <template>
   <div class="daily-list">
+    <!-- 😁 firestore 출력 결과!!! 지저분하게 출력해서 죄송합니다 진아씨ㅠㅠㅠㅠ 결과를 보여드리기 위해서...  -->
+    <ul>
+      <li v-for="item in listIncomeDataArr" :key="item.id">
+        <strong> 수입 : {{ item }}</strong>
+      </li>
+    </ul>
+    <ul>
+      <li v-for="item in listExpendDataArr" :key="item.id">
+        <strong> 지출 : {{ item }}</strong>
+      </li>
+    </ul>
+    <!--😁 firestore 출력 결과 -->
+
     <ul class="daily-list-cont">
       {{
         listArray.length
@@ -52,19 +65,58 @@
 import { deleteCookie } from '@/utils/cookies';
 import { addComma } from '@/utils/filters';
 import { eventBus } from '@/main';
+import { getUsersRef } from '@/api/firebase';
+
 export default {
   created() {
     this.listArray = this.$store.state.listData;
+
+    // 오늘 날짜를 기준으로 문서를 불러옴
+    const today = new Date();
+    const todayListRef = this.dailyListAddRef().doc(this.conversionDate(today));
+
+    // firebase.firestore.DocumentSnapshot
+    // todayListRef.onSnapshot(doc => {
+    //   doc.data().income.forEach(element => {
+    //     console.log(element);
+    //     this.listIncomeDataArr.push(element);
+    //   });
+    // });
+
+    // 저장된 유저의 데이터 출력문
+    todayListRef.get().then(doc => {
+      // 데이터가 수입
+      doc.data().income.forEach(element => {
+        // console.log(element);
+        this.listIncomeDataArr.push(element);
+      });
+
+      // 데이터가 지출
+      doc.data().expend.forEach(element => {
+        this.listExpendDataArr.push(element);
+      });
+    });
   },
   data() {
     return {
       listArray: '',
       // listArray: [],
       listDateArray: [],
+      currentUid: this.$store.state.uid, // 현재 로그인한 유저 uid
+      listIncomeDataArr: [], // 수입 데이터 담아올 배열
+      listExpendDataArr: [], // 지출 데이터 담아올 배열
       // 왜 새로고침을 해야 반영이 될까? ( 쿠키에 저장하기만하고 스토어에 저장 안할때)
     };
   },
   methods: {
+    // daily listAdd DB 레퍼런스 급하게하느라 맨위에 뒀습니다 진아씨가 필요에 따라 변형하거나 위치 옮겨주세요!
+    dailyListAddRef() {
+      return getUsersRef()
+        .doc(this.currentUid)
+        .collection('moneyboo')
+        .doc('daily')
+        .collection('listAdd');
+    },
     // 날짜 정렬 함수
     sortListDate() {
       // 저장된 객체가 없으면 리턴해서 나가라.
@@ -138,6 +190,17 @@ export default {
     },
     editCommaPrice(price) {
       return addComma(price);
+    },
+    // date 값이 필요해서 listAdd에서 진아씨가 만든 함수 복사했습니다!!! 필요없으면 삭제해주세요 😉 - 명주 -
+    conversionDate(date) {
+      console.log(date);
+
+      // 저장되는 날짜를 한국기준으로 정리해서 저장.
+      let month = date.getMonth();
+      let todayDate = date.getDate();
+
+      return `${month + 1}.${todayDate}`;
+      // 출력 형식 : 7.17
     },
   },
 };
