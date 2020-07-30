@@ -56,6 +56,21 @@ function checkListData() {
   );
 }
 
+// //StatisticsPage > ListOfMonth
+// function checkMonthList() {
+//   return document.cookie.replace(
+//     /(?:(?:^|.*;\s*)totalGoal\s*=\s*([^;]*).*$)|^.*$/,
+//     '$1',
+//   );
+// }
+// //StatisticsPage > ListOfYear
+// function checkYearList() {
+//   return document.cookie.replace(
+//     /(?:(?:^|.*;\s*)totalGoal\s*=\s*([^;]*).*$)|^.*$/,
+//     '$1',
+//   );
+// }
+
 // store에서 사용.
 function getTotalGoal() {
   return document.cookie.replace(
@@ -195,6 +210,7 @@ function getListData() {
   let listData = checkListData();
   let sortListData = listData.split(/{/).map(a => a.replace(/}/g, ''));
   sortListData.splice('', 1);
+
   for (let i = 0; i < sortListData.length; i++) {
     sortListData[i] = eval('({' + sortListData[i] + '})');
   }

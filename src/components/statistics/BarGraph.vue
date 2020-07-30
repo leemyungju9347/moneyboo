@@ -1,29 +1,29 @@
 <template>
-  <!-- 가영 -->
-  <!-- /statistics  -->
   <div class="bar-graph-cont">
     <div class="bar-graph">
-      <h3><span>2020</span></h3>
+      <h3>{{ whatYear() }}</h3>
       <div id="canvas-holder">
         <canvas id="b-graph"></canvas>
       </div>
-
-      <!-- <ul>
-        <li>
-          <span>1월</span>
-        </li>
-        <li>
-          <span>1월</span>통계
-        </li>
-      </ul> -->
     </div>
+    <ListOfyears></ListOfyears>
   </div>
 </template>
 
 <script>
 import Chart from 'chart.js';
+import ListOfyears from './ListOfyears';
+import { yearCheck } from '@/utils/statistics.js';
 
 export default {
+  components: {
+    ListOfyears,
+  },
+  methods: {
+    whatYear() {
+      return yearCheck();
+    },
+  },
   mounted() {
     var ctx = document.getElementById('b-graph').getContext('2d');
 

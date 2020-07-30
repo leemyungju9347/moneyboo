@@ -38,6 +38,8 @@ export default new Vuex.Store({
       // id: [],
     },
     listData: getListData() || [],
+
+    // StasticsPage
   },
   mutations: {
     SET_DAILYLIST() {},
