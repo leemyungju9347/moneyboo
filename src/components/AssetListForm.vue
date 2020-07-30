@@ -37,7 +37,7 @@ export default {
   data() {
     return {
       assetTotal: '',
-      cash: this.$store.state.cashGoal,
+      cash: this.$store.state.cashAsset,
       bankArr: [],
     };
   },
@@ -57,7 +57,6 @@ export default {
 
     this.totalCalculate();
   },
-  computed: {},
   methods: {
     addBtn() {
       this.$router.push('/daily');

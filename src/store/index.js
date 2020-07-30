@@ -40,9 +40,11 @@ export default new Vuex.Store({
       // id: [],
     },
     listData: getListData() || [],
+
     //Registration
     email: getUserEmail() || '',
     uid: getAuthUid() || '',
+
   },
   mutations: {},
   actions: {},

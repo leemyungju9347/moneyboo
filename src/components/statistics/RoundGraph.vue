@@ -1,39 +1,33 @@
 <template>
-  <!-- 가영 -->
-  <!-- /statistics  -->
   <div class="round-graph-cont">
     <div class="round-graph">
-      <h3><span>1월</span></h3>
+      <h3>{{ whatMonth() }}월</h3>
       <div id="canvas-holder">
         <canvas id="r-graph"></canvas>
       </div>
-
-      <!-- <ul>
-        <li>
-          <span>화장품</span>
-          <b>30%</b>
-        </li>
-        <li>
-          <span>식비</span>
-          <b>30%</b>
-        </li>
-        <li>
-          <span>공과금</span>
-          <b>30%</b>
-        </li>
-      </ul> -->
     </div>
+    <ListOfmonth :monthCk="whatMonth()"></ListOfmonth>
   </div>
 </template>
 
 <script>
 import Chart from 'chart.js';
+import ListOfmonth from './ListOfMonth';
+import { todayCheck } from '@/utils/statistics.js';
 
 export default {
+  components: {
+    ListOfmonth,
+  },
   data() {
     return {
       dailyList: this.$store.state.listData,
     };
+  },
+  methods: {
+    whatMonth() {
+      return todayCheck();
+    },
   },
   mounted() {
     const ctx = document.getElementById('r-graph');
@@ -55,20 +49,6 @@ export default {
               'rgb(128, 203, 196)',
               'rgb(77, 182, 172)',
               'rgb(38, 166, 154)',
-              //
-              // 'rgb(31, 97, 141)',
-              // 'rgb(40, 116, 166)',
-              // 'rgb(20, 143, 119)',
-              // 'rgb(18, 122, 101)',
-              // 'rgb(29, 132, 73)',
-              //
-              // rgb(52,143,108)
-              // 'rgb(101, 198, 187)',
-              // 'rgb(134, 226, 213)',
-              // 'rgb(200, 247, 197)',
-              // 'rgb(104, 195, 163)',
-              // 'rgb(102, 204, 153)',
-              // 'rgb(135, 211, 124)',
             ],
             data: [10, 20, 40, 10, 20],
             borderWidth: 0.5,
@@ -80,7 +60,6 @@ export default {
       options: {
         layout: {},
         responsive: true,
-
         maintainAspectRatio: false,
         legend: {
           display: false,
