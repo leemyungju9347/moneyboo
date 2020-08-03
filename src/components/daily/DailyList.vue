@@ -1,22 +1,10 @@
 <template>
-  <div class="daily-list">
-    <!-- 😁 firestore 출력 결과!!! 지저분하게 출력해서 죄송합니다 진아씨ㅠㅠㅠㅠ 결과를 보여드리기 위해서...  -->
-    <ul>
-      <li v-for="item in listIncomeDataArr" :key="item.id">
-        <strong> 수입 : {{ item }}</strong>
-      </li>
-    </ul>
-    <ul>
-      <li v-for="item in listExpendDataArr" :key="item.id">
-        <strong> 지출 : {{ item }}</strong>
-      </li>
-    </ul>
-    <!--😁 firestore 출력 결과 -->
   <div class="daily-list" :class="{ 'list-empty': listArray.length == 0 }">
     <ul class="daily-list-cont">
       <!-- {{
         listArray
       }} -->
+      <!-- <strong>{{ listIncomeDataArr }}</strong> -->
 
       <li v-if="listArray.length == 0">
         등록한 내역이 없습니다.
@@ -37,11 +25,11 @@
         <ul>
           <!-- eslint-disable vue/no-use-v-if-with-v-for,vue/no-confusing-v-for-v-if -->
           <!-- <li v-for="list in propsdata" :key="list.id" v-if="list.date == date"> -->
-          <li v-for="list in listArray" :key="list.id" v-if="list.date == date">
-            <i
-              class="category-icon"
-              :class="convertIntoIcon(list.category)"
-            ></i>
+          <li v-for="list in listArray" :key="list.id">
+            <!-- :class="convertIntoIcon(list.category)" -->
+
+            <i class="category-icon"></i>
+
             <!-- <p class="list-text">{{ list.text }}</p> -->
             <span class="font-uto"> {{ list.bank }} </span>
             <p class="list-text">{{ list.text }}</p>
@@ -89,44 +77,58 @@ export default {
   created() {
     this.listArray = this.$store.state.listData;
 
-    // 오늘 날짜를 기준으로 문서를 불러옴
-    const today = new Date();
-    const todayListRef = this.dailyListAddRef().doc(this.conversionDate(today));
+    // 1. 초기 셋팅이 되어있지 않으면 income export를 못불러옴 예외처리해줘야함
+    // 2. 로그인 안했을때 에러처러
+    // 3. 회원 삭제되면 db 목록에도 삭제
+    /*
+      회원가입하고 아무것도 추가하지 않은 상태에서 daily Page 들어왔을때부터 생각해줘야함
 
-    // firebase.firestore.DocumentSnapshot
-    // todayListRef.onSnapshot(doc => {
-    //   doc.data().income.forEach(element => {
-    //     console.log(element);
-    //     this.listIncomeDataArr.push(element);
+      1. daily doc이 없으면?
+      2. listAdd coll이 없으면?
+      3. 해당 날짜의 doc이 없으면?
+      4. field 에 아무것도 추가되지 않아서 income, expend를 못불러오는 상황이라면?
+
+    */
+
+    // const dailyListAddRef = getUsersRef()
+    //   .doc(this.currentUid)
+    //   .collection('moneyboo')
+    //   .doc('daily')
+    //   .collection('listAdd');
+
+    // // listAdd collection의 하위 document 전체 출력?
+    // dailyListAddRef
+    //   .get()
+    //   .then(querySnapshot => {
+    //     const docSnapshot = querySnapshot.docs;
+
+    //     docSnapshot.forEach(doc => {
+    //       console.log('반복문', doc.data().listData);
+    //       this.getAllListData.push(doc.data().listData);
+    //     });
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
     //   });
+
+    // console.log('getAllListData🤩', this.getAllListData);
+    // this.getAllListData.forEach(el => {
+    //   console.log('겟 올 출력🤡', el);
     // });
 
-    // 저장된 유저의 데이터 출력문
-    todayListRef.get().then(doc => {
-      // 데이터가 수입
-      doc.data().income.forEach(element => {
-        // console.log(element);
-        this.listIncomeDataArr.push(element);
-      });
+    // // 스토어의 전체 리스트를 불러온다.
+    // let allList = this.$store.state.listData;
+    // // 카테고리 할당
+    // this.categorys = this.$store.state.categorys;
 
-      // 데이터가 지출
-      doc.data().expend.forEach(element => {
-        this.listExpendDataArr.push(element);
-      });
-    });
-    // 스토어의 전체 리스트를 불러온다.
-    let allList = this.$store.state.listData;
-    // 카테고리 할당
-    this.categorys = this.$store.state.categorys;
-
-    // 이번달 확인 후 모든 리스트에서 달이 같은 리스트를 불러온 뒤, 해당달의 내역이라면 listArray에 push해 준다.
-    let Month = new Date().getMonth() + 1;
-    for (let i = 0; i < allList.length; i++) {
-      let checkMonth = allList[i].date.split('.');
-      if (checkMonth[0] == Month) {
-        this.listArray.push(allList[i]);
-      }
-    }
+    // // 이번달 확인 후 모든 리스트에서 달이 같은 리스트를 불러온 뒤, 해당달의 내역이라면 listArray에 push해 준다.
+    // let Month = new Date().getMonth() + 1;
+    // for (let i = 0; i < allList.length; i++) {
+    //   let checkMonth = allList[i].date.split('.');
+    //   if (checkMonth[0] == Month) {
+    //     this.listArray.push(allList[i]);
+    //   }
+    // }
   },
   // props: ['propsdata'],
   data() {
@@ -135,16 +137,14 @@ export default {
       // listArray: [],
       listDateArray: [],
       currentUid: this.$store.state.uid, // 현재 로그인한 유저 uid
-      listIncomeDataArr: [], // 수입 데이터 담아올 배열
-      listExpendDataArr: [], // 지출 데이터 담아올 배열
       // 왜 새로고침을 해야 반영이 될까? ( 쿠키에 저장하기만하고 스토어에 저장 안할때)
       // categorys: this.$store.state.categorys,
       categorys: [],
+      getAllListData: [],
       // 이번달데이터: [],
     };
   },
   methods: {
-    // daily listAdd DB 레퍼런스 급하게하느라 맨위에 뒀습니다 진아씨가 필요에 따라 변형하거나 위치 옮겨주세요!
     dailyListAddRef() {
       return getUsersRef()
         .doc(this.currentUid)
@@ -223,7 +223,6 @@ export default {
     editCommaPrice(price) {
       return addComma(price);
     },
-    // date 값이 필요해서 listAdd에서 진아씨가 만든 함수 복사했습니다!!! 필요없으면 삭제해주세요 😉 - 명주 -
     conversionDate(date) {
       console.log(date);
 
@@ -234,16 +233,16 @@ export default {
       return `${month + 1}.${todayDate}`;
       // 출력 형식 : 7.17
     },
-    convertIntoIcon(category) {
-      let copyCategorys = this.categorys;
-      let categoryIconNum = 0;
-      for (let i = 0; i < copyCategorys.name.length; i++) {
-        if (copyCategorys.name[i] == category) {
-          categoryIconNum = i;
-        }
-      }
-      return copyCategorys.icon[categoryIconNum];
-    },
+    // convertIntoIcon(category) {
+    //   let copyCategorys = this.categorys;
+    //   let categoryIconNum = 0;
+    //   for (let i = 0; i < copyCategorys.name.length; i++) {
+    //     if (copyCategorys.name[i] == category) {
+    //       categoryIconNum = i;
+    //     }
+    //   }
+    //   return copyCategorys.icon[categoryIconNum];
+    // },
     deleteListData(list) {
       // console.log();
       deleteListCookie(list);

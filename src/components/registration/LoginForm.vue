@@ -82,9 +82,15 @@ export default {
           alert(err.message);
         },
       );
+
+      // 처음 로그인했을때 미리 document를 셋팅해줄까?
+
+      this.$store.commit('SET_USER', this.username);
+
       this.username = '';
       this.password = '';
 
+      // this.$store.commit('set_value', this.inputValue);
       console.log(auth.currentUser.uid);
       // 로그인시 현재 유저가 안바뀜...
       const usersDoc = db.collection('users').doc(auth.currentUser.uid);

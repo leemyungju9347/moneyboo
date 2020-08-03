@@ -43,8 +43,13 @@ export default new Vuex.Store({
     //Registration
     email: getUserEmail() || '',
     uid: getAuthUid() || '',
+    user: '',
   },
-  mutations: {},
+  mutations: {
+    SET_USER(state, data) {
+      state.user = data;
+    },
+  },
   actions: {},
   modules: {},
 });

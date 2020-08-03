@@ -1,7 +1,7 @@
 <template>
   <div class="daily-list-add">
     <!-- <form class="add-cont" @submit.prevent="submitList"> -->
-    <form class="add-cont" @submit="submitList">
+    <form class="add-cont" @submit.prevent="submitList">
       {{ date }}
       <button
         type="button"
@@ -32,7 +32,7 @@
         ></DatePicker>
         <select v-model="selectCategory">
           <option disabled value="">분류</option>
-          <option v-for="(name, index) in categorys.name" :key="index">{{
+          <option v-for="(name, index) in getCategory" :key="index">{{
             name
           }}</option>
         </select>
@@ -93,6 +93,31 @@ export default {
     this.categorys = this.$store.state.categorys;
     // getCategoryCookie();
     // getBanksCookie(this.saveAsset);
+
+    // Select option에 setting에서 받아온 category 값 셋팅
+    const moneybooRef = getUsersRef()
+      .doc(this.currentUid)
+      .collection('moneyboo');
+
+    moneybooRef
+      .doc('settings')
+      .get()
+      .then(docSnapshot => {
+        // 값이 있으면
+        if (docSnapshot) {
+          const setCategory = docSnapshot.data().setCategory;
+          setCategory.forEach(el => {
+            console.log(el.name);
+            this.getCategory.push(el.name);
+          });
+          //값이 없으면
+        } else {
+          console.log('setting에 값이 없음');
+        }
+      })
+      .catch(err => {
+        console.log('에러가 발생한 위치는 listAdd Created', err);
+      });
   },
   data() {
     return {
@@ -113,6 +138,8 @@ export default {
       // },
       categorys: [],
       bankAsset: this.$store.state.bankAsset,
+      currentUid: this.$store.state.uid,
+      getCategory: [],
     };
   },
   methods: {
@@ -174,9 +201,7 @@ export default {
       //   console.log('수정한 리스트 저장한다!');
       // }
 
-      // 😁 ---------------------------------------------------------------- firestore 저장
-      // 현재 로그인한 유저 uid (store에 저장된 쿠키 값)
-      const currentUid = this.$store.state.uid;
+      // *** 신규사용자 데일리페이지에서 첫 등록하면 등록 안됨 확인해야함
 
       /*
         <데이터 구조>
@@ -199,43 +224,58 @@ export default {
       */
 
       /* 
-        신규사용자 문제!!!
+        신규사용자 문제!!! ==>> 일단 해결 
         - 처음 회원가입 하고 로그인하면 field의 income을  찾지 못함 예외처리 해줄것
         - 새로운 사용자는 추가해도 문서가 안생김...일단 나중에 처리하자
 
 
         만약 listData === 0 이면 set으로 데이터 등록 해준뒤에 update문으로 갱신?
+
+        !!!!!!!!!!!!!!! 왜 처음에 배열 셋팅이 안될까!!!???????????ㅡㅡ
+        다시해보니 된다 됐다 안됐다 한다....... 일단패쓰ㅠ
       */
 
-      // 😁 문서 구분할때 오늘 날짜 기준으로 분류했습니다.
-      // 진아씨가 코드 짜기 편한대로 변형해주시거나 수정하시면 돼요!
-
       let today = new Date();
+      this.conversionDate(today);
 
       const dailyListAddRef = getUsersRef()
-        .doc(currentUid)
+        .doc(this.currentUid)
         .collection('moneyboo')
         .doc('daily')
         .collection('listAdd');
 
-      // 😁 listData 배열을 income과 expend로 나누어서 보관하기 위해 조건을 줬습니다
-      // 혹시나 다른 방법 생각나시거나 간단하게 조건 줄 수 있는 방법 알게되시면 알려주세요!
-      if (listData.item === 'income') {
-        dailyListAddRef.doc(this.conversionDate(today)).update({
-          income: firebase.firestore.FieldValue.arrayUnion(listData),
-        });
-      } else {
-        dailyListAddRef.doc(this.conversionDate(today)).update({
-          expend: firebase.firestore.FieldValue.arrayUnion(listData),
-        });
-      }
+      // dailyListAdd Ref를 불러와서
+      dailyListAddRef
+        .doc(this.conversionDate(today))
+        .get()
+        .then(docSnapshot => {
+          // 만약 document값이 없으면 초기값 셋팅해주고
+          if (!docSnapshot.exists) {
+            dailyListAddRef
+              .doc(this.conversionDate(today))
+              .set({ listData: [listData] });
+            console.log('초기 리스트 데이터 저장');
 
-      console.log(listData);
-      // console.log(listData.date);
-      // this.$store.commit(
-      //   'SET_DAILYLIST',
-      //   this.$store.state.listData.push(listData),
-      // );
+            // 만약 값이 있다면 배열을 업데이트 해줄것
+          } else {
+            console.log('리스트 데이터 업데이트');
+
+            dailyListAddRef.doc(this.conversionDate(today)).update({
+              listData: firebase.firestore.FieldValue.arrayUnion(listData),
+            });
+          }
+        })
+        .catch(err => {
+          console.log('listAdd submitList 부분 에러 발생', err);
+        });
+      /* 
+        문제점 발견
+
+        1. 만약 document에 값이 없다면 set을 해줘야함
+        2. 그 뒤에 update 데이터
+        ** 3. field 값에 데이터가 없으면 income도 못불러오고 적용이 안되기때문에 오류가 난다 다른 조건을 주자.. 
+      */
+
       console.log(listData);
       // 쿠키저장
       saveListData(listData);
