@@ -3,8 +3,10 @@
   <div class="side-gnb-form">
     <!-- 로고 -->
     <div class="logo-cont">
-      <h1><a href="">머니부</a></h1>
-      <strong>{{ useremail }}</strong>
+      <h1>
+        <a href=""><img src="../../assets/images/moneyboo_logo.png" alt=""/></a>
+      </h1>
+      <strong>{{ this.$store.state.user }}</strong>
     </div>
     <!-- GNB 메뉴 -->
     <div class="gnb-list-cont">
@@ -75,6 +77,7 @@ export default {
         },
       ],
       useremail: this.$store.state.email,
+      username: this.$store.state.user,
     };
   },
   methods: {

@@ -290,7 +290,7 @@ export {
   getCategoryCookieIcon,
   getCategoryCookieId,
   getListData,
-  deleteCookie,
+  // deleteCookie,
   saveAuth,
   getUserEmail,
   getAuthUid,

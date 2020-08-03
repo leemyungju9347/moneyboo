@@ -459,7 +459,7 @@
         </ul>
 
         <!-- 위의 수정 버튼을 누르면 '추가'버튼이 '수정'으로 바뀌도록 할 것 -->
-        <button class="btn small" @click="clickAddCategory()">
+        <button class="btn small" @click.prevent="clickAddCategory()">
           추가
         </button>
         <!-- <button>수정</button> -->
@@ -474,6 +474,8 @@
 <script>
 import { saveCategory } from '@/utils/cookies.js';
 import { makeID } from '@/utils/filters.js';
+import { getUsersRef } from '@/api/firebase';
+import firebase from 'firebase';
 
 export default {
   data() {
@@ -494,6 +496,7 @@ export default {
       showCategoryId: this.$store.state.categorys.id,
       // 카테고리 클릭 여부 확인용
       categoryCardClick: false,
+      currentUid: this.$store.state.uid,
     };
   },
   created() {
@@ -507,6 +510,38 @@ export default {
       // cookies.js에 있는 saveCategory()함수 실행.
       let newCategory = `${this.inputCategory.name}|${this.inputCategory.icon}|${this.inputCategory.id}`;
       console.log(newCategory);
+
+      const moneybooRef = getUsersRef()
+        .doc(this.currentUid)
+        .collection('moneyboo');
+
+      // moneyboo Ref 불러와서
+      moneybooRef
+        .doc('settings')
+        .get()
+        .then(docSnapshot => {
+          // 만약 document에 데이터가 없으면 초기값 셋팅
+          if (!docSnapshot.exists) {
+            // console.log('없다');
+            moneybooRef
+              .doc('settings')
+              .set({ setCategory: [this.inputCategory] }); // 배열로 넘겨줌
+
+            // 값이 있다면 배열을 업데이트
+          } else {
+            // console.log('있다');
+
+            moneybooRef.doc('settings').update({
+              setCategory: firebase.firestore.FieldValue.arrayUnion(
+                this.inputCategory,
+              ),
+            });
+          }
+        });
+
+      // 빈 문서에 업데이트 하나만 있으면 안올라감
+      // set(값) update(값) 있으면 올라감 근데 set은 필요 x
+
       saveCategory(newCategory);
     },
     clickCategoryCard() {
