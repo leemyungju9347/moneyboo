@@ -235,8 +235,8 @@ export default {
         다시해보니 된다 됐다 안됐다 한다....... 일단패쓰ㅠ
       */
 
-      // let today = new Date();
-      // this.conversionDate(today)
+      let today = new Date();
+      this.conversionDate(today);
 
       const dailyListAddRef = getUsersRef()
         .doc(this.currentUid)
@@ -246,19 +246,21 @@ export default {
 
       // dailyListAdd Ref를 불러와서
       dailyListAddRef
-        .doc('8.2')
+        .doc(this.conversionDate(today))
         .get()
         .then(docSnapshot => {
           // 만약 document값이 없으면 초기값 셋팅해주고
           if (!docSnapshot.exists) {
-            dailyListAddRef.doc('8.2').set({ listData: [listData] });
+            dailyListAddRef
+              .doc(this.conversionDate(today))
+              .set({ listData: [listData] });
             console.log('초기 리스트 데이터 저장');
 
             // 만약 값이 있다면 배열을 업데이트 해줄것
           } else {
             console.log('리스트 데이터 업데이트');
 
-            dailyListAddRef.doc('8.2').update({
+            dailyListAddRef.doc(this.conversionDate(today)).update({
               listData: firebase.firestore.FieldValue.arrayUnion(listData),
             });
           }
