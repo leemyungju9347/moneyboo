@@ -102,7 +102,8 @@ export default {
     //     const docSnapshot = querySnapshot.docs;
 
     //     docSnapshot.forEach(doc => {
-    //       console.log('반복문😭', doc.data().listData);
+    //       console.log('반복문', doc.data().listData);
+    //       this.getAllListData.push(doc.data().listData);
     //     });
     //   })
     //   .catch(err => {
@@ -110,6 +111,9 @@ export default {
     //   });
 
     // console.log('getAllListData🤩', this.getAllListData);
+    // this.getAllListData.forEach(el => {
+    //   console.log('겟 올 출력🤡', el);
+    // });
 
     // // 스토어의 전체 리스트를 불러온다.
     // let allList = this.$store.state.listData;
