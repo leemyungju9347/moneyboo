@@ -65,6 +65,9 @@ export default {
     globalMountedInLogin(this.$el);
   },
   methods: {
+    // 1. 로그인 안했을때 에러처리
+    // 2. 회원 삭제되면 db 목록에도 삭제
+
     // 로그인 양식 제출
     submitForm() {
       // 1. async await문으로 작성

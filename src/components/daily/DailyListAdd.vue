@@ -39,8 +39,8 @@
         <select class="add-bank" v-model="selectBank">
           <option disabled value="">은행</option>
           <option>현금</option>
-          <option v-for="(name, index) in bankAsset.bank" :key="index">{{
-            name
+          <option v-for="(name, index) in getBankAsset" :key="index">{{
+            name.bank
           }}</option>
         </select>
         <input
@@ -70,7 +70,7 @@ import DatePicker from 'v-calendar/lib/components/date-picker.umd';
 // import DatePicker from '@/js/v-calendar.js';
 import { makeID } from '@/utils/filters.js';
 import { eventBus } from '@/main.js';
-import { getUsersRef } from '@/api/firebase';
+import { moneybooRef } from '@/api/firebase';
 import firebase from 'firebase';
 
 export default {
@@ -94,25 +94,57 @@ export default {
     // getCategoryCookie();
     // getBanksCookie(this.saveAsset);
 
-    // Select option에 setting에서 받아온 category 값 셋팅
-    const moneybooRef = getUsersRef()
-      .doc(this.currentUid)
-      .collection('moneyboo');
+    // 셋팅에 아무것도 추가하지 않고 데일리 페이지 왔더니 setCategory를 못찾음 예외처리 ㄱㄱ!
+    // settings에 값이 없을때 daily로 오면 settings로 넘겨버릴까?
+    // 만약 카테고리만 저장하고 에셋은 저장안하고 daily 페이지에 왔다면??
 
-    moneybooRef
+    // 셋팅페이지에 있는 데이터 불러오기
+    this.mbooRef()
       .doc('settings')
       .get()
       .then(docSnapshot => {
-        // 값이 있으면
-        if (docSnapshot) {
+        // document 값이 있으면
+        if (docSnapshot.exists) {
           const setCategory = docSnapshot.data().setCategory;
-          setCategory.forEach(el => {
-            console.log(el.name);
-            this.getCategory.push(el.name);
-          });
-          //값이 없으면
+          const setAsset = docSnapshot.data().setAsset;
+
+          // category와 asset이 셋팅되어있을때만 실행
+          if (setCategory && setAsset) {
+            // 카테고리
+            setCategory.forEach(data => {
+              this.getCategory.push(data.name);
+            });
+
+            // 에셋
+            setAsset.banks.forEach(data => {
+              this.getBankAsset.push(data);
+            });
+
+            // category나 asset이 설정되어 있지 않을 경우만 실행
+          } else {
+            // 에러메세지 undefined 값인 데이터에 문자 삽입
+            const errMessage =
+              setAsset === undefined
+                ? '목표금액과 자산'
+                : setCategory === undefined
+                ? '카테고리'
+                : '관리페이지';
+
+            // 경고창 실행하고 셋팅페이지로 이동
+            alert(
+              errMessage +
+                '에서 설정값을(를) 등록해주세요! 관리페이지로 이동합니다.',
+            );
+            this.$router.push('/setting');
+          }
+
+          // document 값이 없으면
         } else {
-          console.log('setting에 값이 없음');
+          // setting 페이지로 이동
+          alert(
+            '관리 페이지에서 초기값을 등록해주세요! 관리페이지로 이동합니다.',
+          );
+          this.$router.push('/setting');
         }
       })
       .catch(err => {
@@ -140,6 +172,7 @@ export default {
       bankAsset: this.$store.state.bankAsset,
       currentUid: this.$store.state.uid,
       getCategory: [],
+      getBankAsset: [],
     };
   },
   methods: {
@@ -158,6 +191,14 @@ export default {
     //     return;
     //   }
     // },
+    mbooRef() {
+      return moneybooRef(this.currentUid);
+    },
+    dailyListAddRef() {
+      return this.mbooRef()
+        .doc('daily')
+        .collection('listAdd');
+    },
     submitList() {
       if (
         // 하나라도 값이 입력되지 않으면, alert창으로 입력해야함을 알려야 한다.
@@ -201,68 +242,24 @@ export default {
       //   console.log('수정한 리스트 저장한다!');
       // }
 
-      // *** 신규사용자 데일리페이지에서 첫 등록하면 등록 안됨 확인해야함
-
-      /*
-        <데이터 구조>
-        users (collection)
-          - currentUid (document)
-            - moneyboo (sub collection)
-              - daily (doc)
-                - listAdd (sub sub collection)
-                  - 7.29 (doc)
-                    - income (field title) = array
-                      [{listData}][0] (field)
-                      [{listData}][1] (field)
-                      [{listData}][2] (field)
-                    - expend 
-                      [{listData}][0]
-                      [{listData}][1]
-                      [{listData}][2]
-                  - 7.30
-                  - 7.31
-      */
-
-      /* 
-        신규사용자 문제!!! ==>> 일단 해결 
-        - 처음 회원가입 하고 로그인하면 field의 income을  찾지 못함 예외처리 해줄것
-        - 새로운 사용자는 추가해도 문서가 안생김...일단 나중에 처리하자
-
-
-        만약 listData === 0 이면 set으로 데이터 등록 해준뒤에 update문으로 갱신?
-
-        !!!!!!!!!!!!!!! 왜 처음에 배열 셋팅이 안될까!!!???????????ㅡㅡ
-        다시해보니 된다 됐다 안됐다 한다....... 일단패쓰ㅠ
-      */
-
-      let today = new Date();
-      this.conversionDate(today);
-
-      const dailyListAddRef = getUsersRef()
-        .doc(this.currentUid)
-        .collection('moneyboo')
-        .doc('daily')
-        .collection('listAdd');
-
-      // dailyListAdd Ref를 불러와서
-      dailyListAddRef
-        .doc(this.conversionDate(today))
+      // firestore에 listData 저장
+      this.dailyListAddRef()
+        .doc(listData.date)
         .get()
         .then(docSnapshot => {
           // 만약 document값이 없으면 초기값 셋팅해주고
           if (!docSnapshot.exists) {
-            dailyListAddRef
-              .doc(this.conversionDate(today))
+            this.dailyListAddRef()
+              .doc(listData.date)
               .set({ listData: [listData] });
-            console.log('초기 리스트 데이터 저장');
 
             // 만약 값이 있다면 배열을 업데이트 해줄것
           } else {
-            console.log('리스트 데이터 업데이트');
-
-            dailyListAddRef.doc(this.conversionDate(today)).update({
-              listData: firebase.firestore.FieldValue.arrayUnion(listData),
-            });
+            this.dailyListAddRef()
+              .doc(listData.date)
+              .update({
+                listData: firebase.firestore.FieldValue.arrayUnion(listData),
+              });
           }
         })
         .catch(err => {
@@ -276,7 +273,7 @@ export default {
         ** 3. field 값에 데이터가 없으면 income도 못불러오고 적용이 안되기때문에 오류가 난다 다른 조건을 주자.. 
       */
 
-      console.log(listData);
+      // console.log(listData);
       // 쿠키저장
       saveListData(listData);
       // this.$emit('addListData', listData);
@@ -292,8 +289,8 @@ export default {
       this.listText = '';
     },
     conversionDate(date) {
-      console.log(date);
-      console.log(new Date());
+      // console.log(date);
+      // console.log(new Date());
 
       // 저장되는 날짜를 한국기준으로 정리해서 저장.
       let month = date.getMonth();
