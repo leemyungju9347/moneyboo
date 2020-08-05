@@ -25,4 +25,10 @@ function getUsersRef() {
   return db.collection('users');
 }
 
-export { auth, db, getUsersRef };
+function moneybooRef(curUid) {
+  return getUsersRef()
+    .doc(curUid)
+    .collection('moneyboo');
+}
+
+export { auth, db, getUsersRef, moneybooRef };

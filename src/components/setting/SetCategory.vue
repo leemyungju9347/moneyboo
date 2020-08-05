@@ -1,5 +1,18 @@
 <template>
   <div class="set-category">
+    <div>
+      <strong v-if="getCategory.length === 0" style="color:red">{{
+        logMessage
+      }}</strong>
+      <ul v-else>
+        <li v-for="item in getCategory" :key="item.id">
+          <strong>
+            {{ item.name }}
+            {{ item.icon }}
+          </strong>
+        </li>
+      </ul>
+    </div>
     <!-- 수입/지출 카테고리 아이콘 수정 -->
     <div class="category-list-cont">
       <h3 class="font-jua">수입 / 지출 카테고리</h3>
@@ -474,7 +487,7 @@
 <script>
 import { saveCategory } from '@/utils/cookies.js';
 import { makeID } from '@/utils/filters.js';
-import { getUsersRef } from '@/api/firebase';
+import { moneybooRef } from '@/api/firebase';
 import firebase from 'firebase';
 
 export default {
@@ -496,11 +509,46 @@ export default {
       showCategoryId: this.$store.state.categorys.id,
       // 카테고리 클릭 여부 확인용
       categoryCardClick: false,
-      currentUid: this.$store.state.uid,
+      currentUid: this.$store.state.uid, // 현재 로그인한 유저의 uid
+      logMessage: '',
+      getCategory: [],
     };
   },
   created() {
     this.categoryNum = this.$store.state.categorys.name.length;
+
+    // firestore에 저장된 category DB 가져오기
+    this.mbooRef()
+      .doc('settings')
+      .get()
+      .then(docSnapshot => {
+        // document가 존재하면
+        if (docSnapshot.exists) {
+          const setCategory = docSnapshot.data().setCategory;
+
+          // setCategory 데이터가 있으면
+          if (setCategory) {
+            setCategory.forEach(data => {
+              this.getCategory.push(data);
+            });
+
+            // setCategory 데이터가 없으면
+          } else {
+            this.logMessage = '카테고리 값을 입력해주세요!';
+            console.log('setCategory 데이터가 없음', docSnapshot);
+          }
+
+          // document가 없으면
+        } else {
+          console.log('settings 값 없음', docSnapshot);
+          this.logMessage = '셋팅 값을 입력해주세요!';
+        }
+      })
+      .catch(err => {
+        console.log('에러 발생한 위치 setCategory.vue created부분', err);
+      });
+
+    console.log(this.getCategory);
   },
   methods: {
     clickAddCategory() {
@@ -511,38 +559,36 @@ export default {
       let newCategory = `${this.inputCategory.name}|${this.inputCategory.icon}|${this.inputCategory.id}`;
       console.log(newCategory);
 
-      const moneybooRef = getUsersRef()
-        .doc(this.currentUid)
-        .collection('moneyboo');
-
-      // moneyboo Ref 불러와서
-      moneybooRef
+      // firestore에 category DB 저장
+      this.mbooRef()
         .doc('settings')
         .get()
         .then(docSnapshot => {
           // 만약 document에 데이터가 없으면 초기값 셋팅
           if (!docSnapshot.exists) {
-            // console.log('없다');
-            moneybooRef
+            this.mbooRef()
               .doc('settings')
               .set({ setCategory: [this.inputCategory] }); // 배열로 넘겨줌
 
-            // 값이 있다면 배열을 업데이트
-          } else {
-            // console.log('있다');
+            this.logMessage = '';
 
-            moneybooRef.doc('settings').update({
-              setCategory: firebase.firestore.FieldValue.arrayUnion(
-                this.inputCategory,
-              ),
-            });
+            // 만약 document에 데이터가 있다면 배열을 업데이트
+          } else {
+            this.mbooRef()
+              .doc('settings')
+              .update({
+                setCategory: firebase.firestore.FieldValue.arrayUnion(
+                  this.inputCategory,
+                ),
+              });
           }
         });
 
-      // 빈 문서에 업데이트 하나만 있으면 안올라감
-      // set(값) update(값) 있으면 올라감 근데 set은 필요 x
-
       saveCategory(newCategory);
+    },
+    // 머니부 참조값
+    mbooRef() {
+      return moneybooRef(this.currentUid);
     },
     clickCategoryCard() {
       // 화면에 보이는 카테고리 클릭할 때마다 ture, false값을 줘서 [수정]버튼 활성, 비활성화 되게 해줌. + 클릭한 해당 카테고리의 배경색, 글자색 변경하기 위한 :class 주는 용도.

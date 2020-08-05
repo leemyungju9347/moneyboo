@@ -4,8 +4,30 @@
       <!-- {{
         listArray
       }} -->
-      <!-- <strong>{{ listIncomeDataArr }}</strong> -->
-
+      <!-- ****************** firstore 출력 부분 **********************-->
+      <ul>
+        <li v-if="listArrLength === 0">
+          {{ logMessage }}
+        </li>
+        <li v-for="(item, index) in getAllListData" :key="index" v-else>
+          <strong>{{ item.id }}</strong>
+          <ul>
+            <li v-for="list in item.data" :key="list.id">
+              <p v-if="list.item === 'income'">
+                {{ list.item }}
+                {{ list.category }}
+                + {{ list.price }}
+              </p>
+              <p v-else>
+                {{ list.item }}
+                {{ list.category }}
+                - {{ list.price }}
+              </p>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <!-- **************** firstore 출력 부분 확인하고 삭제해주세요!! ****************-->
       <li v-if="listArray.length == 0">
         등록한 내역이 없습니다.
       </li>
@@ -70,50 +92,20 @@
 import { deleteListCookie } from '@/utils/cookies';
 import { addComma } from '@/utils/filters';
 import { eventBus } from '@/main';
-import { getUsersRef } from '@/api/firebase';
+import { moneybooRef } from '@/api/firebase';
 
 export default {
   created() {
     this.listArray = this.$store.state.listData;
 
-    // 1. 초기 셋팅이 되어있지 않으면 income export를 못불러옴 예외처리해줘야함
-    // 2. 로그인 안했을때 에러처러
-    // 3. 회원 삭제되면 db 목록에도 삭제
     /*
       회원가입하고 아무것도 추가하지 않은 상태에서 daily Page 들어왔을때부터 생각해줘야함
 
       1. daily doc이 없으면?
       2. listAdd coll이 없으면?
       3. 해당 날짜의 doc이 없으면?
-      4. field 에 아무것도 추가되지 않아서 income, expend를 못불러오는 상황이라면?
-
     */
-
-    // const dailyListAddRef = getUsersRef()
-    //   .doc(this.currentUid)
-    //   .collection('moneyboo')
-    //   .doc('daily')
-    //   .collection('listAdd');
-
-    // // listAdd collection의 하위 document 전체 출력?
-    // dailyListAddRef
-    //   .get()
-    //   .then(querySnapshot => {
-    //     const docSnapshot = querySnapshot.docs;
-
-    //     docSnapshot.forEach(doc => {
-    //       console.log('반복문', doc.data().listData);
-    //       this.getAllListData.push(doc.data().listData);
-    //     });
-    //   })
-    //   .catch(err => {
-    //     console.log(err);
-    //   });
-
-    // console.log('getAllListData🤩', this.getAllListData);
-    // this.getAllListData.forEach(el => {
-    //   console.log('겟 올 출력🤡', el);
-    // });
+    this.getListData();
 
     // // 스토어의 전체 리스트를 불러온다.
     // let allList = this.$store.state.listData;
@@ -140,16 +132,51 @@ export default {
       // categorys: this.$store.state.categorys,
       categorys: [],
       getAllListData: [],
+      listArrLength: 0,
+      logMessage: '',
       // 이번달데이터: [],
     };
   },
   methods: {
+    // firestore에 있는 저장된 DB를 가져오는 함수
+    getListData() {
+      // listAdd collection 하위에 있는 document 전체를 불러옴
+      this.dailyListAddRef()
+        .get()
+        .then(querySnapshot => {
+          const docSnapshot = querySnapshot.docs;
+          this.listArrLength = querySnapshot.size; // 문서의 값이 있는지 없는지 판단해서 처리할 용도
+
+          // 데이터가 생성되지 않았을 경우
+          if (querySnapshot.empty) {
+            this.logMessage = '등록한 내역이 없습니다!!';
+
+            // 데이터가 있을 경우 실행
+          } else {
+            this.logMessage = ''; // 로그메세지 리셋
+            // document 출력
+
+            // 가져온 데이터를 배열에 삽입
+            docSnapshot.forEach(doc => {
+              this.getAllListData.push({
+                id: doc.id, // document 이름
+                data: doc.data().listData,
+              });
+            });
+          }
+        })
+        .catch(err => {
+          console.log('위치는 DailyList 메쏘드', err);
+        });
+    },
+    // listAdd collection 참조 값
     dailyListAddRef() {
-      return getUsersRef()
-        .doc(this.currentUid)
-        .collection('moneyboo')
+      return this.mbooRef()
         .doc('daily')
         .collection('listAdd');
+    },
+    mbooRef() {
+      return moneybooRef(this.currentUid);
     },
     // 날짜 정렬 함수
     sortListDate() {
@@ -223,7 +250,7 @@ export default {
       return addComma(price);
     },
     conversionDate(date) {
-      console.log(date);
+      // console.log(date);
 
       // 저장되는 날짜를 한국기준으로 정리해서 저장.
       let month = date.getMonth();
