@@ -15,6 +15,7 @@ export default {
     Sidebar,
     StatusHeader,
   },
+  created() {},
   methods: {
     isHeader() {
       // let routerArr = this.$router.options.routes.map(a => a.path);
