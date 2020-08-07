@@ -10,6 +10,7 @@ module.exports = {
   rules: {
     "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
     "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
+    "vue/no-use-v-if-with-v-for": "off",
     "prettier/prettier": ['error', {
       singleQuote: true,
       semi: true,
@@ -19,6 +20,7 @@ module.exports = {
       printWidth: 80,
       bracketSpacing: true,
       arrowParens: 'avoid',
+      allowUsingIterationVar: false
       }]
     }
 }
