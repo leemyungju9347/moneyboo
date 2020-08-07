@@ -148,7 +148,6 @@ export default {
     // settings에 값이 없을때 daily로 오면 settings로 넘겨버릴까?
     // 만약 카테고리만 저장하고 에셋은 저장안하고 daily 페이지에 왔다면??
     this.getSettingData();
-
   },
   data() {
     return {
@@ -312,9 +311,8 @@ export default {
           console.log('listAdd submitList 부분 에러 발생', err);
         });
 
-
       // 쿠키저장
-      saveListData(listData);
+      // saveListData(listData);
 
       // this.$emit('addListData', listData);
       this.resetData(); // 인풋창의 데이터를 리셋해주는 함수

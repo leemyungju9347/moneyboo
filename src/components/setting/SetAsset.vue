@@ -221,7 +221,7 @@ export default {
     //   this.saveAsset.banks[i].id = this.$store.state.bankAsset.id[i];
     //   console.log(this.$store.state.bankAsset.id[i]);
     // }
-    
+
     // firstore에서 asset DB 가져오기
     this.mbooRef()
       .doc('settings')
@@ -305,7 +305,6 @@ export default {
 
     // // 저장된 은행 수 data에 넣어줌.
     // this.bankNum = this.$store.state.bankAsset.bank.length;
-
   },
   computed: {},
   methods: {

@@ -32,10 +32,43 @@
     /* outline:1px solid red; */
     width:200px;
     height: 200px;
-    /* display: inline-block; */
+    display: inline-block;
   }
   .myinfo-form > .status-inform-cont > div > i{
-    font-size: 200px;
+    width: 100%;
+    height: 100%;
+    /* font-size: 200px; */
+    display:inline-block;
+  }
+
+  .myinfo-form > .status-inform-cont > div > i.emo-first {
+    background-image: url('../images/emo_0-15.png');
+    background-size: cover;
+  }
+  
+  .myinfo-form > .status-inform-cont > div > i.emo-second {
+    background-image: url('../images/emo_16-30.png');
+    background-size: cover;
+  }
+  .myinfo-form > .status-inform-cont > div > i.emo-third {
+    background-image: url('../images/emo_31-50.png');
+    background-size: cover;
+  }
+  .myinfo-form > .status-inform-cont > div > i.emo-fourth {
+    background-image: url('../images/emo_51-65.png');
+    background-size: cover;
+  }
+  .myinfo-form > .status-inform-cont > div > i.emo-fifth {
+    background-image: url('../images/emo_66-80.png');
+    background-size: cover;
+  }
+  .myinfo-form > .status-inform-cont > div > i.emo-sixth {
+    background-image: url('../images/emo_81-99.png');
+    background-size: cover;
+  }
+  .myinfo-form > .status-inform-cont > div > i.emo-seventh {
+    background-image: url('../images/emo_100.png');
+    background-size: cover;
   }
 
 

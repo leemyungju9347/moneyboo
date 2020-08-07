@@ -13,7 +13,7 @@
         </li>
       </ul>
     </div> -->
-    
+
     <!-- 수입/지출 카테고리 아이콘 수정 -->
     <div class="category-list-cont">
       <h3 class="font-jua">수입 / 지출 카테고리</h3>
