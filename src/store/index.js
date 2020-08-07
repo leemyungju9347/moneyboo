@@ -44,7 +44,6 @@ export default new Vuex.Store({
     //Registration
     email: getUserEmail() || '',
     uid: getAuthUid() || '',
-
   },
   mutations: {},
   actions: {},
