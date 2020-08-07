@@ -1,6 +1,6 @@
 <template>
   <div class="set-category">
-    <div>
+    <!-- <div>
       <strong v-if="getCategory.length === 0" style="color:red">{{
         logMessage
       }}</strong>
@@ -12,25 +12,21 @@
           </strong>
         </li>
       </ul>
-    </div>
+    </div> -->
+    
     <!-- 수입/지출 카테고리 아이콘 수정 -->
     <div class="category-list-cont">
       <h3 class="font-jua">수입 / 지출 카테고리</h3>
       <form action="">
-        <b
-          class="explanation"
-          v-if="this.$store.state.categorys.name.length !== 0"
-          >( 현재 {{ categoryNum }}개의 카테고리가 저장되어 있습니다. )</b
+        <b class="explanation" v-if="getCategory.length !== 0"
+          >( 현재 {{ getCategory.length }}개의 카테고리가 저장되어 있습니다.
+          )</b
         >
         <ul>
-          <b class="explanation" v-if="showCategoryName == ''"
+          <b class="explanation" v-if="getCategory.length === 0"
             >추가 된 카테고리가 보여지는 공간입니다.</b
           >
-          <!-- script를 작성하면 li의 '관리비'등의 이름을 {{}}로 줘서 data랑 연동되도록 하면 되겠다 -->
-          <li
-            v-for="(category, index) in showCategoryIcon"
-            :key="showCategoryId[index]"
-          >
+          <li v-for="category in getCategory" :key="category.id">
             <label
               ><input type="radio" name="category" />
               <!-- 추후에 span 옆에 선택한 아이콘도 넣어줄 것 -->
@@ -38,12 +34,10 @@
                 :class="{ click: categoryCardClick === true }"
                 @click="clickCategoryCard()"
               >
-                <!-- <i class="fas fa-wallet"></i> -->
-                <i :class="category"></i>
+                <i :class="category.icon"></i>
                 <span :class="{ click: categoryCardClick === true }">{{
-                  showCategoryName[index]
+                  category.name
                 }}</span>
-                <!-- <img src="../../assets/images/045-ecology.png" alt="" /> -->
               </div>
               <button
                 :class="{ click: categoryCardClick === true }"
@@ -210,7 +204,7 @@
               <input
                 type="radio"
                 name="icon"
-                value="ffas fa-futbol"
+                value="fas fa-futbol"
                 v-model="inputCategory.icon"
               />
               <i class="fas fa-futbol"></i>

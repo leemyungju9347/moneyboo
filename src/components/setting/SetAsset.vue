@@ -10,17 +10,17 @@
       1. settings 데이터가 없을때 == > '셋팅 값을 입력해주세요!' 출력
       2. settings 데이터는 있는데 setAsset 데이터가 없을때 == > '자산과 목표값을 입력해주세요!' 출력
      -->
-    <strong v-if="getBanks.length === 0" style="color:red">{{
+    <!-- <strong v-if="saveAsset.banks.length === 0" style="color:red">{{
       logMassage
-    }}</strong>
+    }}</strong> -->
     <!-- 자산, 목표금액 목록 -->
-    <div v-else>
-      <strong>현금 자산 : {{ getAsset.cashAsset }}</strong>
-      <strong>현금 목표 : {{ getAsset.cashGoal }}</strong>
-      <strong>총 목표 금액 : {{ getAsset.totalGoal }}</strong>
-      <!-- 은행별 자산 목록  -->
-      <ul>
-        <li v-for="item in getBanks" :key="item.id">
+    <!-- <div v-else>
+      <strong>현금 자산 : {{ saveAsset.cashAsset }}</strong>
+      <strong>현금 목표 : {{ saveAsset.cashGoal }}</strong>
+      <strong>총 목표 금액 : {{ saveAsset.totalGoal }}</strong> -->
+    <!-- 은행별 자산 목록  -->
+    <!-- <ul>
+        <li v-for="item in saveAsset.banks" :key="item.id">
           <strong>
             은행 자산 :
             {{ item.bank }}
@@ -28,7 +28,7 @@
           </strong>
         </li>
       </ul>
-    </div>
+    </div> -->
 
     <!-- ******************** 출력 확인용!! 확인하고 삭제해주세요!************************* -->
 
@@ -62,18 +62,24 @@
 
       <div action="" class="credit-goal-cont">
         <strong>은행 별 자산 입력</strong>
-        <b
-          class="explanation"
-          v-if="this.$store.state.bankAsset.bank.length !== 0"
-          >( 현재 {{ bankNum }}개의 은행 자산이 저장되어 있습니다. )</b
-        >
+        <!-- <b class="explanation" v-if="getBanks.length === 0">
+          ( 우측 <span>+</span> 버튼을 눌러 은행 별 자산 입력창을 추가해 주세요.
+          )
+        </b> -->
+        <b class="explanation" v-if="getBanks.length !== 0">
+          <!-- 저장되어 있는 은행 개수를 불러와야 하기 때문에 getBanks의 length를 이용. -->
+          ( 현재 {{ getBanks.length }}개의 은행 자산이 저장되어 있습니다.)
+        </b>
         <button @click.prevent="clickAddBank()">+</button>
         <ul>
-          <li
-            v-for="(bankList, index) in saveAsset.banks"
-            :key="saveAsset.banks[index].id"
-          >
-            <select name="bank" v-model="saveAsset.banks[index].bank">
+          <li class="explanationLi" v-if="saveAsset.banks.length === 0">
+            <span class="explanation">
+              우측 <span>+</span> 버튼을 눌러 은행 별 자산 입력창을 추가해
+              주세요.
+            </span>
+          </li>
+          <li v-for="bankList in saveAsset.banks" :key="bankList.id">
+            <select name="bank" v-model="bankList.bank">
               <option value="">은행선택</option>
               <option value="경남은행">경남은행</option>
               <option value="광주은행">광주은행</option>
@@ -101,7 +107,7 @@
             <input
               type="text"
               placeholder="해당 은행의 총 목표 금액을 입력해 주세요"
-              v-model="saveAsset.banks[index].asset"
+              v-model="bankList.asset"
             />
             <!-- <button class="edit">수정</button> -->
             <button
@@ -157,19 +163,21 @@ import { moneybooRef } from '@/api/firebase';
 export default {
   data() {
     return {
+      // '입력한 값', 'firebase에서 불러온 저장된 값' 모두 saveAsset 이용.
       saveAsset: {
-        totalGoal: this.$store.state.totalGoal,
-        cashGoal: this.$store.state.cashGoal,
-        cashAsset: this.$store.state.cashAsset,
+        totalGoal: '',
+        cashGoal: '',
+        cashAsset: '',
         banks: [],
-        // banks: [{ bank: '', asset: 0, id: makeID('bank') }],
       },
-      bankNum: 0,
+      // 저장된 은행 개수 위해 필요.
+      getBanks: [], // 은행 리스트
+      // bankNum: 0,
       currentUid: this.$store.state.uid, // 현재 로그인한 유저의 uid
       // firstore에 있는 데이터를 가져오기 위한 변수
-      getAsset: {}, // cashGoal, totalGoal, cashAsset
-      getBanks: [], // 은행 리스트
-      logMassage: '', // 데이터 확인용 임시 변수
+      // getAsset: {}, // cashGoal, totalGoal, cashAsset
+
+      // logMassage: '', // 데이터 확인용 임시 변수
     };
   },
   created() {
@@ -203,17 +211,17 @@ export default {
       this.saveAsset.banks.push({ bank: '', asset: '', id: '' });
     }
 
-    // cookie에 저장 된 은행 별 자산 불러옴.
-    for (let i = 0; i < this.$store.state.bankAsset.bank.length; i++) {
-      // 1) cookie에 저장된 은행 수만큼 화면에 상자 생기게 해줌.
-      this.saveAsset.banks.push({ bank: '', asset: '', id: '' });
-      // 2) 은행명, 은행별 자산, 은행별 아이디 각각 넣어줌.
-      this.saveAsset.banks[i].bank = this.$store.state.bankAsset.bank[i];
-      this.saveAsset.banks[i].asset = this.$store.state.bankAsset.asset[i];
-      this.saveAsset.banks[i].id = this.$store.state.bankAsset.id[i];
-      console.log(this.$store.state.bankAsset.id[i]);
-    }
-
+    // // cookie에 저장 된 은행 별 자산 불러옴.
+    // for (let i = 0; i < this.$store.state.bankAsset.bank.length; i++) {
+    //   // 1) cookie에 저장된 은행 수만큼 화면에 상자 생기게 해줌.
+    //   this.saveAsset.banks.push({ bank: '', asset: '', id: '' });
+    //   // 2) 은행명, 은행별 자산, 은행별 아이디 각각 넣어줌.
+    //   this.saveAsset.banks[i].bank = this.$store.state.bankAsset.bank[i];
+    //   this.saveAsset.banks[i].asset = this.$store.state.bankAsset.asset[i];
+    //   this.saveAsset.banks[i].id = this.$store.state.bankAsset.id[i];
+    //   console.log(this.$store.state.bankAsset.id[i]);
+    // }
+    
     // firstore에서 asset DB 가져오기
     this.mbooRef()
       .doc('settings')
@@ -253,6 +261,51 @@ export default {
 
     // 저장된 은행 수 data에 넣어줌.
     this.bankNum = this.$store.state.bankAsset.bank.length;
+
+    // firstore에서 asset DB 가져오기
+    this.mbooRef()
+      .doc('settings')
+      .get()
+      .then(docSnapshot => {
+        // document의 값이 있으면
+        if (docSnapshot.exists) {
+          const setAsset = docSnapshot.data().setAsset;
+
+          // setAsset 데이터가 있으면
+          if (setAsset) {
+            // 불러온 목표금액,현금자산 getAsset 객체에 저장
+            this.saveAsset.totalGoal = setAsset.totalGoal;
+            this.saveAsset.cashAsset = setAsset.cashAsset;
+            this.saveAsset.cashGoal = setAsset.cashGoal;
+            // this.getAsset.totalGoal = setAsset.totalGoal;
+            // this.getAsset.cashAsset = setAsset.cashAsset;
+            // this.getAsset.cashGoal = setAsset.cashGoal;
+
+            // 불러온 은행 자산들 getBanks에 저장
+            setAsset.banks.forEach(data => {
+              this.saveAsset.banks.push(data);
+              this.getBanks.push(data);
+            });
+
+            // setAsset 데이터가 없으면
+          } else {
+            this.logMassage = '자산과 목표값을 입력해주세요!';
+            console.log('setAsset 데이터가 없습니다!', docSnapshot);
+          }
+
+          // document 값이 없으면
+        } else {
+          console.log('settings 값이 없음', docSnapshot);
+          this.logMassage = '셋팅 값을 입력해주세요!';
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+
+    // // 저장된 은행 수 data에 넣어줌.
+    // this.bankNum = this.$store.state.bankAsset.bank.length;
+
   },
   computed: {},
   methods: {

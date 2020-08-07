@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import { saveListData } from '@/utils/cookies.js';
+// import { saveListData } from '@/utils/cookies.js';
 import DatePicker from 'v-calendar/lib/components/date-picker.umd';
 // import DatePicker from '@/js/v-calendar.js';
 import { makeID } from '@/utils/filters.js';
@@ -90,9 +90,6 @@ export default {
       this.editId = data.id;
       this.listText = data.text;
     });
-    this.categorys = this.$store.state.categorys;
-    // getCategoryCookie();
-    // getBanksCookie(this.saveAsset);
 
     // 셋팅페이지에 있는 데이터 불러오기
     this.mbooRef()
@@ -146,6 +143,12 @@ export default {
       .catch(err => {
         console.log('에러가 발생한 위치는 listAdd Created', err);
       });
+
+    // 셋팅에 아무것도 추가하지 않고 데일리 페이지 왔더니 setCategory를 못찾음 예외처리 ㄱㄱ!
+    // settings에 값이 없을때 daily로 오면 settings로 넘겨버릴까?
+    // 만약 카테고리만 저장하고 에셋은 저장안하고 daily 페이지에 왔다면??
+    this.getSettingData();
+
   },
   data() {
     return {
@@ -157,36 +160,65 @@ export default {
       listText: '',
       edit: false,
       editId: '',
-      // num: 1,
-      // categorys: this.$store.state.categorys,
-      // saveAsset: {
-      //   total: this.$store.state.totalGoal,
-      //   cash: this.$store.state.cashGoal,
-      //   banks: [],
-      // },
-      categorys: [],
-      bankAsset: this.$store.state.bankAsset,
       currentUid: this.$store.state.uid,
       getCategory: [],
       getBankAsset: [],
     };
   },
   methods: {
-    // 수입 지출 버튼에 따른 인풋창 변화.
-    clickIncomeBtn() {
-      this.inputControl = 'income';
+    getSettingData() {
+      // 셋팅페이지에 있는 데이터 불러오기
+      this.mbooRef()
+        .doc('settings')
+        .get()
+        .then(docSnapshot => {
+          // document 값이 있으면
+          if (docSnapshot.exists) {
+            const setCategory = docSnapshot.data().setCategory;
+            const setAsset = docSnapshot.data().setAsset;
+
+            // category와 asset이 셋팅되어있을때만 실행
+            if (setCategory && setAsset) {
+              // 카테고리
+              setCategory.forEach(data => {
+                this.getCategory.push(data.name);
+              });
+
+              // 에셋
+              setAsset.banks.forEach(data => {
+                this.getBankAsset.push(data);
+              });
+
+              // category나 asset이 설정되어 있지 않을 경우만 실행
+            } else {
+              // 에러메세지 undefined 값인 데이터에 문자 삽입
+              const errMessage =
+                setAsset === undefined
+                  ? '목표금액과 자산'
+                  : setCategory === undefined
+                  ? '카테고리'
+                  : '관리페이지';
+
+              // 경고창 실행하고 셋팅페이지로 이동
+              alert(
+                errMessage +
+                  '에서 설정값을(를) 등록해주세요! 관리페이지로 이동합니다.',
+              );
+              this.$router.push('/setting');
+            }
+            // document 값이 없으면
+          } else {
+            // setting 페이지로 이동
+            alert(
+              '관리 페이지에서 초기값을 등록해주세요! 관리페이지로 이동합니다.',
+            );
+            this.$router.push('/setting');
+          }
+        })
+        .catch(err => {
+          console.log('에러가 발생한 위치는 listAdd Created', err);
+        });
     },
-    clickExpendBtn() {
-      this.inputControl = 'expend';
-    },
-    // checkEmptyList() {},
-    // checkPriceNumber() {
-    //   // 숫자가 아니면 alert 창을 띄워라
-    //   if (isNaN(this.price)) {
-    //     alert('숫자만 입력해주세요');
-    //     return;
-    //   }
-    // },
     mbooRef() {
       return moneybooRef(this.currentUid);
     },
@@ -195,22 +227,39 @@ export default {
         .doc('daily')
         .collection('listAdd');
     },
-    submitList() {
+    // 수입 지출 버튼에 따른 인풋창 변화.
+    clickIncomeBtn() {
+      this.inputControl = 'income';
+    },
+    clickExpendBtn() {
+      this.inputControl = 'expend';
+    },
+    // 값 입력하지 않았을때 확인 함수
+    checkEmptyList() {
       if (
-        // 하나라도 값이 입력되지 않으면, alert창으로 입력해야함을 알려야 한다.
         this.selectCategory === '' ||
         this.selectBank === '' ||
         this.price === null
       ) {
         alert('값을 선택, 입력해 주세요.');
-        return;
-      }
-      // 숫자가 아니라면, alert 창으로 숫자만 입력해야함을 알린다.
+        return true;
+      } else return false;
+    },
+    checkPriceNumber() {
+      // 숫자가 아니면 alert 창을 띄워라
       if (isNaN(this.price)) {
         alert('숫자만 입력해주세요');
-        this.price = null;
-        return;
-      }
+        return true;
+      } else return false;
+    },
+    submitList() {
+      if (this.checkEmptyList() || this.checkPriceNumber()) return;
+      // if (isNaN(this.price)) {
+      //   // 숫자가 아니라면, alert 창으로 숫자만 입력해야함을 알린다.
+      //   alert('숫자만 입력해주세요');
+      //   this.price = null;
+      //   return;
+      // }
       // 값이 하나라도 빌 경우를 확인해주는 함수
       let listData = {};
       if (this.edit === true) {
@@ -239,20 +288,21 @@ export default {
       // }
 
       // firestore에 listData 저장
+      const thisMonth = this.conversionMonth(this.date);
       this.dailyListAddRef()
-        .doc(listData.date)
+        .doc(thisMonth)
         .get()
         .then(docSnapshot => {
           // 만약 document값이 없으면 초기값 셋팅해주고
           if (!docSnapshot.exists) {
             this.dailyListAddRef()
-              .doc(listData.date)
+              .doc(thisMonth)
               .set({ listData: [listData] });
 
             // 만약 값이 있다면 배열을 업데이트 해줄것
           } else {
             this.dailyListAddRef()
-              .doc(listData.date)
+              .doc(thisMonth)
               .update({
                 listData: firebase.firestore.FieldValue.arrayUnion(listData),
               });
@@ -262,8 +312,10 @@ export default {
           console.log('listAdd submitList 부분 에러 발생', err);
         });
 
+
       // 쿠키저장
       saveListData(listData);
+
       // this.$emit('addListData', listData);
       this.resetData(); // 인풋창의 데이터를 리셋해주는 함수
     },
@@ -277,15 +329,19 @@ export default {
       this.listText = '';
     },
     conversionDate(date) {
-      // console.log(date);
-      // console.log(new Date());
-
       // 저장되는 날짜를 한국기준으로 정리해서 저장.
       let month = date.getMonth();
       let todayDate = date.getDate();
 
       return `${month + 1}.${todayDate}`;
       // 출력 형식 : 7.17
+    },
+    conversionMonth(date) {
+      const years = String(date.getFullYear()).substr(2, 2);
+      const month =
+        date.getMonth() < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
+
+      return `${years}.${month}`;
     },
   },
 };
