@@ -66,4 +66,19 @@ function makeID(type) {
   return idDate;
 }
 
-export { addComma, /*getBanksCookie, getCategoryCookie,*/ makeID };
+// 오늘의 년 + 월 을 가져오는 함수
+function newConversionMonth() {
+  const year = String(new Date().getFullYear()).substr(2, 2);
+  const month =
+    new Date().getMonth() < 10
+      ? `0${new Date().getMonth() + 1}`
+      : new Date().getMonth() + 1;
+
+  return `${year}.${month}`;
+}
+
+export {
+  addComma,
+  /*getBanksCookie, getCategoryCookie,*/ makeID,
+  newConversionMonth,
+};

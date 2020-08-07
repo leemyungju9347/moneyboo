@@ -1,34 +1,7 @@
 <template>
-  <div class="daily-list" :class="{ 'list-empty': listArray.length == 0 }">
+  <div class="daily-list" :class="{ 'list-empty': getAllListData.length == 0 }">
     <ul class="daily-list-cont">
-      <!-- {{
-        listArray
-      }} -->
-      <!-- ****************** firstore 출력 부분 **********************-->
-      <ul>
-        <li v-if="listArrLength === 0">
-          {{ logMessage }}
-        </li>
-        <li v-for="(item, index) in getAllListData" :key="index" v-else>
-          <strong>{{ item.id }}</strong>
-          <ul>
-            <li v-for="list in item.data" :key="list.id">
-              <p v-if="list.item === 'income'">
-                {{ list.item }}
-                {{ list.category }}
-                + {{ list.price }}
-              </p>
-              <p v-else>
-                {{ list.item }}
-                {{ list.category }}
-                - {{ list.price }}
-              </p>
-            </li>
-          </ul>
-        </li>
-      </ul>
-      <!-- **************** firstore 출력 부분 확인하고 삭제해주세요!! ****************-->
-      <li v-if="listArray.length == 0">
+      <li v-if="getAllListData.length == 0">
         등록한 내역이 없습니다.
       </li>
       <li
@@ -46,13 +19,15 @@
         >
         <ul>
           <!-- eslint-disable vue/no-use-v-if-with-v-for,vue/no-confusing-v-for-v-if -->
-          <!-- <li v-for="list in propsdata" :key="list.id" v-if="list.date == date"> -->
-          <li v-for="list in listArray" :key="list.id">
-            <!-- :class="convertIntoIcon(list.category)" -->
-
-            <i class="category-icon"></i>
-
-            <!-- <p class="list-text">{{ list.text }}</p> -->
+          <li
+            v-for="list in getAllListData"
+            :key="list.id"
+            v-if="list.date == date"
+          >
+            <i
+              class="category-icon"
+              :class="convertIntoIcon(list.category)"
+            ></i>
             <span class="font-uto"> {{ list.bank }} </span>
             <p class="list-text">{{ list.text }}</p>
             <b v-if="list.item === 'income'"
@@ -74,7 +49,6 @@
                 - {{ editCommaPrice(list.price) }} 원</a
               >
             </b>
-            <!-- <p class="list-text">{{ list.text }}</p> -->
             <button
               class="btn list-delete"
               @click.prevent="deleteListData(list)"
@@ -90,14 +64,12 @@
 
 <script>
 import { deleteListCookie } from '@/utils/cookies';
-import { addComma } from '@/utils/filters';
+import { addComma, newConversionMonth } from '@/utils/filters';
 import { eventBus } from '@/main';
 import { moneybooRef } from '@/api/firebase';
 
 export default {
   created() {
-    this.listArray = this.$store.state.listData;
-
     /*
       회원가입하고 아무것도 추가하지 않은 상태에서 daily Page 들어왔을때부터 생각해줘야함
 
@@ -106,40 +78,56 @@ export default {
       3. 해당 날짜의 doc이 없으면?
     */
     this.getListData();
-
-    // // 스토어의 전체 리스트를 불러온다.
-    // let allList = this.$store.state.listData;
-    // // 카테고리 할당
-    // this.categorys = this.$store.state.categorys;
-
-    // // 이번달 확인 후 모든 리스트에서 달이 같은 리스트를 불러온 뒤, 해당달의 내역이라면 listArray에 push해 준다.
-    // let Month = new Date().getMonth() + 1;
-    // for (let i = 0; i < allList.length; i++) {
-    //   let checkMonth = allList[i].date.split('.');
-    //   if (checkMonth[0] == Month) {
-    //     this.listArray.push(allList[i]);
-    //   }
-    // }
+    this.getCategoryData();
   },
   // props: ['propsdata'],
   data() {
     return {
-      listArray: [],
-      // listArray: [],
       listDateArray: [],
       currentUid: this.$store.state.uid, // 현재 로그인한 유저 uid
       // 왜 새로고침을 해야 반영이 될까? ( 쿠키에 저장하기만하고 스토어에 저장 안할때)
-      // categorys: this.$store.state.categorys,
-      categorys: [],
       getAllListData: [],
       listArrLength: 0,
       logMessage: '',
-      // 이번달데이터: [],
+      getCategory: [],
     };
   },
   methods: {
+    // firestore에 있는 저장된 카테고리 DB 불러오기
+    getCategoryData() {
+      this.mbooRef()
+        .doc('settings')
+        .get()
+        .then(docSnapshot => {
+          // document 값이 있으면
+          if (docSnapshot.exists) {
+            const setCategory = docSnapshot.data().setCategory;
+
+            // category와 asset이 셋팅되어있을때만 실행
+            if (setCategory) {
+              // 카테고리
+              setCategory.forEach(data => {
+                this.getCategory.push(data);
+              });
+
+              // category나 asset이 설정되어 있지 않을 경우만 실행
+            } else {
+              console.log('setAsset 데이터가 없습니다!', docSnapshot);
+            }
+            // document 값이 없으면
+          } else {
+            // setting 페이지로 이동
+            console.log('settings 값이 없음', docSnapshot);
+          }
+        })
+        .catch(err => {
+          console.log('에러가 발생한 위치는 listAdd Created', err);
+        });
+    },
     // firestore에 있는 저장된 DB를 가져오는 함수
     getListData() {
+      const yearsMonth = newConversionMonth();
+      let pushArray = [];
       // listAdd collection 하위에 있는 document 전체를 불러옴
       this.dailyListAddRef()
         .get()
@@ -156,14 +144,15 @@ export default {
             this.logMessage = ''; // 로그메세지 리셋
             // document 출력
 
-            // 가져온 데이터를 배열에 삽입
             docSnapshot.forEach(doc => {
-              this.getAllListData.push({
-                id: doc.id, // document 이름
-                data: doc.data().listData,
-              });
+              // 현재의 달에 해당하는 것만 담는다
+              if (doc.id == yearsMonth) {
+                pushArray.push(doc.data().listData);
+              }
             });
           }
+          // 이렇게 하는 이유가 배열안에 배열을 방지하기 위해서
+          this.getAllListData = pushArray[0];
         })
         .catch(err => {
           console.log('위치는 DailyList 메쏘드', err);
@@ -181,12 +170,12 @@ export default {
     // 날짜 정렬 함수
     sortListDate() {
       // 저장된 객체가 없으면 리턴해서 나가라.
-      if (!this.listArray) return;
+      if (!this.getAllListData) return;
 
-      let copyListArray = this.listArray;
+      let copyListArray = this.getAllListData;
       let dateArray = [];
 
-      // date만 dateArray 에 할당한다.
+      // date만 dateArray 에 할당한 다.
       for (let i = 0; i < copyListArray.length; i++) {
         dateArray[i] = copyListArray[i].date;
       }
@@ -207,12 +196,13 @@ export default {
           i--;
         }
       }
+
       // 중복값이 없다면 this.listDateArray 에 할당후 함수를 빠져나가라.
       return (this.listDateArray = dateArray);
     },
     // 하루 수입 확인 함수
     checkDayIncome(date) {
-      let copyListArray = this.listArray;
+      let copyListArray = this.getAllListData;
       let totalPrice = 0;
       for (let i = 0; i < copyListArray.length; i++) {
         if (
@@ -227,7 +217,7 @@ export default {
     },
     // 하루 지출 확인 함수
     checkDayExpend(date) {
-      let copyListArray = this.listArray;
+      let copyListArray = this.getAllListData;
       let totalPrice = 0;
       for (let i = 0; i < copyListArray.length; i++) {
         if (
@@ -249,41 +239,21 @@ export default {
     editCommaPrice(price) {
       return addComma(price);
     },
-    conversionDate(date) {
-      // console.log(date);
+    convertIntoIcon(category) {
+      let copyCategorys = this.getCategory;
+      let categoryIconNum = 0;
 
-      // 저장되는 날짜를 한국기준으로 정리해서 저장.
-      let month = date.getMonth();
-      let todayDate = date.getDate();
-
-      return `${month + 1}.${todayDate}`;
-      // 출력 형식 : 7.17
+      for (let i = 0; i < copyCategorys.length; i++) {
+        if (copyCategorys[i].name == category) {
+          categoryIconNum = i;
+          // 같은걸 찾으면 바로 return 해줘라
+          return copyCategorys[categoryIconNum].icon;
+        }
+      }
     },
-    // convertIntoIcon(category) {
-    //   let copyCategorys = this.categorys;
-    //   let categoryIconNum = 0;
-    //   for (let i = 0; i < copyCategorys.name.length; i++) {
-    //     if (copyCategorys.name[i] == category) {
-    //       categoryIconNum = i;
-    //     }
-    //   }
-    //   return copyCategorys.icon[categoryIconNum];
-    // },
     deleteListData(list) {
-      // console.log();
       deleteListCookie(list);
     },
-    // 이번달만추리기() {
-    //   let copyList = this.listArray;
-    //   let Month = new Date().getMonth() + 1;
-    //   for (let i = 0; i < copyList.length; i++) {
-    //     let checkMonth = copyList[i].date.split('.');
-    //     if (checkMonth[0] == Month) {
-    //       this.이번달데이터.push(copyList[i]);
-    //       console.log(copyList[i]);
-    //     }
-    //   }
-    // },
   },
 };
 </script>
