@@ -50,6 +50,7 @@ import {
   overFormEvent,
   resetFormEvent,
   outFormEvent,
+  initRegistForm,
 } from '@/js/register-event.js';
 export default {
   data() {
@@ -60,10 +61,14 @@ export default {
       // event
     };
   },
+  created() {
+    // console.log(auth.currentUser);
+  },
   mounted() {
     // 이벤트 함수를 담당하는 js 함수에 element를 넘겨줘서 쉽게 dom을 제어할 수 있도록 함.
     globalMountedInLogin(this.$el);
   },
+  computed: {},
   methods: {
     // 1. 로그인 안했을때 에러처리
     // 2. 회원 삭제되면 db 목록에도 삭제
@@ -86,15 +91,15 @@ export default {
         },
       );
 
-      // 처음 로그인했을때 미리 document를 셋팅해줄까?
-
+      // store에 저장
       this.$store.commit('SET_USER', this.username);
+      this.$store.commit('SET_UID', auth.currentUser.uid);
 
-      this.username = '';
-      this.password = '';
+      this.initForm();
 
       // this.$store.commit('set_value', this.inputValue);
       console.log(auth.currentUser.uid);
+
       // 로그인시 현재 유저가 안바뀜...
       const usersDoc = db.collection('users').doc(auth.currentUser.uid);
       const moneybooColl = usersDoc.collection('moneyboo').doc('userInfo');
@@ -111,10 +116,16 @@ export default {
       });
       // uid도 쿠키 값에 저장
       saveAuth('user_uid', auth.currentUser.uid);
+
+      initRegistForm();
     },
     // 클릭 이벤트
     clickSignupForm(event) {
       clickFormEvent(event.target);
+    },
+    initForm() {
+      this.username = '';
+      this.password = '';
     },
     // 마우스오버 이벤트
     overLoginForm(event) {

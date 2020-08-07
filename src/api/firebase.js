@@ -19,6 +19,7 @@ const auth = firebaseApp.auth();
 
 // firestore 데이터베이스
 const db = firebaseApp.firestore();
+const provider = new firebase.auth.EmailAuthProvider();
 
 // users Collection
 function getUsersRef() {
@@ -31,4 +32,4 @@ function moneybooRef(curUid) {
     .collection('moneyboo');
 }
 
-export { auth, db, getUsersRef, moneybooRef };
+export { auth, db, getUsersRef, moneybooRef, provider };

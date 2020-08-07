@@ -94,10 +94,6 @@ export default {
     // getCategoryCookie();
     // getBanksCookie(this.saveAsset);
 
-    // 셋팅에 아무것도 추가하지 않고 데일리 페이지 왔더니 setCategory를 못찾음 예외처리 ㄱㄱ!
-    // settings에 값이 없을때 daily로 오면 settings로 넘겨버릴까?
-    // 만약 카테고리만 저장하고 에셋은 저장안하고 daily 페이지에 왔다면??
-
     // 셋팅페이지에 있는 데이터 불러오기
     this.mbooRef()
       .doc('settings')
@@ -265,15 +261,7 @@ export default {
         .catch(err => {
           console.log('listAdd submitList 부분 에러 발생', err);
         });
-      /* 
-        문제점 발견
 
-        1. 만약 document에 값이 없다면 set을 해줘야함
-        2. 그 뒤에 update 데이터
-        ** 3. field 값에 데이터가 없으면 income도 못불러오고 적용이 안되기때문에 오류가 난다 다른 조건을 주자.. 
-      */
-
-      // console.log(listData);
       // 쿠키저장
       saveListData(listData);
       // this.$emit('addListData', listData);

@@ -47,6 +47,7 @@ import {
   overFormEvent,
   resetFormEvent,
   outFormEvent,
+  initRegistForm,
 } from '@/js/register-event.js';
 
 export default {
@@ -84,6 +85,14 @@ export default {
       // 2. 회원탈퇴? 회원 삭제하면 db에서도 사라지게 구현하자.
       // 3. 코드 깔끔하게 다시짜자 (nickname은 함수한에서 등록이 안됨 update시켜줄까?)
 
+      /*
+        << 로그인 기능 순서 >>
+        1. 로그인/회원가입 등록함 
+        2. width,display 등 css를 리셋
+        3. 팝업창 기다리는 동안 로딩바가 나옴 (로딩바 뒷배경은 아무것도 없도록?? 혹은 dimmed처리??)
+        4. 팝업창
+      */
+
       auth.createUserWithEmailAndPassword(this.username, this.password).then(
         function(user) {
           // 회원가입시 users 하위 doc 고유 값 생성해서 moneyboo collection에 'userInfo' doc 생성한뒤 회원정보 저장
@@ -112,6 +121,7 @@ export default {
         },
       );
       this.resetUserInfo(); // input 값 리셋
+      initRegistForm();
     },
     // 회원가입 페이지 클릭 이벤트
     clickSignupForm(event) {

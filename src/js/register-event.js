@@ -9,6 +9,7 @@ let signupMask = null;
 // click이벤트일때는 false를 줘서 click 했을때 크기가 줄어들지 않도록 도와주는 역할을 한다.
 let outCheck = true;
 let clickCheck = true; // 클릭이벤트가 실행 중인지 체크해주는 변수
+// let transitionCheck = false;
 
 //로그인 변수
 let loginForm = null;
@@ -53,7 +54,7 @@ function overWidthChange(kinds, target, login, signup) {
 
   const click = { plus: 30, minus: 30 };
   const over = { plus: 8, minus: 8 };
-  const mini = { plus: 27, minus: 27 };
+  // const mini = { plus: 27, minus: 27 };
 
   // 마우스오버이벤트
   if (kinds === 'over' && clickCheck) {
@@ -70,18 +71,18 @@ function overWidthChange(kinds, target, login, signup) {
       login.style.width = `${setWidth + over.plus}%`;
     }
   }
-  if (kinds === 'over' && !clickCheck) {
-    // 타겟이 회원가입일 경우
-    if (target.classList.contains('mask-signup')) {
-      signup.style.width = `${setWidth - mini.plus}%`;
-      login.style.width = `${setWidth + mini.minus}%`;
+  // if (kinds === 'over' && !clickCheck) {
+  //   // 타겟이 회원가입일 경우
+  //   if (target.classList.contains('mask-signup')) {
+  //     signup.style.width = `${setWidth - mini.plus}%`;
+  //     login.style.width = `${setWidth + mini.minus}%`;
 
-      // 타겟이 로그인일 경우
-    } else if (target.classList.contains('mask-login')) {
-      signup.style.width = `${setWidth + mini.minus}%`;
-      login.style.width = `${setWidth - mini.plus}%`;
-    }
-  }
+  //     // 타겟이 로그인일 경우
+  //   } else if (target.classList.contains('mask-login')) {
+  //     signup.style.width = `${setWidth + mini.minus}%`;
+  //     login.style.width = `${setWidth - mini.plus}%`;
+  //   }
+  // }
 
   // 클릭이벤트
   if (kinds === 'click') {
@@ -160,6 +161,27 @@ function outFormEvent() {
   outCheck = true; // 마우스가 아웃이되면 true로 변경해줘서 outEvent가 실행되도록 설정해줬다.
 }
 
+function initRegistForm() {
+  clickCheck = true;
+  // 로그인 리셋
+  loginMask.style.display = 'block';
+  loginCont.style.display = 'none';
+  signupForm.classList.remove('active');
+
+  // 회원가입 리셋
+  signupMask.style.display = 'block';
+  signupCont.style.display = 'none';
+  loginForm.classList.remove('active');
+
+  signupForm.style.width = '50%';
+  loginForm.style.width = '50%';
+}
+
+// function transitionaSetting() {
+//   signupForm.style.transition = 'all 0.7s ease;';
+//   loginForm.style.transition = 'all 0.7s ease;';
+// }
+
 // function displayControl(login, signup) {}
 
 export {
@@ -170,4 +192,5 @@ export {
   globalMountedInLogin,
   resetFormEvent,
   outFormEvent,
+  initRegistForm,
 };

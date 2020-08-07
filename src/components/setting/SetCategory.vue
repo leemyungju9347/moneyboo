@@ -535,12 +535,10 @@ export default {
             // setCategory 데이터가 없으면
           } else {
             this.logMessage = '카테고리 값을 입력해주세요!';
-            console.log('setCategory 데이터가 없음', docSnapshot);
           }
 
           // document가 없으면
         } else {
-          console.log('settings 값 없음', docSnapshot);
           this.logMessage = '셋팅 값을 입력해주세요!';
         }
       })
