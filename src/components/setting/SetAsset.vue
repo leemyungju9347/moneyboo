@@ -307,6 +307,7 @@ export default {
     // this.bankNum = this.$store.state.bankAsset.bank.length;
 
   },
+  computed: {},
   methods: {
     clickAddBank() {
       this.saveAsset.banks.push({ bank: '', asset: '', id: makeID('bank') });
@@ -326,7 +327,6 @@ export default {
       saveCashAsset(this.saveAsset.cashAsset);
       // 은행 별 자산 저장(은행명+자산금액+id 묶어서)
       saveBankAsset(this.saveAsset.banks);
-
       // firestore에 asset DB 저장
       this.mbooRef()
         .doc('settings')
@@ -346,12 +346,6 @@ export default {
             this.logMassage = ''; // 데이터를 추가했으니 logMessage 없애기
           }
         });
-
-      /*
-          은재씨가 만들어놓은 setAsset 변수 가져와서 저장해줬습니다! 
-          확인하시고 은재씨 편한대로 변형해주세요!!
-          (이 주석은 확인하고 삭제 부탁드립니다~!)
-        */
     },
   },
 };

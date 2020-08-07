@@ -31,6 +31,7 @@ export default new Vuex.Store({
       // asset: [],
       // id: [],
     },
+
     categorys: {
       name: getCategoryCookieName() || [],
       icon: getCategoryCookieIcon() || [],
@@ -40,13 +41,28 @@ export default new Vuex.Store({
       // id: [],
     },
     //Registration
+    // cookie
     email: getUserEmail() || '',
     uid: getAuthUid() || '',
-    user: '',
+  },
+  getters: {
+    isLogin(state) {
+      // useremail 값이 없으면? (로그인되지 않았으면)
+      // 빈문자열이 아니면 로그인 됐다라고 봄
+      return state.email !== '';
+    },
   },
   mutations: {
-    SET_USER(state, data) {
-      state.user = data;
+    // 로그인했을때 회원정보 저장
+    SET_USER(state, email) {
+      state.email = email;
+    },
+    // 로그아웃
+    CLEAR_USER(state) {
+      state.useremail = '';
+    },
+    SET_UID(state, uid) {
+      state.uid = uid;
     },
   },
   actions: {},

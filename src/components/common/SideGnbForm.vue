@@ -6,8 +6,12 @@
       <h1>
         <a href=""><img src="../../assets/images/moneyboo_logo.png" alt=""/></a>
       </h1>
-      <strong>{{ this.$store.state.user }}</strong>
     </div>
+    <!-- username -->
+    <a href="" class="username-cont"
+      ><strong><i class="user-icon"></i>{{ useremail }}</strong></a
+    >
+
     <!-- GNB 메뉴 -->
     <div class="gnb-list-cont">
       <ul>
@@ -23,6 +27,10 @@
           </a>
         </li>
       </ul>
+      <!-- 로그인 / 로그아웃 버튼 -->
+      <a href="" v-if="isUserLogin" class="logout-btn"
+        ><i class="logout-icon"></i>로그아웃</a
+      >
     </div>
     <!-- 날씨와 날짜정보 -->
     <div class="calender-cont">
@@ -70,15 +78,31 @@ export default {
           value: 'mypage',
           link: '/mypage',
         },
-        {
-          text: '로그아웃',
-          value: 'logout',
-          link: '',
-        },
+        // {
+        //   text: '로그아웃',
+        //   value: 'logout',
+        //   link: '',
+        // },
       ],
-      useremail: this.$store.state.email,
-      username: this.$store.state.user,
+      // useremail: this.$store.state.email,
     };
+  },
+  created() {},
+  computed: {
+    // 로그인이 되었을 경우에 (= ture) 로그아웃표시, 로그아웃 되면 로그인표시
+    // 방법 연구
+    // 1. 배열에서 빼서 로그인 로그아웃만 따로 관리
+    // 2. 객체안에서 comnuted로 조건을 줘서 관리
+    // 객체에서 삼항연산자로 조건을 줘서 적용이 안됨
+    isUserLogin() {
+      return this.$store.getters.isLogin;
+    },
+    useremail() {
+      return this.isUserLogin ? this.$store.state.email : '로그인을 해주세요.';
+    },
+    isUserStatus() {
+      return this.isUserLogin ? '로그아웃' : '';
+    },
   },
   methods: {
     setActive(item, index) {
@@ -86,10 +110,45 @@ export default {
       if (item.value === 'transparent-bar' || item.value === 'logout') return;
 
       this.activeIndex = index; // activeIndex에 클릭된 index를 부여해준다.
-      this.$router.push(item.link); // 해당 링크로 이동
+      this.$router.push(item.link);
+      // .catch(err => {
+      //   // Ignore the vuex err regarding  navigating to the page they are already on.
+      //   if (
+      //     err.name !== 'NavigationDuplicated' &&
+      //     !err.message.includes(
+      //       'Avoided redundant navigation to current location',
+      //     )
+      //   ) {
+      //     // But print any other errors to the console
+      //     console.log(err);
+      //   }
+      // });
+    },
+    logoutUser() {
+      this.$store.commit('CLEAR_USER');
+      this.$router.push('/registration');
+
+      // .catch(err => {
+      //   // Ignore the vuex err regarding  navigating to the page they are already on.
+      //   if (
+      //     err.name !== 'NavigationDuplicated' &&
+      //     !err.message.includes(
+      //       'Avoided redundant navigation to current location',
+      //     )
+      //   ) {
+      //     // But print any other errors to the console
+      //     console.log(err);
+      //   }
+      // });
     },
   },
 };
 </script>
 
-<style></style>
+<style>
+.logoutTest {
+  position: absolute;
+  bottom: 0;
+  z-index: 10000;
+}
+</style>
