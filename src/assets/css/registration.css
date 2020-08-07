@@ -68,63 +68,23 @@
     bottom:-155px;
     cursor: pointer;
     font-size: 2em;
-    /* opacity: 0.7;  */
-    /* background-color:#f1ead3; */
-    background-color: rgba(231, 211, 150,0.6);
-    line-height:45px;
-    padding: 5px 28px;
+    line-height:39px;
     border-radius: 25px;
     color:#3B3B3B;
-    /* color: #585858; */
     font-weight: 700;
     letter-spacing: 0.15em;
-    background-color:rgba(232, 212, 194,0.5);
-    background-color:#F0E1CE;
-    /*그린계열*/
     background-color: #348f6c2f;
-    /*회색*/
-    /* background-color:#EBEBE9; */
-    /* color:#348F6C */
-    /* color: #fff; */
-    /* background-color:#E4D4C6; */
-    /* background-color:rgb(226, 201, 146,0.6); */
     opacity:0.7;
     
 }
 .registration-page-wrap > .signup-form > .regist-form-cont > form > .add-btn {
-    /*그린계열*/
     background-color:#348F6C;
-
-    /* 그린 찐한 */
-    /* background-color:#40856a;  */
-
-    /* 그린 연한*/
-    /* background-color:#72b39a; */
-
     font-weight: 500;
-    /* background-color:#72b49b; */
-
-    /* 회빛 */
-    /* background-color:#EBEBE9;  */
-
     color: #fff;
-
-    /* 베이지 */
-    /* background-color:#E2C992;*/
-    /* background-color:#dfcda8; */
-
-
-    /* background-color:#87ad9f; */
-    /* background-color:#7dbba4; */
-
 
 }
 .registration-page-wrap > .regist-form > .regist-form-cont > form > .add-btn:hover{
-    /* background-color:#eed3b0 */
-
-    /* background-color:#E2C992 */
     opacity: 1;
-
 }
 .registration-page-wrap > .regist-form > .regist-form-cont > form > button:hover::after{
     /* right: 0;
@@ -220,10 +180,10 @@
 
 .fade{
     animation: fadein 0.7s;
-    -webkit-animation: fadein 0.7s; /* Safari and Chrome */
+    -webkit-animation: fadein 0.7s;
 
 }
-@-webkit-keyframes fadein { /* Safari and Chrome */
+@-webkit-keyframes fadein {
     from {
         opacity:0;
     }

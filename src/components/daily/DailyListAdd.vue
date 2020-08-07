@@ -1,5 +1,6 @@
 <template>
   <div class="daily-list-add">
+    <!-- <form class="add-cont" @submit.prevent="submitList"> -->
     <form class="add-cont" @submit.prevent="submitList">
       {{ date }}
       <button
@@ -31,36 +32,46 @@
         ></DatePicker>
         <select v-model="selectCategory">
           <option disabled value="">분류</option>
-          <option v-for="(name, index) in categorys.name" :key="index">{{
+          <option v-for="(name, index) in getCategory" :key="index">{{
             name
           }}</option>
         </select>
         <select class="add-bank" v-model="selectBank">
           <option disabled value="">은행</option>
-          <option v-for="(name, index) in bankAsset.bank" :key="index">{{
-            name
+          <option>현금</option>
+          <option v-for="(name, index) in getBankAsset" :key="index">{{
+            name.bank
           }}</option>
         </select>
         <input
+          class="price-box"
           type="text"
           v-model="price"
-          placeholder="내역을 0 단위로 입력해주세요. ex 10,000"
+          placeholder="금액을 입력해주세요."
         />
-        <button class="btn big list-add-btn">등록</button>
+        <input
+          class="text-box"
+          type="text"
+          v-model="listText"
+          placeholder="상세내역을 입력해주세요."
+        />
+        <button class="btn small list-add-btn">
+          <i class="fas fa-plus"></i>
+        </button>
+        <!-- <button class="btn small list-add-btn">등록</button> -->
       </div>
     </form>
   </div>
 </template>
 
 <script>
-import {
-  saveListData,
-  getCategoryCookie,
-  getBanksCookie,
-} from '@/utils/cookies.js';
+// import { saveListData } from '@/utils/cookies.js';
 import DatePicker from 'v-calendar/lib/components/date-picker.umd';
-import { createId } from '@/utils/filters.js';
+// import DatePicker from '@/js/v-calendar.js';
+import { makeID } from '@/utils/filters.js';
 import { eventBus } from '@/main.js';
+import { moneybooRef } from '@/api/firebase';
+import firebase from 'firebase';
 
 export default {
   components: { DatePicker },
@@ -77,9 +88,13 @@ export default {
       this.selectBank = data.bank;
       this.edit = true;
       this.editId = data.id;
+      this.listText = data.text;
     });
-    getCategoryCookie();
-    getBanksCookie(this.saveAsset);
+
+    // 셋팅에 아무것도 추가하지 않고 데일리 페이지 왔더니 setCategory를 못찾음 예외처리 ㄱㄱ!
+    // settings에 값이 없을때 daily로 오면 settings로 넘겨버릴까?
+    // 만약 카테고리만 저장하고 에셋은 저장안하고 daily 페이지에 왔다면??
+    this.getSettingData();
   },
   data() {
     return {
@@ -88,19 +103,76 @@ export default {
       selectCategory: '',
       selectBank: '',
       price: null,
+      listText: '',
       edit: false,
       editId: '',
-      // num: 1,
-      categorys: this.$store.state.categorys,
-      saveAsset: {
-        total: this.$store.state.totalGoal,
-        cash: this.$store.state.cashGoal,
-        banks: [],
-      },
-      bankAsset: this.$store.state.bankAsset,
+      currentUid: this.$store.state.uid,
+      getCategory: [],
+      getBankAsset: [],
     };
   },
   methods: {
+    getSettingData() {
+      // 셋팅페이지에 있는 데이터 불러오기
+      this.mbooRef()
+        .doc('settings')
+        .get()
+        .then(docSnapshot => {
+          // document 값이 있으면
+          if (docSnapshot.exists) {
+            const setCategory = docSnapshot.data().setCategory;
+            const setAsset = docSnapshot.data().setAsset;
+
+            // category와 asset이 셋팅되어있을때만 실행
+            if (setCategory && setAsset) {
+              // 카테고리
+              setCategory.forEach(data => {
+                this.getCategory.push(data.name);
+              });
+
+              // 에셋
+              setAsset.banks.forEach(data => {
+                this.getBankAsset.push(data);
+              });
+
+              // category나 asset이 설정되어 있지 않을 경우만 실행
+            } else {
+              // 에러메세지 undefined 값인 데이터에 문자 삽입
+              const errMessage =
+                setAsset === undefined
+                  ? '목표금액과 자산'
+                  : setCategory === undefined
+                  ? '카테고리'
+                  : '관리페이지';
+
+              // 경고창 실행하고 셋팅페이지로 이동
+              alert(
+                errMessage +
+                  '에서 설정값을(를) 등록해주세요! 관리페이지로 이동합니다.',
+              );
+              this.$router.push('/setting');
+            }
+            // document 값이 없으면
+          } else {
+            // setting 페이지로 이동
+            alert(
+              '관리 페이지에서 초기값을 등록해주세요! 관리페이지로 이동합니다.',
+            );
+            this.$router.push('/setting');
+          }
+        })
+        .catch(err => {
+          console.log('에러가 발생한 위치는 listAdd Created', err);
+        });
+    },
+    mbooRef() {
+      return moneybooRef(this.currentUid);
+    },
+    dailyListAddRef() {
+      return this.mbooRef()
+        .doc('daily')
+        .collection('listAdd');
+    },
     // 수입 지출 버튼에 따른 인풋창 변화.
     clickIncomeBtn() {
       this.inputControl = 'income';
@@ -108,30 +180,32 @@ export default {
     clickExpendBtn() {
       this.inputControl = 'expend';
     },
-    // checkEmptyList() {},
-    // checkPriceNumber() {
-    //   // 숫자가 아니면 alert 창을 띄워라
-    //   if (isNaN(this.price)) {
-    //     alert('숫자만 입력해주세요');
-    //     return;
-    //   }
-    // },
-    submitList() {
+    // 값 입력하지 않았을때 확인 함수
+    checkEmptyList() {
       if (
-        // 하나라도 값이 입력되지 않으면, alert창으로 입력해야함을 알려야 한다.
         this.selectCategory === '' ||
         this.selectBank === '' ||
         this.price === null
       ) {
         alert('값을 선택, 입력해 주세요.');
-        return;
-      }
-      // 숫자가 아니라면, alert 창으로 숫자만 입력해야함을 알린다.
+        return true;
+      } else return false;
+    },
+    checkPriceNumber() {
+      // 숫자가 아니면 alert 창을 띄워라
       if (isNaN(this.price)) {
         alert('숫자만 입력해주세요');
-        this.price = null;
-        return;
-      }
+        return true;
+      } else return false;
+    },
+    submitList() {
+      if (this.checkEmptyList() || this.checkPriceNumber()) return;
+      // if (isNaN(this.price)) {
+      //   // 숫자가 아니라면, alert 창으로 숫자만 입력해야함을 알린다.
+      //   alert('숫자만 입력해주세요');
+      //   this.price = null;
+      //   return;
+      // }
       // 값이 하나라도 빌 경우를 확인해주는 함수
       let listData = {};
       if (this.edit === true) {
@@ -142,28 +216,56 @@ export default {
           category: this.selectCategory,
           bank: this.selectBank,
           price: this.price,
+          text: this.listText,
         };
       } else {
         listData = {
-          id: createId('l', this.date),
+          id: makeID('l'),
           date: this.conversionDate(this.date), // 한국날짜로 변환
           item: this.inputControl,
           category: this.selectCategory,
           bank: this.selectBank,
           price: this.price,
+          text: this.listText,
         };
       }
-
       // if (this.id) {
       //   console.log('수정한 리스트 저장한다!');
       // }
 
-      console.log(listData);
-      // this.$store.commit(
-      //   'SET_DAILYLIST',
-      //   this.$store.state.listData.push(listData),
-      // );
-      saveListData(listData);
+      // firestore에 listData 저장
+      const thisMonth = this.conversionMonth(this.date);
+      this.dailyListAddRef()
+        .doc(thisMonth)
+        .get()
+        .then(docSnapshot => {
+          // 만약 document값이 없으면 초기값 셋팅해주고
+          if (!docSnapshot.exists) {
+            this.dailyListAddRef()
+              .doc(thisMonth)
+              .set({ listData: [listData] });
+
+            // 만약 값이 있다면 배열을 업데이트 해줄것
+          } else {
+            this.dailyListAddRef()
+              .doc(thisMonth)
+              .update({
+                listData: firebase.firestore.FieldValue.arrayUnion(listData),
+              });
+          }
+        })
+        .catch(err => {
+          console.log('listAdd submitList 부분 에러 발생', err);
+        });
+      /* 
+        문제점 발견
+
+        1. 만약 document에 값이 없다면 set을 해줘야함
+        2. 그 뒤에 update 데이터
+        ** 3. field 값에 데이터가 없으면 income도 못불러오고 적용이 안되기때문에 오류가 난다 다른 조건을 주자.. 
+      */
+
+      // this.$emit('addListData', listData);
       this.resetData(); // 인풋창의 데이터를 리셋해주는 함수
     },
     resetData() {
@@ -173,16 +275,22 @@ export default {
       this.selectCategory = '';
       this.selectBank = '';
       this.price = null;
+      this.listText = '';
     },
     conversionDate(date) {
-      console.log(date);
-
       // 저장되는 날짜를 한국기준으로 정리해서 저장.
       let month = date.getMonth();
       let todayDate = date.getDate();
 
       return `${month + 1}.${todayDate}`;
       // 출력 형식 : 7.17
+    },
+    conversionMonth(date) {
+      const years = String(date.getFullYear()).substr(2, 2);
+      const month =
+        date.getMonth() < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
+
+      return `${years}.${month}`;
     },
   },
 };

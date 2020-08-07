@@ -48,6 +48,25 @@ function saveListData(newList) {
   }
 }
 
+// Registration.vue
+function saveAuth(name, value) {
+  document.cookie = `${name}=${value}`;
+}
+
+function getUserEmail() {
+  return document.cookie.replace(
+    /(?:(?:^|.*;\s*)user_email\s*=\s*([^;]*).*$)|^.*$/,
+    '$1',
+  );
+}
+
+function getAuthUid() {
+  return document.cookie.replace(
+    /(?:(?:^|.*;\s*)user_uid\s*=\s*([^;]*).*$)|^.*$/,
+    '$1',
+  );
+}
+
 // 리스트를 저장할때 확인하는 함수
 function checkListData() {
   return document.cookie.replace(
@@ -55,6 +74,21 @@ function checkListData() {
     '$1',
   );
 }
+
+// //StatisticsPage > ListOfMonth
+// function checkMonthList() {
+//   return document.cookie.replace(
+//     /(?:(?:^|.*;\s*)totalGoal\s*=\s*([^;]*).*$)|^.*$/,
+//     '$1',
+//   );
+// }
+// //StatisticsPage > ListOfYear
+// function checkYearList() {
+//   return document.cookie.replace(
+//     /(?:(?:^|.*;\s*)totalGoal\s*=\s*([^;]*).*$)|^.*$/,
+//     '$1',
+//   );
+// }
 
 // store에서 사용.
 function getTotalGoal() {
@@ -195,6 +229,7 @@ function getListData() {
   let listData = checkListData();
   let sortListData = listData.split(/{/).map(a => a.replace(/}/g, ''));
   sortListData.splice('', 1);
+
   for (let i = 0; i < sortListData.length; i++) {
     sortListData[i] = eval('({' + sortListData[i] + '})');
   }
@@ -255,5 +290,9 @@ export {
   getCategoryCookieIcon,
   getCategoryCookieId,
   getListData,
+  // deleteCookie,
+  saveAuth,
+  getUserEmail,
+  getAuthUid,
   deleteListCookie,
 };

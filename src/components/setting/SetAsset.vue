@@ -158,6 +158,7 @@ import {
   // getBanksCookie,
 } from '@/utils/cookies.js';
 import { makeID } from '@/utils/filters.js';
+import { moneybooRef } from '@/api/firebase';
 
 export default {
   data() {
@@ -169,9 +170,6 @@ export default {
         cashAsset: '',
         banks: [],
       },
-<<<<<<< Updated upstream
-      bankNum: 0,
-=======
       // 저장된 은행 개수 위해 필요.
       getBanks: [], // 은행 리스트
       // bankNum: 0,
@@ -180,7 +178,6 @@ export default {
       // getAsset: {}, // cashGoal, totalGoal, cashAsset
 
       // logMassage: '', // 데이터 확인용 임시 변수
->>>>>>> Stashed changes
     };
   },
   created() {
@@ -224,11 +221,47 @@ export default {
     //   this.saveAsset.banks[i].id = this.$store.state.bankAsset.id[i];
     //   console.log(this.$store.state.bankAsset.id[i]);
     // }
+    
+    // firstore에서 asset DB 가져오기
+    this.mbooRef()
+      .doc('settings')
+      .get()
+      .then(docSnapshot => {
+        // document의 값이 있으면
+        if (docSnapshot.exists) {
+          const setAsset = docSnapshot.data().setAsset;
 
-<<<<<<< Updated upstream
+          // setAsset 데이터가 있으면
+          if (setAsset) {
+            // 불러온 목표금액,현금자산 getAsset 객체에 저장
+            this.getAsset.totalGoal = setAsset.totalGoal;
+            this.getAsset.cashAsset = setAsset.cashAsset;
+            this.getAsset.cashGoal = setAsset.cashGoal;
+
+            // 불러온 은행 자산들 getBanks에 저장
+            setAsset.banks.forEach(data => {
+              this.getBanks.push(data);
+            });
+
+            // setAsset 데이터가 없으면
+          } else {
+            this.logMassage = '자산과 목표값을 입력해주세요!';
+            console.log('setAsset 데이터가 없습니다!', docSnapshot);
+          }
+
+          // document 값이 없으면
+        } else {
+          console.log('settings 값이 없음', docSnapshot);
+          this.logMassage = '셋팅 값을 입력해주세요!';
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+
     // 저장된 은행 수 data에 넣어줌.
     this.bankNum = this.$store.state.bankAsset.bank.length;
-=======
+
     // firstore에서 asset DB 가져오기
     this.mbooRef()
       .doc('settings')
@@ -272,7 +305,7 @@ export default {
 
     // // 저장된 은행 수 data에 넣어줌.
     // this.bankNum = this.$store.state.bankAsset.bank.length;
->>>>>>> Stashed changes
+
   },
   methods: {
     clickAddBank() {
@@ -280,6 +313,9 @@ export default {
     },
     clickRemoveBank(bankList) {
       this.banks.$remove(bankList);
+    },
+    mbooRef() {
+      return moneybooRef(this.currentUid);
     },
     clickSaveAsset() {
       // 총 목표 금액 저장
@@ -290,6 +326,32 @@ export default {
       saveCashAsset(this.saveAsset.cashAsset);
       // 은행 별 자산 저장(은행명+자산금액+id 묶어서)
       saveBankAsset(this.saveAsset.banks);
+
+      // firestore에 asset DB 저장
+      this.mbooRef()
+        .doc('settings')
+        .get()
+        .then(docSnapshot => {
+          // documnet가 있으면 update
+          if (docSnapshot.exists) {
+            this.mbooRef()
+              .doc('settings')
+              .update({ setAsset: this.saveAsset });
+
+            // document가 없으면 set
+          } else {
+            this.mbooRef()
+              .doc('settings')
+              .set({ setAsset: this.saveAsset });
+            this.logMassage = ''; // 데이터를 추가했으니 logMessage 없애기
+          }
+        });
+
+      /*
+          은재씨가 만들어놓은 setAsset 변수 가져와서 저장해줬습니다! 
+          확인하시고 은재씨 편한대로 변형해주세요!!
+          (이 주석은 확인하고 삭제 부탁드립니다~!)
+        */
     },
   },
 };

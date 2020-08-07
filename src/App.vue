@@ -15,11 +15,14 @@ export default {
     Sidebar,
     StatusHeader,
   },
+  created() {},
   methods: {
     isHeader() {
       // let routerArr = this.$router.options.routes.map(a => a.path);
       // 현재 내 라우터 path 위치를 변수 삽입
       const currentRouter = this.$router.currentRoute.path;
+      // console.log(this.$router);
+      // console.log(currentRouter);
       // const headerList = ['/daily', '/statistics', '/main'];
 
       // 조건 현재 라우터 위치가 '데일리','통계','메인' 일때만 true를 출력하도록 변수 생성

@@ -5,27 +5,6 @@ function addComma(price) {
   return Number(price).toLocaleString();
 }
 
-// 아이디 출력 형식에 맞는 날짜 출력 함수
-function conversionDateId(date) {
-  let year = date
-    .getFullYear()
-    .toString()
-    .substr(2, 4);
-  let month = date.getMonth();
-  let todayDate = date.getDate();
-  return `${year}${month + 1}${todayDate}`;
-  // 출력형식 : 200726
-}
-
-// 아이디출력 함수
-function createId(category, date) {
-  let num = Math.random()
-    .toString(10)
-    .substr(2, 6);
-  let createIdName = `${category}${conversionDateId(date)}-${num}`;
-  return createIdName;
-}
-
 // // ------ cookie에 저장 된 '은행 별 자산'들 불러와서 화면에 나타내줌 ------
 // function getBanksCookie(saveAsset) {
 //   // cookie에 저장된 bankAsset 불러와 변수 선언.
@@ -87,4 +66,19 @@ function makeID(type) {
   return idDate;
 }
 
-export { addComma, /*getBanksCookie, getCategoryCookie,*/ createId, makeID };
+// 오늘의 년 + 월 을 가져오는 함수
+function newConversionMonth() {
+  const year = String(new Date().getFullYear()).substr(2, 2);
+  const month =
+    new Date().getMonth() < 10
+      ? `0${new Date().getMonth() + 1}`
+      : new Date().getMonth() + 1;
+
+  return `${year}.${month}`;
+}
+
+export {
+  addComma,
+  /*getBanksCookie, getCategoryCookie,*/ makeID,
+  newConversionMonth,
+};

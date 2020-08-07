@@ -1,29 +1,29 @@
 <template>
-  <!-- 가영 -->
-  <!-- /statistics  -->
   <div class="bar-graph-cont">
     <div class="bar-graph">
-      <h3><span>2020</span></h3>
+      <h3>{{ whatYear() }}</h3>
       <div id="canvas-holder">
         <canvas id="b-graph"></canvas>
       </div>
-
-      <!-- <ul>
-        <li>
-          <span>1월</span>
-        </li>
-        <li>
-          <span>1월</span>통계
-        </li>
-      </ul> -->
     </div>
+    <ListOfyears></ListOfyears>
   </div>
 </template>
 
 <script>
 import Chart from 'chart.js';
+import ListOfyears from './ListOfyears';
+import { yearCheck } from '@/utils/statistics.js';
 
 export default {
+  components: {
+    ListOfyears,
+  },
+  methods: {
+    whatYear() {
+      return yearCheck();
+    },
+  },
   mounted() {
     var ctx = document.getElementById('b-graph').getContext('2d');
 
@@ -37,7 +37,6 @@ export default {
       // The data for our dataset
       data: {
         // 이름.
-        // labels: ['January', 'Febuary', 'March', 'April', 'May', 'June', 'July'],
         labels: ['1월', '2월', '3월', '4월', '5월', '6월', '7월'],
         datasets: [
           {
@@ -51,22 +50,6 @@ export default {
               'rgb(178,223,219,0.3)',
               'rgb(178,223,219,0.3)',
               'rgb(178,223,219,0.3)',
-              //2
-              // 'rgb(207, 216, 220)',
-              // 'rgb(197, 202, 233)',
-              // 'rgb(209, 196, 233)',
-              // 'rgb(255, 205, 210)',
-              // 'rgb(255, 224, 178)',
-              // 'rgb(240, 244, 195)',
-              // 'rgb(178, 235, 242)',
-              // 3
-              // 'rgb(232, 236, 241)',
-              // 'rgb(228, 233, 237)',
-              // 'rgb(210, 215, 211)',
-              // 'rgb(149, 165, 166)',
-              // 'rgb(191, 191, 191)',
-              // 'rgb(171, 183, 183)',
-              // 'rgb(228, 233, 237)',
             ],
             borderColor: 'rgb(178,223,219)',
             maxBarThickness: 40,
@@ -76,8 +59,6 @@ export default {
           },
         ],
       },
-
-      // Configuration options go here
       options: {
         responsive: true,
         maintainAspectRatio: false,
