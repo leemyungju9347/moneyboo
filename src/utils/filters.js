@@ -54,13 +54,20 @@ function makeID(type) {
       ? `0${new Date().getMonth() + 1}`
       : new Date().getMonth() + 1;
   let date = new Date().getDate();
+
+  let hh = new Date().getHours().toString();
+  let mm = new Date().getMinutes().toString();
+  let ss = new Date().getSeconds().toString();
+
+  const nowTime = ` ${hh < 10 ? `0${hh}` : hh}${mm < 10 ? `0${mm}` : mm}${
+    ss < 10 ? `0${ss}` : ss
+    } `;
+
   // type구함.
   type === 'category' ? (type = 'c') : type === 'bank' ? (type = 'b') : 'l';
-  // 랜덤숫자 구함.
-  let randomNum = Math.floor(Math.random() * 10000);
 
-  // type + date + 랜덤숫자 조합해 id생성.
-  let idDate = `${type}${year}${month}${date}-${randomNum}`;
+  // type + date + 시분초 조합해 id생성.
+  let idDate = `${type}${year}${month}${date}-${nowTime}`;
   console.log(idDate);
 
   return idDate;
