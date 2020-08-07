@@ -165,14 +165,14 @@ button.btn.small {
 .side-gnb-form > .username-cont > strong{
   color: rgb(255, 255, 255); 
   font-weight: 700;
-  letter-spacing:1.2px;
+  letter-spacing:2px;
   font-size: 1.4em;
   position: absolute;
   left: 65px;
   padding-left:5px;
 }
 .side-gnb-form > .username-cont > strong > .user-icon{
-  background: url(/img/user.5405d77c.png) no-repeat 0 0;
+  background: url('../images/user.png') no-repeat 0 0;
   background-size: 100%;
   width: 29px;
   height: 30px;
