@@ -79,6 +79,7 @@
   background-color: #3f9c79;
   color: #ffffff;
   border-radius: 10px;
+  border-bottom: 2px solid #fdfaf3;
 }
 /* .daily-list-add select.add-bank {
   padding: 4px 2.5%;
@@ -176,21 +177,9 @@
 .daily-list-day li i.category-icon.fas{
   width: 15%;
   color: #e2c992;
-  /* color: #348f6c; */
   font-size: 1.5em;
   position: relative;
 }
-/* .daily-list-day li i.category-icon.fas::after{
-  display: block;
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%,-50%);
-  height: 40px;
-  width: 40px;
-  border: 2px solid #e2c992;
-} */
 .daily-list-day li span {
   width: 20%;
 }
@@ -212,4 +201,63 @@
 }
 .daily-list-day li .list-delete i {
   color: #348f6c;
+}
+
+/* PC : 1024px ~
+테블릿 : 768 ~ 1023px
+모바일 : ~ 768px */
+
+/* 태블릿사이즈 */
+@media screen and (max-width:1023px){
+  
+}
+
+/* 모바일사이즈 */
+@media screen and (max-width:768px){
+  .daily-balance-cont {
+    display: block;
+  }
+  .daily-balance li {
+  width: 100%;
+  /* max-width: 340px;
+  height: 96px;
+  border-radius: 20px;
+  color: #3b3b3b;
+  font-size: 1.6em;
+  text-align: center; */
+  }
+  .daily-balance li:first-child {
+    margin: 0 auto;
+    margin-bottom: 5%;
+  }
+  .daily-balance li:last-child {
+    margin: 0 auto;
+  }
+  .daily-list-add {
+    padding: 30px 6%
+  }
+
+  .daily-list-add .add-cont > button {
+    font-size:2em;
+  }
+
+  .daily-list-add input.vc-appearance-none {
+    width: 60vw;
+  }
+
+  .daily-list-add select, .daily-list-add .what-date {
+    /* padding: 10px 10.5vw; */
+    width: 60vw;
+    margin-top: 10px;
+  }
+  .daily-list-add input.price-box, .daily-list-add input.text-box {
+    margin-top: 10px;
+    width: 60vw;
+  }
+  .daily-list-add .list-add-btn {
+    position: absolute;
+    top: -36px;
+    right: 10px;
+  }
+
 }

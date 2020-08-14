@@ -20,7 +20,7 @@ function makeID(type) {
   let mm = new Date().getMinutes().toString();
   let ss = new Date().getSeconds().toString();
 
-  const nowTime = ` ${hh < 10 ? `0${hh}` : hh}${mm < 10 ? `0${mm}` : mm}${
+  const nowTime = `${hh < 10 ? `0${hh}` : hh}${mm < 10 ? `0${mm}` : mm}${
     ss < 10 ? `0${ss}` : ss
   } `;
 
