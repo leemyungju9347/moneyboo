@@ -77,7 +77,6 @@ function deleteCookie(value) {
   document.cookie = `${value}=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
 }
 
-
 // //StatisticsPage > ListOfMonth
 // function checkMonthList() {
 //   return document.cookie.replace(
@@ -254,8 +253,5 @@ export {
   getUserNickname,
   deleteCookie,
   getCurrentRouter,
-<<<<<<< Updated upstream
-=======
   // deleteListCookie,
->>>>>>> Stashed changes
 };
