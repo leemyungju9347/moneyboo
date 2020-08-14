@@ -9,14 +9,13 @@
     transition:all 0.7s ease;
 }
 .registration-page-wrap > .regist-form > .regist-form-cont {display:none;position: relative;}
-.registration-page-wrap > .regist-form > .regist-form-cont > form {position: relative;margin-top:100px;width:80%;}
+.registration-page-wrap > .regist-form > .regist-form-cont > form {position: relative;margin-top:90px;width:80%;}
 .registration-page-wrap > .login-form > .regist-form-cont > form {margin-top:110px;}
 .registration-page-wrap > .regist-form > .regist-form-cont > form > div {position: relative;width: 100%;}
-.registration-page-wrap > .regist-form > .regist-form-cont > form > div + div {margin-top:30px;}
-.registration-page-wrap > .login-form > .regist-form-cont > form > div + div {margin-top:42px;}
+.registration-page-wrap > .regist-form > .regist-form-cont > form > div + div {margin-top:40px;}
 .registration-page-wrap > .regist-form > .regist-form-cont > form > div > label {
     position: absolute;
-    left:5px;
+    left:10px;
     font-size: 1.6em;
     font-family: 'Jua', sans-serif;
     font-weight: 600;
@@ -27,23 +26,24 @@
     font-size: 1.8em;
     font-weight: 600;
     background-color: unset;
-    border:unset;
     border-bottom: 2px solid rgba(133, 133, 133, 0.5);
-    /* border-bottom: 2px solid #598373; */
-    /* border-bottom: 2px solid #8bbeaa; */
     border-bottom: 2px solid #99bbad;
-    /* border-bottom: 2px solid #9fb1a9; */
-    padding:10px 0;
-    padding-left:5px;
     width: 100%;
     font-family: 'Jua', sans-serif;
     letter-spacing: 1.8px;
+    padding: 5px 10px 15px;
 }
 .registration-page-wrap > .regist-form > .regist-form-cont > form > div:focus-within > label{
     visibility: hidden;
 }
-.registration-page-wrap > .regist-form > .regist-form-cont > form > div:focus-within > input {
-    border-bottom: 2px solid #598373;  
+.registration-page-wrap > .regist-form > .regist-form-cont > form > div:focus-within > input:after{
+    content: '입력해주세요';
+}
+.registration-page-wrap > .regist-form > .regist-form-cont > form > div.active > input {
+    border-color: #187b55;
+    border-color:#3f9c79;
+    border-color:#52927a;
+
 }
 .registration-page-wrap > .regist-form > .regist-form-cont > form > p {
     font-weight:600;
@@ -81,21 +81,10 @@
     background-color:#348F6C;
     font-weight: 500;
     color: #fff;
-
 }
-.registration-page-wrap > .regist-form > .regist-form-cont > form > .add-btn:hover{
+.registration-page-wrap > .regist-form > .regist-form-cont > form > .add-btn.active{
     opacity: 1;
 }
-.registration-page-wrap > .regist-form > .regist-form-cont > form > button:hover::after{
-    /* right: 0;
-    opacity: 1; */
-}
-.registration-page-wrap > .regist-form > .regist-form-cont > form > button:hover{
-    /* background-color:rgb(70, 158, 124);
-    background-color:#d8c690;
-    background-color:#e7d396; */
-}
-
 .registration-page-wrap > .regist-form > .regist-form-cont > .reset-btn{
     position: absolute;
     font-size: 0;
@@ -109,23 +98,16 @@
     cursor: pointer;
     opacity: 0.7;
 }
-/* .registration-page-wrap > .signup-form {background-color: rgb(226, 201, 146,0.7);} */
-/* .registration-page-wrap > .signup-form {background-color:rgb(189, 204, 206,0.6);} */
-/*연두(밝은거)*/
-.registration-page-wrap  >  .signup-form {background-color:#dbec9d;}
-/*연두(옅은거)*/
-.registration-page-wrap  >  .signup-form {background-color:#dbe9a9;}
-/* 캔디바 (블루계열) 색상 */
-.registration-page-wrap > .signup-form {background-color: #348f6c2f }
-/* .registration-page-wrap > .signup-form {background-color: #348f6c67; } */
-.registration-page-wrap > .signup-form > form {}
-/* .registration-page-wrap > .login-form {background-color: rgb(253, 249, 243);} */
-/*연두*/
-/* .registration-page-wrap > .login-form {background-color:#f6faea} */
-/* 캔디바 (블루계열) 색상 */
-/*이거임*/
-.registration-page-wrap > .login-form {background-color: #dde2e12f} 
-.registration-page-wrap > .regist-form > .regist-form-cont > h3 {font-size:3em;letter-spacing: 2px;}
+.registration-page-wrap > .signup-form {
+    background-color: #348f6c2f 
+}
+.registration-page-wrap > .login-form {
+    background-color: #dde2e12f
+} 
+.registration-page-wrap > .regist-form > .regist-form-cont > h3 {
+    font-size:3em;
+    letter-spacing: 2px;
+}
 
 .registration-page-wrap > .regist-form > .mask {
     position: absolute;
@@ -161,7 +143,6 @@
     right:-15px
 }
 
-
 .registration-page-wrap > .regist-form > .mask > strong {
     position: absolute;
     font-size:2.8em;
@@ -181,8 +162,8 @@
 .fade{
     animation: fadein 0.7s;
     -webkit-animation: fadein 0.7s;
-
 }
+
 @-webkit-keyframes fadein {
     from {
         opacity:0;

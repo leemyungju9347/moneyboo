@@ -36,10 +36,12 @@ function saveCategory(newCategory) {
 }
 
 // Registration.vue
+// save
 function saveAuth(name, value) {
   document.cookie = `${name}=${value}`;
 }
 
+// get user email
 function getUserEmail() {
   return document.cookie.replace(
     /(?:(?:^|.*;\s*)user_email\s*=\s*([^;]*).*$)|^.*$/,
@@ -47,9 +49,38 @@ function getUserEmail() {
   );
 }
 
-function getAuthUid() {
+// get user uid
+function getUserUid() {
   return document.cookie.replace(
     /(?:(?:^|.*;\s*)user_uid\s*=\s*([^;]*).*$)|^.*$/,
+    '$1',
+  );
+}
+
+function getUserNickname() {
+  return document.cookie.replace(
+    /(?:(?:^|.*;\s*)user_nickname\s*=\s*([^;]*).*$)|^.*$/,
+    '$1',
+  );
+}
+
+// get router path
+function getCurrentRouter() {
+  return document.cookie.replace(
+    /(?:(?:^|.*;\s*)cur_path\s*=\s*([^;]*).*$)|^.*$/,
+    '$1',
+  );
+}
+
+// delete
+function deleteCookie(value) {
+  document.cookie = `${value}=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+}
+
+// 리스트를 저장할때 확인하는 함수
+function checkListData() {
+  return document.cookie.replace(
+    /(?:(?:^|.*;\s*)listData\s*=\s*([^;]*).*$)|^.*$/,
     '$1',
   );
 }
@@ -226,5 +257,9 @@ export {
   // deleteCookie,
   saveAuth,
   getUserEmail,
-  getAuthUid,
+  getUserUid,
+  getUserNickname,
+  deleteCookie,
+  getCurrentRouter,
+  deleteListCookie,
 };

@@ -8,11 +8,15 @@
 <script>
 import LoginForm from '@/components/registration/LoginForm';
 import SignupForm from '@/components/registration/SignupForm';
+import { deleteCookie } from '@/utils/cookies';
 
 export default {
   components: {
     LoginForm,
     SignupForm,
+  },
+  created() {
+    deleteCookie('cur_path');
   },
 };
 </script>

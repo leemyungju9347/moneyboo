@@ -146,7 +146,7 @@ button.btn.small {
 .side-gnb-form a, .side-gnb-form h1, .calender-cont > * {font-family: 'IBMPlexSansKR-Text';}
 
 .side-gnb-form{
-    padding: 20px;
+    padding:10px 20px 20px;
     position: relative;
     height: 100%;
 }
@@ -156,10 +156,37 @@ button.btn.small {
     position: absolute;
     bottom: 0;
 }
-.side-gnb-form > .logo-cont a {color: #fff;font-size: 2em;}
-.side-gnb-form > .logo-cont a > img {width:80%;height:auto;}
+.side-gnb-form > .logo-cont .logo {color: #fff;font-size: 2em;}
+.side-gnb-form > .logo-cont .logo > img {width:70%;height:auto;}
+.side-gnb-form > .username-cont {
+  padding-top: 14px;
+  display: block;
+  white-space: nowrap;
+  width: 100%;
+}
+.side-gnb-form > .username-cont > strong{
+  color: rgb(255, 255, 255); 
+  font-weight: 700;
+  letter-spacing:2px;
+  font-size: 1.4em;
+  position: absolute;
+  left: 65px;
+  padding-left:5px;
+}
+.side-gnb-form > .username-cont > strong > .user-icon{
+  background: url('../images/user.png') no-repeat 0 0;
+  background-size: 100%;
+  width: 29px;
+  height: 30px;
+  position: absolute;
+  left: -37px;
+  top: -2px;
+
+}
+
 .side-gnb-form > .gnb-list-cont {
   position: absolute;
+  top: 86px;
   left:0;
   right: 0;
   padding-left:5px
@@ -173,7 +200,7 @@ button.btn.small {
   position: absolute;
   top:1px;
   left:14px;
-  /* background-color: #4a9b7b */
+  background-color: #4a9b7b
 }
 .side-gnb-form > .gnb-list-cont > ul > li {
   width: 100%;
@@ -181,12 +208,15 @@ button.btn.small {
   padding-left:15px;
   border-radius:100px;
 }
+.side-gnb-form > .gnb-list-cont > ul > li.mypage {
+  margin-top:10px;
+}
 .side-gnb-form > .gnb-list-cont > ul > li + li {
   margin-top:5px;
 }
 .side-gnb-form > .gnb-list-cont > ul > li.transparent-bar{
   padding:10px 0;
-  margin-top: 0;
+  margin-top:10px;
 }
 .side-gnb-form > .gnb-list-cont > ul > li.transparent-bar::before{
   content: '';
@@ -290,13 +320,6 @@ button.btn.small {
 }
 .side-gnb-form > .gnb-list-cont > ul > li.transparent-bar:hover {
   background-color: unset;
-}
-.side-gnb-form > .gnb-list-cont > ul > li.logout > a > .gnb-icon.logout-icon {
-  transition:all 0.2s ease;
-}
-.side-gnb-form > .gnb-list-cont > ul > li.logout:hover > a > .gnb-icon.logout-icon {
-  background-image: url('../images/logout_open.png');
-  /* transform: scale(1.15) */
 }
 
 

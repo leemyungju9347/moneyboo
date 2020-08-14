@@ -4,19 +4,23 @@ import {
   getTotalGoal,
   getCashGoal,
   getCashAsset,
-  // getBankAsset,
   getBanksCookieBank,
   getBanksCookieAsset,
   getBanksCookieId,
   getCategoryCookieName,
   getCategoryCookieIcon,
   getCategoryCookieId,
-  // getListData,
   getUserEmail,
-  getAuthUid,
+  getUserUid,
+  getUserNickname,
+  getCurrentRouter,
+  saveAuth,
 } from '../utils/cookies.js';
+import { loginUser } from '@/api/firebase';
+import { getBankAsset } from '@/utils/getFirebase.js';
 
 Vue.use(Vuex);
+console.log(Vuex.Store);
 
 export default new Vuex.Store({
   state: {
@@ -27,28 +31,66 @@ export default new Vuex.Store({
       bank: getBanksCookieBank() || [],
       asset: getBanksCookieAsset() || [],
       id: getBanksCookieId() || [],
-      // bank: [],
-      // asset: [],
-      // id: [],
     },
+    banks: getBankAsset() || [],
+
     categorys: {
       name: getCategoryCookieName() || [],
       icon: getCategoryCookieIcon() || [],
       id: getCategoryCookieId() || [],
-      // name: [],
-      // icon: [],
-      // id: [],
     },
     //Registration
     email: getUserEmail() || '',
-    uid: getAuthUid() || '',
-    user: '',
+    uid: getUserUid() || '',
+    nickname: getUserNickname() || '',
+    // router path
+    currentRouter: getCurrentRouter() || '',
   },
-  mutations: {
-    SET_USER(state, data) {
-      state.user = data;
+  getters: {
+    isLogin(state) {
+      // useremail 값이 없으면? (로그인되지 않았으면)
+      // 빈문자열이 아니면 로그인 됐다라고 봄
+      return state.email !== '';
     },
   },
-  actions: {},
+  mutations: {
+    // 로그인
+    SET_USER(state, email) {
+      state.email = email;
+    },
+    SET_UID(state, uid) {
+      state.uid = uid;
+    },
+    SET_NICKNAME(state, nickname) {
+      state.nickname = nickname;
+    },
+    // 로그아웃
+    CLEAR_USER(state) {
+      state.email = '';
+    },
+    CLEAR_UID(state) {
+      state.uid = '';
+    },
+    // 라우터 경로
+    SET_ROUTERPATH(state, router) {
+      state.currentRouter = router;
+    },
+  },
+  actions: {
+    async FATCH_LOGIN({ commit }, data) {
+      const response = await loginUser(data.email, data.password);
+      // state 저장
+      commit('SET_USER', response.user.email);
+      commit('SET_UID', response.user.uid);
+      commit('SET_NICKNAME', response.user.displayName);
+
+      // 쿠키저장
+      saveAuth('user_email', response.user.email);
+      saveAuth('user_uid', response.user.uid);
+      saveAuth('user_nickname', response.user.displayName);
+
+      return response;
+    },
+  },
   modules: {},
 });

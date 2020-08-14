@@ -1,36 +1,18 @@
 <template>
   <div class="set-category">
-    <div>
-      <strong v-if="getCategory.length === 0" style="color:red">{{
-        logMessage
-      }}</strong>
-      <ul v-else>
-        <li v-for="item in getCategory" :key="item.id">
-          <strong>
-            {{ item.name }}
-            {{ item.icon }}
-          </strong>
-        </li>
-      </ul>
-    </div>
     <!-- 수입/지출 카테고리 아이콘 수정 -->
     <div class="category-list-cont">
       <h3 class="font-jua">수입 / 지출 카테고리</h3>
       <form action="">
-        <b
-          class="explanation"
-          v-if="this.$store.state.categorys.name.length !== 0"
-          >( 현재 {{ categoryNum }}개의 카테고리가 저장되어 있습니다. )</b
+        <b class="explanation" v-if="getCategory.length !== 0"
+          >( 현재 {{ getCategory.length }}개의 카테고리가 저장되어 있습니다.
+          )</b
         >
         <ul>
-          <b class="explanation" v-if="showCategoryName == ''"
+          <b class="explanation" v-if="getCategory.length === 0"
             >추가 된 카테고리가 보여지는 공간입니다.</b
           >
-          <!-- script를 작성하면 li의 '관리비'등의 이름을 {{}}로 줘서 data랑 연동되도록 하면 되겠다 -->
-          <li
-            v-for="(category, index) in showCategoryIcon"
-            :key="showCategoryId[index]"
-          >
+          <li v-for="category in getCategory" :key="category.id">
             <label
               ><input type="radio" name="category" />
               <!-- 추후에 span 옆에 선택한 아이콘도 넣어줄 것 -->
@@ -38,12 +20,10 @@
                 :class="{ click: categoryCardClick === true }"
                 @click="clickCategoryCard()"
               >
-                <!-- <i class="fas fa-wallet"></i> -->
-                <i :class="category"></i>
+                <i :class="category.icon"></i>
                 <span :class="{ click: categoryCardClick === true }">{{
-                  showCategoryName[index]
+                  category.name
                 }}</span>
-                <!-- <img src="../../assets/images/045-ecology.png" alt="" /> -->
               </div>
               <button
                 :class="{ click: categoryCardClick === true }"
@@ -65,11 +45,7 @@
       </form>
     </div>
 
-    <!-- <p>***cookie에 저장되어있는 카테고리명들***</p>
-    {{ saveCategory }}
-    <br /><br />
-    <p>***아래 input창에 새롭게 입력한 카테고리명+아이콘명***</p>
-    {{ inputCategory }} -->
+    <!-- category 이름 + 아이콘 선택 -->
     <div class="category-edit-cont">
       <strong>카테고리 추가</strong>
       <b class="explanation"
@@ -210,7 +186,7 @@
               <input
                 type="radio"
                 name="icon"
-                value="ffas fa-futbol"
+                value="fas fa-futbol"
                 v-model="inputCategory.icon"
               />
               <i class="fas fa-futbol"></i>
@@ -478,14 +454,11 @@
         <!-- <button>수정</button> -->
       </form>
     </div>
-    <!-- {{ categorys }}
-    {{ showCategoryName }}
-    {{ showCategoryIcon }} -->
   </div>
 </template>
 
 <script>
-import { saveCategory } from '@/utils/cookies.js';
+// import { saveCategory } from '@/utils/cookies.js';
 import { makeID } from '@/utils/filters.js';
 import { moneybooRef } from '@/api/firebase';
 import firebase from 'firebase';
@@ -499,18 +472,18 @@ export default {
         icon: '',
         id: '',
       },
-      // cookie에 저장 된 category 개수
-      categoryNum: '',
-      // 불러온 카테고리명
-      showCategoryName: this.$store.state.categorys.name,
-      // 불러온 카테고리 아이콘명
-      showCategoryIcon: this.$store.state.categorys.icon,
-      // 불러온 카테고리 id
-      showCategoryId: this.$store.state.categorys.id,
+      // // cookie에 저장 된 category 개수
+      // categoryNum: '',
+      // // 불러온 카테고리명
+      // showCategoryName: this.$store.state.categorys.name,
+      // // 불러온 카테고리 아이콘명
+      // showCategoryIcon: this.$store.state.categorys.icon,
+      // // 불러온 카테고리 id
+      // showCategoryId: this.$store.state.categorys.id,
       // 카테고리 클릭 여부 확인용
       categoryCardClick: false,
       currentUid: this.$store.state.uid, // 현재 로그인한 유저의 uid
-      logMessage: '',
+      // logMessage: '',
       getCategory: [],
     };
   },
@@ -518,6 +491,7 @@ export default {
     this.categoryNum = this.$store.state.categorys.name.length;
 
     // firestore에 저장된 category DB 가져오기
+
     this.mbooRef()
       .doc('settings')
       .get()
@@ -535,12 +509,10 @@ export default {
             // setCategory 데이터가 없으면
           } else {
             this.logMessage = '카테고리 값을 입력해주세요!';
-            console.log('setCategory 데이터가 없음', docSnapshot);
           }
 
           // document가 없으면
         } else {
-          console.log('settings 값 없음', docSnapshot);
           this.logMessage = '셋팅 값을 입력해주세요!';
         }
       })
@@ -548,7 +520,8 @@ export default {
         console.log('에러 발생한 위치 setCategory.vue created부분', err);
       });
 
-    console.log(this.getCategory);
+    this.getFirebase();
+
   },
   methods: {
     clickAddCategory() {
@@ -582,14 +555,41 @@ export default {
                 ),
               });
           }
+
+          this.resetInputCategory(); // category input창 리셋.
         });
 
-      saveCategory(newCategory);
+      // saveCategory(newCategory); // cookie에 category 저장.
     },
+    // [추가]버튼 클릭 시 category 입력 창 비워줌.
+    resetInputCategory() {
+      this.inputCategory.name = '';
+      this.inputCategory.icon = '';
+      this.inputCategory.id = '';
+    },
+
     // 머니부 참조값
     mbooRef() {
       return moneybooRef(this.currentUid);
     },
+    // firestore에 저장된 category DB 가져오기 (created()에서 함수 실행)
+    getFirebase() {
+      this.mbooRef()
+        .doc('settings')
+        .onSnapshot(snapshot => {
+          console.log(snapshot.data());
+          console.log(snapshot.data().setCategory);
+          // document가 존재하면
+          if (snapshot.exists) {
+            const setCategory = snapshot.data().setCategory;
+            // setCategory 데이터가 있으면
+            if (setCategory) {
+              this.getCategory = setCategory;
+            }
+          }
+        });
+    },
+
     clickCategoryCard() {
       // 화면에 보이는 카테고리 클릭할 때마다 ture, false값을 줘서 [수정]버튼 활성, 비활성화 되게 해줌. + 클릭한 해당 카테고리의 배경색, 글자색 변경하기 위한 :class 주는 용도.
       if (this.categoryCardClick === false) {
@@ -601,6 +601,25 @@ export default {
     },
     clickRemoveCategory() {
       console.log('이 카테고리 삭제하자!!!');
+      // 클릭한 카테고리의 id를 구해서 이 함수로 보내줄 수 있으면 편할 것 같은데...!
+      console.log(this.getCategory);
+
+      this.mbooRef()
+        .where(typeof 'settings.setCategory.id', '==', 'string')
+        .onSnapshot(snapshot => {
+          console.log(snapshot);
+          snapshot.docChanges().forEach(change => {
+            if (change.type === 'added') {
+              console.log('New city: ', change.doc.data());
+            }
+            if (change.type === 'modified') {
+              console.log('Modified city: ', change.doc.data());
+            }
+            if (change.type === 'removed') {
+              console.log('Removed city: ', change.doc.data());
+            }
+          });
+        });
     },
     clickCategoryEdit() {
       console.log('이 카테고리 수정하자!!!!');
