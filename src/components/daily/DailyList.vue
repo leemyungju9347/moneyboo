@@ -63,7 +63,6 @@
 </template>
 
 <script>
-import { deleteListCookie } from '@/utils/cookies';
 import { addComma, newConversionMonth } from '@/utils/filters';
 import { eventBus } from '@/main';
 import { moneybooRef } from '@/api/firebase';
@@ -250,9 +249,6 @@ export default {
           return copyCategorys[categoryIconNum].icon;
         }
       }
-    },
-    deleteListData(list) {
-      deleteListCookie(list);
     },
   },
 };
