@@ -1,6 +1,3 @@
-// import store from '@/store/index';
-// import { makeID } from '@/utils/filters.js';
-
 // SetAsset.vue
 function saveTotalGoal(total) {
   console.log(total);
@@ -76,29 +73,6 @@ function getCurrentRouter() {
 function deleteCookie(value) {
   document.cookie = `${value}=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
 }
-
-// 리스트를 저장할때 확인하는 함수
-function checkListData() {
-  return document.cookie.replace(
-    /(?:(?:^|.*;\s*)listData\s*=\s*([^;]*).*$)|^.*$/,
-    '$1',
-  );
-}
-
-// //StatisticsPage > ListOfMonth
-// function checkMonthList() {
-//   return document.cookie.replace(
-//     /(?:(?:^|.*;\s*)totalGoal\s*=\s*([^;]*).*$)|^.*$/,
-//     '$1',
-//   );
-// }
-// //StatisticsPage > ListOfYear
-// function checkYearList() {
-//   return document.cookie.replace(
-//     /(?:(?:^|.*;\s*)totalGoal\s*=\s*([^;]*).*$)|^.*$/,
-//     '$1',
-//   );
-// }
 
 // store에서 사용.
 function getTotalGoal() {
@@ -261,5 +235,4 @@ export {
   getUserNickname,
   deleteCookie,
   getCurrentRouter,
-  deleteListCookie,
 };

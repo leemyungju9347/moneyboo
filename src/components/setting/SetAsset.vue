@@ -121,13 +121,6 @@
 </template>
 
 <script>
-// import {
-//   saveTotalGoal,
-//   saveCashGoal,
-//   saveCashAsset,
-//   saveBankAsset,
-//   // getBanksCookie,
-// } from '@/utils/cookies.js';
 import { makeID } from '@/utils/filters.js';
 import { moneybooRef } from '@/api/firebase';
 
@@ -235,7 +228,6 @@ export default {
 
     // firstore에서 asset DB 가져오기
     this.getFirebase();
-
   },
   computed: {},
   methods: {
