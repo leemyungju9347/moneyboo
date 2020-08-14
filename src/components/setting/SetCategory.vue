@@ -59,11 +59,7 @@
       </form>
     </div>
 
-    <!-- <p>***cookie에 저장되어있는 카테고리명들***</p>
-    {{ saveCategory }}
-    <br /><br />
-    <p>***아래 input창에 새롭게 입력한 카테고리명+아이콘명***</p>
-    {{ inputCategory }} -->
+    <!-- category 이름 + 아이콘 선택 -->
     <div class="category-edit-cont">
       <strong>카테고리 추가</strong>
       <b class="explanation"
@@ -472,14 +468,11 @@
         <!-- <button>수정</button> -->
       </form>
     </div>
-    <!-- {{ categorys }}
-    {{ showCategoryName }}
-    {{ showCategoryIcon }} -->
   </div>
 </template>
 
 <script>
-import { saveCategory } from '@/utils/cookies.js';
+// import { saveCategory } from '@/utils/cookies.js';
 import { makeID } from '@/utils/filters.js';
 import { moneybooRef } from '@/api/firebase';
 import firebase from 'firebase';
@@ -493,18 +486,18 @@ export default {
         icon: '',
         id: '',
       },
-      // cookie에 저장 된 category 개수
-      categoryNum: '',
-      // 불러온 카테고리명
-      showCategoryName: this.$store.state.categorys.name,
-      // 불러온 카테고리 아이콘명
-      showCategoryIcon: this.$store.state.categorys.icon,
-      // 불러온 카테고리 id
-      showCategoryId: this.$store.state.categorys.id,
+      // // cookie에 저장 된 category 개수
+      // categoryNum: '',
+      // // 불러온 카테고리명
+      // showCategoryName: this.$store.state.categorys.name,
+      // // 불러온 카테고리 아이콘명
+      // showCategoryIcon: this.$store.state.categorys.icon,
+      // // 불러온 카테고리 id
+      // showCategoryId: this.$store.state.categorys.id,
       // 카테고리 클릭 여부 확인용
       categoryCardClick: false,
       currentUid: this.$store.state.uid, // 현재 로그인한 유저의 uid
-      logMessage: '',
+      // logMessage: '',
       getCategory: [],
     };
   },
@@ -512,35 +505,7 @@ export default {
     this.categoryNum = this.$store.state.categorys.name.length;
 
     // firestore에 저장된 category DB 가져오기
-    this.mbooRef()
-      .doc('settings')
-      .get()
-      .then(docSnapshot => {
-        // document가 존재하면
-        if (docSnapshot.exists) {
-          const setCategory = docSnapshot.data().setCategory;
-
-          // setCategory 데이터가 있으면
-          if (setCategory) {
-            setCategory.forEach(data => {
-              this.getCategory.push(data);
-            });
-
-            // setCategory 데이터가 없으면
-          } else {
-            this.logMessage = '카테고리 값을 입력해주세요!';
-          }
-
-          // document가 없으면
-        } else {
-          this.logMessage = '셋팅 값을 입력해주세요!';
-        }
-      })
-      .catch(err => {
-        console.log('에러 발생한 위치 setCategory.vue created부분', err);
-      });
-
-    console.log(this.getCategory);
+    this.getFirebase();
   },
   methods: {
     clickAddCategory() {
@@ -574,14 +539,41 @@ export default {
                 ),
               });
           }
+
+          this.resetInputCategory(); // category input창 리셋.
         });
 
-      saveCategory(newCategory);
+      // saveCategory(newCategory); // cookie에 category 저장.
     },
+    // [추가]버튼 클릭 시 category 입력 창 비워줌.
+    resetInputCategory() {
+      this.inputCategory.name = '';
+      this.inputCategory.icon = '';
+      this.inputCategory.id = '';
+    },
+
     // 머니부 참조값
     mbooRef() {
       return moneybooRef(this.currentUid);
     },
+    // firestore에 저장된 category DB 가져오기 (created()에서 함수 실행)
+    getFirebase() {
+      this.mbooRef()
+        .doc('settings')
+        .onSnapshot(snapshot => {
+          console.log(snapshot.data());
+          console.log(snapshot.data().setCategory);
+          // document가 존재하면
+          if (snapshot.exists) {
+            const setCategory = snapshot.data().setCategory;
+            // setCategory 데이터가 있으면
+            if (setCategory) {
+              this.getCategory = setCategory;
+            }
+          }
+        });
+    },
+
     clickCategoryCard() {
       // 화면에 보이는 카테고리 클릭할 때마다 ture, false값을 줘서 [수정]버튼 활성, 비활성화 되게 해줌. + 클릭한 해당 카테고리의 배경색, 글자색 변경하기 위한 :class 주는 용도.
       if (this.categoryCardClick === false) {
@@ -593,6 +585,25 @@ export default {
     },
     clickRemoveCategory() {
       console.log('이 카테고리 삭제하자!!!');
+      // 클릭한 카테고리의 id를 구해서 이 함수로 보내줄 수 있으면 편할 것 같은데...!
+      console.log(this.getCategory);
+
+      this.mbooRef()
+        .where(typeof 'settings.setCategory.id', '==', 'string')
+        .onSnapshot(snapshot => {
+          console.log(snapshot);
+          snapshot.docChanges().forEach(change => {
+            if (change.type === 'added') {
+              console.log('New city: ', change.doc.data());
+            }
+            if (change.type === 'modified') {
+              console.log('Modified city: ', change.doc.data());
+            }
+            if (change.type === 'removed') {
+              console.log('Removed city: ', change.doc.data());
+            }
+          });
+        });
     },
     clickCategoryEdit() {
       console.log('이 카테고리 수정하자!!!!');
