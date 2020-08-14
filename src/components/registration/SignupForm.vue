@@ -5,21 +5,30 @@
       <h3>회원가입</h3>
       <form class="form" action="" @submit.prevent="submitForm">
         <!-- 아이디 -->
-        <div>
-          <label for="username" v-if="!username">이메일</label>
-          <input id="username" type="text" v-model="username" />
+        <div :class="{ active: useremail }">
+          <label for="useremail" v-if="!useremail">이메일</label>
+          <input id="useremail" type="text" v-model="useremail" />
+          <!-- <button @click.prevent="emailCheck()">중복체크</button> -->
         </div>
         <!-- 닉네임 -->
-        <div>
+        <div :class="{ active: nickname }">
           <label for="nickname" v-if="!nickname">닉네임</label>
           <input id="nickname" type="text" v-model="nickname" />
         </div>
         <!-- 비밀번호 -->
-        <div>
+        <div :class="{ active: password }">
           <label for="password" v-if="!password">비밀번호</label>
           <input id="password" type="text" v-model="password" />
         </div>
-        <button class="btn big signup add-btn font-jua">가입</button>
+        <strong>{{ errCode }}</strong>
+        <strong>{{ errMessage }}</strong>
+
+        <button
+          :class="{ active: userCompleted }"
+          class="btn big signup add-btn font-jua"
+        >
+          가입
+        </button>
       </form>
       <button class="reset-btn" @click.prevent="resetBtnForm()">
         되돌아가기
@@ -39,7 +48,13 @@
 </template>
 <script>
 // import { auth } from '@/api/firebase';
-import { auth, db } from '@/api/firebase';
+import {
+  auth,
+  signupUser,
+  moneybooRef,
+  userProfileUpdate,
+} from '@/api/firebase';
+import { dateFormat } from '@/utils/filters';
 
 import {
   clickFormEvent,
@@ -48,20 +63,26 @@ import {
   resetFormEvent,
   outFormEvent,
   initRegistForm,
-} from '@/js/register-event.js';
+} from '@/js/registration.js';
 
 export default {
   data() {
     return {
       // register
-      username: '',
+      useremail: '',
       nickname: '',
       password: '',
-      //firebase
-      docInit: ['userInfo', 'daily', 'settings'],
-      // for문 돌려서 신규 가입자는 doc을 미리 셋팅해놓음??
-      // 혹시모르니 메인 페이지에서는 if exists 인지 확인하고 데이터를 삽입
+      errCode: '',
+      errMessage: '',
     };
+  },
+  computed: {
+    userCompleted() {
+      return this.useremail && this.nickname && this.password;
+    },
+  },
+  created() {
+    // 만약에 로그인한 사용자가 해당페이지로 진입할 경우 메인페이지로 돌아가도록 설정
   },
   mounted() {
     // 이벤트 함수를 담당하는 js 함수에 element를 넘겨줘서 쉽게 dom을 제어할 수 있도록 함.
@@ -69,21 +90,14 @@ export default {
   },
   methods: {
     // 회원가입 양식 제출
-    submitForm() {
+    async submitForm() {
       // 1. 만약 유저가 있을 경우? 예외처리..
       // 2. 중복체크
       // 3. 유저정보 저장 방법 다르게?
       // 4. 회원가입이 완료되고 로그인,회원가입창 리셋시키기
-      const userInfo = {
-        created_date: new Date(),
-        email: this.username,
-        nickname: this.nickname,
-        login_status: false,
-      };
+      // 5. 회원탈퇴? 회원 삭제하면 db에서도 사라지게 구현하자.
 
-      // 1. 회원가입할때 settings와 daily document를 미리 만들어놓을까?
-      // 2. 회원탈퇴? 회원 삭제하면 db에서도 사라지게 구현하자.
-      // 3. 코드 깔끔하게 다시짜자 (nickname은 함수한에서 등록이 안됨 update시켜줄까?)
+      // 에러처리 어떤게 있을까..
 
       /*
         << 로그인 기능 순서 >>
@@ -93,35 +107,66 @@ export default {
         4. 팝업창
       */
 
-      auth.createUserWithEmailAndPassword(this.username, this.password).then(
-        function(user) {
-          // 회원가입시 users 하위 doc 고유 값 생성해서 moneyboo collection에 'userInfo' doc 생성한뒤 회원정보 저장
-          console.log(user);
-          console.log('유저의 이메일', user.user.email);
+      // 1. 이메일 중복체크,
+      // 2. 비밀번호 유효성검사
+      // 3. 중복검사
+      // 4. 에러처리
 
-          // const userInfo = {
-          //   created_date: new Date(),
-          //   email: user.user.email,
-          //   nickname: this.nickname,
-          //   login_status: false,
-          // };
+      try {
+        // 만약 입력값이 있다면
+        if (this.nickname && this.password && this.nickname) {
+          const response = await signupUser(this.useremail, this.password);
 
-          db.collection('users')
-            .doc(user.user.uid)
-            .collection('moneyboo')
-            .doc('userInfo')
-            .set(userInfo);
+          // 닉네임 등록
+          userProfileUpdate(response, this.nickname);
 
+          const userInfo = {
+            createdAt: this.getDateFormat(new Date()),
+            email: response.user.email,
+            nickname: this.nickname,
+            loginStatus: false,
+          };
+
+          // user 정보 DB에 등록
+          this.userInfoSetting(response.user.uid, userInfo);
+
+          console.log(response);
           alert('계정이 생성되었습니다! 로그인을 해주세요 🎉');
-          // 리셋이벤트해줄것..(마지막에 하자)
-        },
-        function(err) {
-          console.log(err);
-          alert(err.message);
-        },
-      );
-      this.resetUserInfo(); // input 값 리셋
-      initRegistForm();
+
+          this.resetUserInfo();
+          initRegistForm();
+
+          // 하나라도 입력값이 없다면
+        } else {
+          console.log('닉네임', this.nickname);
+          console.log('비밀번호', this.password);
+          console.log('이메일', this.useremail);
+          // 둘 다 입력되지 않았을때..??
+          const errTarget =
+            this.nickname === ''
+              ? '닉네임'
+              : this.password === ''
+              ? '비밀번호'
+              : '이메일';
+
+          alert(`${errTarget}이(가) 입력되지 않았습니다!`);
+        }
+
+        // 에러처리
+      } catch (err) {
+        // console.log(err);
+        alert(err.errMessage);
+        this.errCode = err.code;
+        this.errMessage = err.errMessage;
+      }
+
+      //this.resetUserInfo(); // input 값 리셋
+    },
+    emailCheck() {
+      console.log(this.useremail);
+      auth.importUsers().then(user => {
+        console.log(user);
+      });
     },
     // 회원가입 페이지 클릭 이벤트
     clickSignupForm(event) {
@@ -134,6 +179,7 @@ export default {
     // 리셋 버튼
     resetBtnForm() {
       resetFormEvent('signup');
+      this.resetUserInfo();
     },
     // 마우스 아웃 이벤트
     outSignupForm(event) {
@@ -142,8 +188,16 @@ export default {
     // input 정보 리셋 함수
     resetUserInfo() {
       this.nickname = '';
-      this.username = '';
+      this.useremail = '';
       this.password = '';
+    },
+    getDateFormat(date) {
+      return dateFormat(date);
+    },
+    userInfoSetting(uid, userData) {
+      return moneybooRef(uid)
+        .doc('userInfo')
+        .set(userData);
     },
   },
 };

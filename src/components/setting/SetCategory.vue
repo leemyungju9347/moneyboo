@@ -1,19 +1,5 @@
 <template>
   <div class="set-category">
-    <!-- <div>
-      <strong v-if="getCategory.length === 0" style="color:red">{{
-        logMessage
-      }}</strong>
-      <ul v-else>
-        <li v-for="item in getCategory" :key="item.id">
-          <strong>
-            {{ item.name }}
-            {{ item.icon }}
-          </strong>
-        </li>
-      </ul>
-    </div> -->
-
     <!-- 수입/지출 카테고리 아이콘 수정 -->
     <div class="category-list-cont">
       <h3 class="font-jua">수입 / 지출 카테고리</h3>
@@ -539,8 +525,6 @@ export default {
       .catch(err => {
         console.log('에러 발생한 위치 setCategory.vue created부분', err);
       });
-
-    console.log(this.getCategory);
   },
   methods: {
     clickAddCategory() {

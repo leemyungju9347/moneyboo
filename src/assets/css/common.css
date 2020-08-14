@@ -156,11 +156,13 @@ button.btn.small {
     position: absolute;
     bottom: 0;
 }
-.side-gnb-form > .logo-cont a {color: #fff;font-size: 2em;}
-.side-gnb-form > .logo-cont a > img {width:70%;height:auto;}
+.side-gnb-form > .logo-cont .logo {color: #fff;font-size: 2em;}
+.side-gnb-form > .logo-cont .logo > img {width:70%;height:auto;}
 .side-gnb-form > .username-cont {
   padding-top: 14px;
   display: block;
+  white-space: nowrap;
+  width: 100%;
 }
 .side-gnb-form > .username-cont > strong{
   color: rgb(255, 255, 255); 
@@ -206,12 +208,15 @@ button.btn.small {
   padding-left:15px;
   border-radius:100px;
 }
+.side-gnb-form > .gnb-list-cont > ul > li.mypage {
+  margin-top:10px;
+}
 .side-gnb-form > .gnb-list-cont > ul > li + li {
   margin-top:5px;
 }
 .side-gnb-form > .gnb-list-cont > ul > li.transparent-bar{
   padding:10px 0;
-  margin-top: 0;
+  margin-top:10px;
 }
 .side-gnb-form > .gnb-list-cont > ul > li.transparent-bar::before{
   content: '';
@@ -315,37 +320,6 @@ button.btn.small {
 }
 .side-gnb-form > .gnb-list-cont > ul > li.transparent-bar:hover {
   background-color: unset;
-}
-.side-gnb-form > .gnb-list-cont > ul > li.logout > a > .gnb-icon.logout-icon {
-  transition:all 0.2s ease;
-}
-.side-gnb-form > .gnb-list-cont > ul > li.logout:hover > a > .gnb-icon.logout-icon {
-  background-image: url('../images/logout_open.png');
-  /* transform: scale(1.15) */
-}
-.side-gnb-form > .gnb-list-cont > .logout-btn {
-  position: absolute;
-  bottom: -40px;
-  line-height: 56px;
-  font-size: 1.4em;
-  display: block;
-  padding-left: 70px;
-  color: #fff;
-  font-weight: 700;
-}
-.side-gnb-form > .gnb-list-cont > .logout-btn > .logout-icon {
-  background:url('../images/logout.png') no-repeat 50% 50%;
-  background-size:100%;
-  width:20px;
-  height:20px;
-  transform: scale(1.2);
-  display: block;
-  position: absolute;
-  left: 30px;
-  top: 18px;
-}
-.side-gnb-form > .gnb-list-cont > .logout-btn:hover > .logout-icon {
-  background-image: url('../images/logout_open.png');
 }
 
 

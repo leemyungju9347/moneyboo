@@ -4,17 +4,19 @@ import {
   getTotalGoal,
   getCashGoal,
   getCashAsset,
-  // getBankAsset,
   getBanksCookieBank,
   getBanksCookieAsset,
   getBanksCookieId,
   getCategoryCookieName,
   getCategoryCookieIcon,
   getCategoryCookieId,
-  // getListData,
   getUserEmail,
-  getAuthUid,
+  getUserUid,
+  getUserNickname,
+  getCurrentRouter,
+  saveAuth,
 } from '../utils/cookies.js';
+import { loginUser } from '@/api/firebase';
 
 Vue.use(Vuex);
 
@@ -27,23 +29,19 @@ export default new Vuex.Store({
       bank: getBanksCookieBank() || [],
       asset: getBanksCookieAsset() || [],
       id: getBanksCookieId() || [],
-      // bank: [],
-      // asset: [],
-      // id: [],
     },
 
     categorys: {
       name: getCategoryCookieName() || [],
       icon: getCategoryCookieIcon() || [],
       id: getCategoryCookieId() || [],
-      // name: [],
-      // icon: [],
-      // id: [],
     },
     //Registration
-    // cookie
     email: getUserEmail() || '',
-    uid: getAuthUid() || '',
+    uid: getUserUid() || '',
+    nickname: getUserNickname() || '',
+    // router path
+    currentRouter: getCurrentRouter() || '',
   },
   getters: {
     isLogin(state) {
@@ -53,18 +51,43 @@ export default new Vuex.Store({
     },
   },
   mutations: {
-    // 로그인했을때 회원정보 저장
+    // 로그인
     SET_USER(state, email) {
       state.email = email;
-    },
-    // 로그아웃
-    CLEAR_USER(state) {
-      state.useremail = '';
     },
     SET_UID(state, uid) {
       state.uid = uid;
     },
+    SET_NICKNAME(state, nickname) {
+      state.nickname = nickname;
+    },
+    // 로그아웃
+    CLEAR_USER(state) {
+      state.email = '';
+    },
+    CLEAR_UID(state) {
+      state.uid = '';
+    },
+    // 라우터 경로
+    SET_ROUTERPATH(state, router) {
+      state.currentRouter = router;
+    },
   },
-  actions: {},
+  actions: {
+    async FATCH_LOGIN({ commit }, data) {
+      const response = await loginUser(data.email, data.password);
+      // state 저장
+      commit('SET_USER', response.user.email);
+      commit('SET_UID', response.user.uid);
+      commit('SET_NICKNAME', response.user.displayName);
+
+      // 쿠키저장
+      saveAuth('user_email', response.user.email);
+      saveAuth('user_uid', response.user.uid);
+      saveAuth('user_nickname', response.user.displayName);
+
+      return response;
+    },
+  },
   modules: {},
 });

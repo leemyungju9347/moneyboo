@@ -3,35 +3,6 @@
     <!-- 1.목표금액 설정 2.각 자산들 설정 -->
     <h3 class="font-jua">목표 금액 설정 - 개인작업용</h3>
     <b class="explanation">* 모든 금액은 숫자만 기입해 주세요</b>
-
-    <!-- ******************** 출력 확인용!! 확인하고 삭제해주세요!************************* -->
-    <!-- 
-      데이터 확인용 임시 로그메세지 출력!!! 은재씨 확인하시고 삭제해주시거나 변형해주세요!!
-      1. settings 데이터가 없을때 == > '셋팅 값을 입력해주세요!' 출력
-      2. settings 데이터는 있는데 setAsset 데이터가 없을때 == > '자산과 목표값을 입력해주세요!' 출력
-     -->
-    <!-- <strong v-if="saveAsset.banks.length === 0" style="color:red">{{
-      logMassage
-    }}</strong> -->
-    <!-- 자산, 목표금액 목록 -->
-    <!-- <div v-else>
-      <strong>현금 자산 : {{ saveAsset.cashAsset }}</strong>
-      <strong>현금 목표 : {{ saveAsset.cashGoal }}</strong>
-      <strong>총 목표 금액 : {{ saveAsset.totalGoal }}</strong> -->
-    <!-- 은행별 자산 목록  -->
-    <!-- <ul>
-        <li v-for="item in saveAsset.banks" :key="item.id">
-          <strong>
-            은행 자산 :
-            {{ item.bank }}
-            {{ item.asset }}
-          </strong>
-        </li>
-      </ul>
-    </div> -->
-
-    <!-- ******************** 출력 확인용!! 확인하고 삭제해주세요!************************* -->
-
     <form action="">
       <div action="" class="total-goal-cont">
         <strong>총 목표 금액</strong>
@@ -119,8 +90,6 @@
           </li>
         </ul>
       </div>
-      <!-- {{ banks }} -->
-      <!-- {{ saveAsset }} -->
       <button
         class="btn small"
         v-if="
@@ -174,10 +143,6 @@ export default {
       getBanks: [], // 은행 리스트
       // bankNum: 0,
       currentUid: this.$store.state.uid, // 현재 로그인한 유저의 uid
-      // firstore에 있는 데이터를 가져오기 위한 변수
-      // getAsset: {}, // cashGoal, totalGoal, cashAsset
-
-      // logMassage: '', // 데이터 확인용 임시 변수
     };
   },
   created() {
@@ -222,43 +187,6 @@ export default {
     //   console.log(this.$store.state.bankAsset.id[i]);
     // }
 
-    // firstore에서 asset DB 가져오기
-    this.mbooRef()
-      .doc('settings')
-      .get()
-      .then(docSnapshot => {
-        // document의 값이 있으면
-        if (docSnapshot.exists) {
-          const setAsset = docSnapshot.data().setAsset;
-
-          // setAsset 데이터가 있으면
-          if (setAsset) {
-            // 불러온 목표금액,현금자산 getAsset 객체에 저장
-            this.getAsset.totalGoal = setAsset.totalGoal;
-            this.getAsset.cashAsset = setAsset.cashAsset;
-            this.getAsset.cashGoal = setAsset.cashGoal;
-
-            // 불러온 은행 자산들 getBanks에 저장
-            setAsset.banks.forEach(data => {
-              this.getBanks.push(data);
-            });
-
-            // setAsset 데이터가 없으면
-          } else {
-            this.logMassage = '자산과 목표값을 입력해주세요!';
-            console.log('setAsset 데이터가 없습니다!', docSnapshot);
-          }
-
-          // document 값이 없으면
-        } else {
-          console.log('settings 값이 없음', docSnapshot);
-          this.logMassage = '셋팅 값을 입력해주세요!';
-        }
-      })
-      .catch(err => {
-        console.log(err);
-      });
-
     // 저장된 은행 수 data에 넣어줌.
     this.bankNum = this.$store.state.bankAsset.bank.length;
 
@@ -277,9 +205,6 @@ export default {
             this.saveAsset.totalGoal = setAsset.totalGoal;
             this.saveAsset.cashAsset = setAsset.cashAsset;
             this.saveAsset.cashGoal = setAsset.cashGoal;
-            // this.getAsset.totalGoal = setAsset.totalGoal;
-            // this.getAsset.cashAsset = setAsset.cashAsset;
-            // this.getAsset.cashGoal = setAsset.cashGoal;
 
             // 불러온 은행 자산들 getBanks에 저장
             setAsset.banks.forEach(data => {
@@ -302,9 +227,6 @@ export default {
       .catch(err => {
         console.log(err);
       });
-
-    // // 저장된 은행 수 data에 넣어줌.
-    // this.bankNum = this.$store.state.bankAsset.bank.length;
   },
   computed: {},
   methods: {
