@@ -53,13 +53,16 @@ function makeID(type) {
     new Date().getMonth() < 10
       ? `0${new Date().getMonth() + 1}`
       : new Date().getMonth() + 1;
-  let date = new Date().getDate();
+  let date =
+    new Date().getDate() < 10
+      ? `0${new Date().getDate()}`
+      : new Date().getDate();
 
   let hh = new Date().getHours().toString();
   let mm = new Date().getMinutes().toString();
   let ss = new Date().getSeconds().toString();
 
-  const nowTime = ` ${hh < 10 ? `0${hh}` : hh}${mm < 10 ? `0${mm}` : mm}${
+  const nowTime = `${hh < 10 ? `0${hh}` : hh}${mm < 10 ? `0${mm}` : mm}${
     ss < 10 ? `0${ss}` : ss
     } `;
 

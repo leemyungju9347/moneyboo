@@ -1,8 +1,7 @@
 <template>
   <div class="daily-list-add">
-    <!-- <form class="add-cont" @submit.prevent="submitList"> -->
     <form class="add-cont" @submit.prevent="submitList">
-      {{ date }}
+      <!-- {{ date }} -->
       <button
         type="button"
         v-on:click="clickIncomeBtn()"
@@ -20,7 +19,6 @@
         지출
       </button>
       <div>
-        <!-- <button class="btn what-date" type="button">날짜</button> -->
         <DatePicker
           v-model="date"
           color="green"
@@ -58,7 +56,6 @@
         <button class="btn small list-add-btn">
           <i class="fas fa-plus"></i>
         </button>
-        <!-- <button class="btn small list-add-btn">등록</button> -->
       </div>
     </form>
   </div>
@@ -79,7 +76,7 @@ export default {
     eventBus.$on('editList', data => {
       // 리스트에서 edit 버튼을 누른다면,
       console.log(data);
-      let dd = new Date(` 2020, ${data.date}`);
+      let dd = new Date();
       // 데이터는 연결이 잘 되는데, 달력에 연결이 안된다...
       this.date = dd.toString();
       this.price = data.price;
@@ -94,6 +91,8 @@ export default {
     // 셋팅에 아무것도 추가하지 않고 데일리 페이지 왔더니 setCategory를 못찾음 예외처리 ㄱㄱ!
     // settings에 값이 없을때 daily로 오면 settings로 넘겨버릴까?
     // 만약 카테고리만 저장하고 에셋은 저장안하고 daily 페이지에 왔다면??
+
+    // 셋팅페이지에 있는 데이터 불러오기
     this.getSettingData();
   },
   data() {
@@ -169,6 +168,7 @@ export default {
       return moneybooRef(this.currentUid);
     },
     dailyListAddRef() {
+      // 😆😆변경함
       return this.mbooRef()
         .doc('daily')
         .collection('listAdd');
@@ -185,12 +185,14 @@ export default {
       if (
         this.selectCategory === '' ||
         this.selectBank === '' ||
-        this.price === null
+        this.price === null ||
+        this.price == ' '
       ) {
         alert('값을 선택, 입력해 주세요.');
         return true;
       } else return false;
     },
+    // 금액입력 인풋창에 숫자가 맞는지 확인 함수
     checkPriceNumber() {
       // 숫자가 아니면 alert 창을 띄워라
       if (isNaN(this.price)) {
@@ -198,16 +200,13 @@ export default {
         return true;
       } else return false;
     },
+    // 리스트 제출 함수
     submitList() {
+      // 값이 비는지, 숫자가 맞는지 확인을 먼저 해준다.
       if (this.checkEmptyList() || this.checkPriceNumber()) return;
-      // if (isNaN(this.price)) {
-      //   // 숫자가 아니라면, alert 창으로 숫자만 입력해야함을 알린다.
-      //   alert('숫자만 입력해주세요');
-      //   this.price = null;
-      //   return;
-      // }
-      // 값이 하나라도 빌 경우를 확인해주는 함수
+
       let listData = {};
+      // 만약 수정버튼을 눌렀을 때라면,
       if (this.edit === true) {
         listData = {
           id: this.editId,
@@ -257,6 +256,7 @@ export default {
         .catch(err => {
           console.log('listAdd submitList 부분 에러 발생', err);
         });
+<<<<<<< Updated upstream
       /* 
         문제점 발견
 
@@ -266,6 +266,8 @@ export default {
       */
 
       // this.$emit('addListData', listData);
+=======
+>>>>>>> Stashed changes
       this.resetData(); // 인풋창의 데이터를 리셋해주는 함수
     },
     resetData() {
