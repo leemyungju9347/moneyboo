@@ -35,19 +35,6 @@ function saveCategory(newCategory) {
   }
 }
 
-// DailyListAdd.vue
-function saveListData(newList) {
-  if (!checkListData()) {
-    document.cookie = `listData = ${JSON.stringify(newList)}`;
-    // document.cookie = `listData = ${newnewList}`;
-    // document.cookie = `listData = ${newList}`;
-  } else if (checkListData()) {
-    // document.cookie = `listData = ${getListData()}${newList}`;
-    // document.cookie = `listData = ${getListData()}${newnewList}`;
-    document.cookie = `listData = ${checkListData()}${JSON.stringify(newList)}`;
-  }
-}
-
 // Registration.vue
 function saveAuth(name, value) {
   document.cookie = `${name}=${value}`;
@@ -60,19 +47,24 @@ function getUserEmail() {
   );
 }
 
-function getAuthUid() {
+function getUserNickname() {
   return document.cookie.replace(
-    /(?:(?:^|.*;\s*)user_uid\s*=\s*([^;]*).*$)|^.*$/,
+    /(?:(?:^|.*;\s*)user_nickname\s*=\s*([^;]*).*$)|^.*$/,
     '$1',
   );
 }
 
-// 리스트를 저장할때 확인하는 함수
-function checkListData() {
+// get router path
+function getCurrentRouter() {
   return document.cookie.replace(
-    /(?:(?:^|.*;\s*)listData\s*=\s*([^;]*).*$)|^.*$/,
+    /(?:(?:^|.*;\s*)cur_path\s*=\s*([^;]*).*$)|^.*$/,
     '$1',
   );
+}
+
+// delete
+function deleteCookie(value) {
+  document.cookie = `${value}=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
 }
 
 // //StatisticsPage > ListOfMonth
@@ -225,57 +217,13 @@ function getCategoryCookieId() {
   return categoryId;
 }
 
-function getListData() {
-  let listData = checkListData();
-  let sortListData = listData.split(/{/).map(a => a.replace(/}/g, ''));
-  sortListData.splice('', 1);
-
-  for (let i = 0; i < sortListData.length; i++) {
-    sortListData[i] = eval('({' + sortListData[i] + '})');
-  }
-  return sortListData;
-}
-
-function deleteListCookie(value) {
-  let listData = checkListData();
-  // JSON.parse(listData);
-  console.log(value);
-  console.log(listData);
-
-  let sortListData = listData.split(/{/).map(a => a.replace(/}/g, ''));
-  sortListData.splice('', 1);
-  for (let i = 0; i < sortListData.length; i++) {
-    sortListData[i] = eval('({' + sortListData[i] + '})');
-    console.log(sortListData[i]);
-
-    if (sortListData[i].id == value.id) {
-      console.log(i);
-      sortListData.splice([i], 1);
-    }
-    // sortListData = JSON.stringify(sortListData[i]);
-    // sortListData = toString(sortListData[i]);
-  }
-
-  console.log(sortListData);
-
-  // document.cookie = `${JSON.stringify(
-  //   value,
-  // )}=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
-  document.cookie = `listData=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
-  // saveListData(sortListData[0]);
-  // console.log(value);
-
-  // let delList = `${value}=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
-  // console.log(delList);
-}
-
 export {
   saveTotalGoal,
   saveCashGoal,
   saveCashAsset,
   saveBankAsset,
   saveCategory,
-  saveListData,
+  // saveListData,
   getTotalGoal,
   getCashGoal,
   getCashAsset,
@@ -289,10 +237,12 @@ export {
   getCategoryCookieName,
   getCategoryCookieIcon,
   getCategoryCookieId,
-  getListData,
   // deleteCookie,
   saveAuth,
   getUserEmail,
-  getAuthUid,
-  deleteListCookie,
+  // getUserUid,
+  getUserNickname,
+  deleteCookie,
+  getCurrentRouter,
+  // deleteListCookie,
 };
