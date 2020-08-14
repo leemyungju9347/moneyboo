@@ -15,7 +15,7 @@
         </li>
         <li>
           Nickname
-          <span>hello12345</span>
+          <span>{{ nickname }}</span>
         </li>
       </ul>
       <!-- <span>ID : {{}}</span>
@@ -35,6 +35,7 @@ export default {
   data() {
     return {
       id: this.$store.state.email,
+      nickname: this.$store.state.nickname,
       totalGoal: 0,
       totalExpendPrice: 0,
       totalPercent: 0,
