@@ -74,6 +74,21 @@ function deleteCookie(value) {
   document.cookie = `${value}=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
 }
 
+// //StatisticsPage > ListOfMonth
+// function checkMonthList() {
+//   return document.cookie.replace(
+//     /(?:(?:^|.*;\s*)totalGoal\s*=\s*([^;]*).*$)|^.*$/,
+//     '$1',
+//   );
+// }
+// //StatisticsPage > ListOfYear
+// function checkYearList() {
+//   return document.cookie.replace(
+//     /(?:(?:^|.*;\s*)totalGoal\s*=\s*([^;]*).*$)|^.*$/,
+//     '$1',
+//   );
+// }
+
 // store에서 사용.
 function getTotalGoal() {
   return document.cookie.replace(
@@ -235,4 +250,5 @@ export {
   getUserNickname,
   deleteCookie,
   getCurrentRouter,
+  // deleteListCookie,
 };
