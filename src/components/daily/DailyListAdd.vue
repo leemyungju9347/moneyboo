@@ -87,57 +87,6 @@ export default {
       this.listText = data.text;
     });
     // 셋팅페이지에 있는 데이터 불러오기
-    this.mbooRef()
-      .doc('settings')
-      .get()
-      .then(docSnapshot => {
-        // document 값이 있으면
-        if (docSnapshot.exists) {
-          const setCategory = docSnapshot.data().setCategory;
-          const setAsset = docSnapshot.data().setAsset;
-
-          // category와 asset이 셋팅되어있을때만 실행
-          if (setCategory && setAsset) {
-            // 카테고리
-            setCategory.forEach(data => {
-              this.getCategory.push(data.name);
-            });
-
-            // 에셋
-            setAsset.banks.forEach(data => {
-              this.getBankAsset.push(data);
-            });
-
-            // category나 asset이 설정되어 있지 않을 경우만 실행
-          } else {
-            // 에러메세지 undefined 값인 데이터에 문자 삽입
-            const errMessage =
-              setAsset === undefined
-                ? '목표금액과 자산'
-                : setCategory === undefined
-                ? '카테고리'
-                : '관리페이지';
-
-            // 경고창 실행하고 셋팅페이지로 이동
-            alert(
-              errMessage +
-                '에서 설정값을(를) 등록해주세요! 관리페이지로 이동합니다.',
-            );
-            this.$router.push('/setting');
-          }
-
-          // document 값이 없으면
-        } else {
-          // setting 페이지로 이동
-          alert(
-            '관리 페이지에서 초기값을 등록해주세요! 관리페이지로 이동합니다.',
-          );
-          this.$router.push('/setting');
-        }
-      })
-      .catch(err => {
-        console.log('에러가 발생한 위치는 listAdd Created', err);
-      });
     this.getSettingData();
   },
   data() {
