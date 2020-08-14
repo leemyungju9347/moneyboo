@@ -15,8 +15,10 @@ import {
   getUserEmail,
   getAuthUid,
 } from '../utils/cookies.js';
+import { getBankAsset } from '@/utils/getFirebase.js';
 
 Vue.use(Vuex);
+console.log(Vuex.Store);
 
 export default new Vuex.Store({
   state: {
@@ -31,6 +33,7 @@ export default new Vuex.Store({
       // asset: [],
       // id: [],
     },
+    banks: getBankAsset() || [],
 
     categorys: {
       name: getCategoryCookieName() || [],

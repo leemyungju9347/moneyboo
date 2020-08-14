@@ -53,7 +53,10 @@ function makeID(type) {
     new Date().getMonth() < 10
       ? `0${new Date().getMonth() + 1}`
       : new Date().getMonth() + 1;
-  let date = new Date().getDate();
+  let date =
+    new Date().getDate() < 10
+      ? `0${new Date().getDate()}`
+      : new Date().getDate();
 
   let hh = new Date().getHours().toString();
   let mm = new Date().getMinutes().toString();
