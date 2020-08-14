@@ -17,7 +17,7 @@ import {
   saveAuth,
 } from '../utils/cookies.js';
 import { loginUser } from '@/api/firebase';
-import { getBankAsset } from '@/utils/getFirebase.js';
+
 
 Vue.use(Vuex);
 console.log(Vuex.Store);
@@ -32,7 +32,6 @@ export default new Vuex.Store({
       asset: getBanksCookieAsset() || [],
       id: getBanksCookieId() || [],
     },
-    banks: getBankAsset() || [],
 
     categorys: {
       name: getCategoryCookieName() || [],
