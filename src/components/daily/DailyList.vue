@@ -61,9 +61,12 @@
 </template>
 
 <script>
+<<<<<<< HEAD
 // import { getListData } from '@/utils/daily.js';
 // import { deleteListCookie } from '@/utils/cookies';
 // import { addComma } from '@/utils/filters';
+=======
+>>>>>>> c9763deeecc0db70a494a1bacf6c130769d2d7e7
 import { addComma, newConversionMonth } from '@/utils/filters';
 import { eventBus } from '@/main';
 // import firebase from 'firebase';
@@ -211,6 +214,7 @@ export default {
         }
       }
     },
+<<<<<<< HEAD
     // 삭제버튼을 눌렀을때의 함수
     deleteListData(list) {
       const yearsMonth = newConversionMonth();
@@ -283,6 +287,8 @@ export default {
 
       return `${years}.${month}`;
     },
+=======
+>>>>>>> c9763deeecc0db70a494a1bacf6c130769d2d7e7
   },
 };
 </script>
