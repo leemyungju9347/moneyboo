@@ -521,7 +521,6 @@ export default {
       });
 
     this.getFirebase();
-
   },
   methods: {
     clickAddCategory() {
