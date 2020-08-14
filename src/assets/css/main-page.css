@@ -113,4 +113,82 @@
 	background-color: rgb(206, 172, 118);
 }
 
-/* ani-money */
+
+/* @media query -------------------------------------------------  */
+/* tablet */
+@media screen and (max-width:1023px){
+	.total-asset-cont strong {
+		font-size: 2em;
+	}
+
+	.asset-list-form > form em {
+		font-size: 1.7em;
+	}
+	.total-asset-cont b, 
+	.cash-asset-cont span, 
+	.credit-asset-cont ul > li > b, 
+	.cash-asset-cont b {
+		font-size: 1.4em;
+	}
+
+	.asset-list-form > form > div {
+		padding: 20px;
+	}
+
+	.total-asset-cont,
+	.asset-list-form > form > div.cash-asset-cont {
+		height: fit-content;
+	}
+}
+
+/* phone */
+@media screen and (max-width:768px){
+	.asset-list-form {
+		outline: 1px solid lime;
+		height: 80%;
+		min-height: 0;
+	}
+	.total-asset-cont strong {
+		font-size: 1.3em;
+		width: 40%;
+	}
+
+	.total-asset-cont b, 
+	.cash-asset-cont span, 
+	.credit-asset-cont ul > li > b, 
+	.cash-asset-cont b {
+		font-size: 1.2em;
+	}
+	.total-asset-cont b {
+		padding-top: 0;
+	}
+	.asset-list-form > form em {
+		font-size: 1.3em;
+	}
+	.asset-list-form > form > div {
+		padding: 20px;
+	}
+	.credit-asset-cont ul > li > span{
+		font-size: 1.3em;
+		width: 40%;
+	}
+	.asset-list-form > form > div.credit-asset-cont {
+		height: 50%;
+	}
+
+	.asset-list-form > form > div
+	.credit-asset-cont {
+		height: 30%;
+	}
+
+	.total-asset-cont,
+	.asset-list-form > form > div.cash-asset-cont {
+		height: fit-content;
+	}
+
+	.btn.main {
+		right: 10px;
+		bottom: 20px;
+		font-size: 2em;
+	}
+}
