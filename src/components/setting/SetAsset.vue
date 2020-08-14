@@ -235,7 +235,6 @@ export default {
 
     // firstore에서 asset DB 가져오기
     this.getFirebase();
-
   },
   computed: {},
   methods: {
