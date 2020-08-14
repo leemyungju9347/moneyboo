@@ -65,7 +65,6 @@
 </template>
 
 <script>
-// import { saveListData } from '@/utils/cookies.js';
 import DatePicker from 'v-calendar/lib/components/date-picker.umd';
 // import DatePicker from '@/js/v-calendar.js';
 import { makeID } from '@/utils/filters.js';
@@ -144,9 +143,6 @@ export default {
         console.log('에러가 발생한 위치는 listAdd Created', err);
       });
 
-    // 셋팅에 아무것도 추가하지 않고 데일리 페이지 왔더니 setCategory를 못찾음 예외처리 ㄱㄱ!
-    // settings에 값이 없을때 daily로 오면 settings로 넘겨버릴까?
-    // 만약 카테고리만 저장하고 에셋은 저장안하고 daily 페이지에 왔다면??
     this.getSettingData();
   },
   data() {
@@ -282,9 +278,6 @@ export default {
           text: this.listText,
         };
       }
-      // if (this.id) {
-      //   console.log('수정한 리스트 저장한다!');
-      // }
 
       // firestore에 listData 저장
       const thisMonth = this.conversionMonth(this.date);
@@ -311,10 +304,6 @@ export default {
           console.log('listAdd submitList 부분 에러 발생', err);
         });
 
-      // 쿠키저장
-      // saveListData(listData);
-
-      // this.$emit('addListData', listData);
       this.resetData(); // 인풋창의 데이터를 리셋해주는 함수
     },
     resetData() {

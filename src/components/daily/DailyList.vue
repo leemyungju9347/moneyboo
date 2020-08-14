@@ -70,13 +70,6 @@ import { moneybooRef } from '@/api/firebase';
 
 export default {
   created() {
-    /*
-      회원가입하고 아무것도 추가하지 않은 상태에서 daily Page 들어왔을때부터 생각해줘야함
-
-      1. daily doc이 없으면?
-      2. listAdd coll이 없으면?
-      3. 해당 날짜의 doc이 없으면?
-    */
     this.getListData();
     this.getCategoryData();
   },

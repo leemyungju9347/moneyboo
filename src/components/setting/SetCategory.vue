@@ -1,19 +1,5 @@
 <template>
   <div class="set-category">
-    <!-- <div>
-      <strong v-if="getCategory.length === 0" style="color:red">{{
-        logMessage
-      }}</strong>
-      <ul v-else>
-        <li v-for="item in getCategory" :key="item.id">
-          <strong>
-            {{ item.name }}
-            {{ item.icon }}
-          </strong>
-        </li>
-      </ul>
-    </div> -->
-
     <!-- 수입/지출 카테고리 아이콘 수정 -->
     <div class="category-list-cont">
       <h3 class="font-jua">수입 / 지출 카테고리</h3>
@@ -505,7 +491,37 @@ export default {
     this.categoryNum = this.$store.state.categorys.name.length;
 
     // firestore에 저장된 category DB 가져오기
+
+    this.mbooRef()
+      .doc('settings')
+      .get()
+      .then(docSnapshot => {
+        // document가 존재하면
+        if (docSnapshot.exists) {
+          const setCategory = docSnapshot.data().setCategory;
+
+          // setCategory 데이터가 있으면
+          if (setCategory) {
+            setCategory.forEach(data => {
+              this.getCategory.push(data);
+            });
+
+            // setCategory 데이터가 없으면
+          } else {
+            this.logMessage = '카테고리 값을 입력해주세요!';
+          }
+
+          // document가 없으면
+        } else {
+          this.logMessage = '셋팅 값을 입력해주세요!';
+        }
+      })
+      .catch(err => {
+        console.log('에러 발생한 위치 setCategory.vue created부분', err);
+      });
+
     this.getFirebase();
+
   },
   methods: {
     clickAddCategory() {

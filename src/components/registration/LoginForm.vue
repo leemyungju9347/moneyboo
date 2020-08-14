@@ -5,12 +5,12 @@
       <h3>로그인</h3>
       <form class="form" action="" @submit.prevent="submitForm">
         <!-- 아이디 -->
-        <div>
-          <label for="username" v-if="!username">아이디</label>
-          <input id="username" type="text" v-model="username" />
+        <div :class="{ active: useremail }">
+          <label for="useremail" v-if="!useremail">아이디</label>
+          <input id="useremail" type="text" v-model="useremail" />
         </div>
         <!-- 비밀번호 -->
-        <div>
+        <div :class="{ active: password }">
           <label for="password" v-if="!password">비밀번호</label>
           <input
             id="password"
@@ -21,7 +21,12 @@
         </div>
         <!-- 회원정보 까먹었을때 찾는 버튼 -->
         <p><a href="" class="font-jua">비밀번호 찾기</a></p>
-        <button class="btn big login add-btn font-jua">로그인</button>
+        <button
+          class="btn big login add-btn font-jua"
+          :class="{ active: userCompleted }"
+        >
+          로그인
+        </button>
       </form>
       <button class="reset-btn" @click.prevent="resetBtnForm()">
         되돌아가기
@@ -41,9 +46,6 @@
   </div>
 </template>
 <script>
-import { auth, db } from '@/api/firebase';
-import { saveAuth } from '@/utils/cookies.js';
-
 import {
   clickFormEvent,
   globalMountedInLogin,
@@ -51,80 +53,67 @@ import {
   resetFormEvent,
   outFormEvent,
   initRegistForm,
-} from '@/js/register-event.js';
+} from '@/js/registration.js';
 export default {
   data() {
     return {
       // register
-      username: '',
+      useremail: '',
       password: '',
       // event
     };
   },
-  created() {
-    // console.log(auth.currentUser);
-  },
+  created() {},
   mounted() {
     // 이벤트 함수를 담당하는 js 함수에 element를 넘겨줘서 쉽게 dom을 제어할 수 있도록 함.
     globalMountedInLogin(this.$el);
   },
-  computed: {},
+  computed: {
+    userCompleted() {
+      return this.useremail && this.password;
+    },
+  },
   methods: {
     // 1. 로그인 안했을때 에러처리
     // 2. 회원 삭제되면 db 목록에도 삭제
 
     // 로그인 양식 제출
-    submitForm() {
-      // 1. async await문으로 작성
-      // 2. 로그인하면 gnb 화면에 유저 정보가 바로 로드 될 수 있도록 하자..
+    async submitForm() {
+      // 1. async await문으로 작성 (완)
+      // 2. 로그인하면 gnb 화면에 유저 정보가 바로 로드 될 수 있도록 하자.. (완)
       // 3. 만약 로그인 정보가 없을 경우의 예외처리
       // 4. 로그인하고 다음 동작
-      // 5. 쿠키 순서 수정..
-      auth.signInWithEmailAndPassword(this.username, this.password).then(
-        function(user) {
-          alert('로그인되었습니다!😊');
-          console.log(user);
-          // 로그인 유저의 데이터 가져오기
-        },
-        function(err) {
-          alert(err.message);
-        },
-      );
+      // 5. 쿠키 순서 수정..(완)
 
-      // store에 저장
-      this.$store.commit('SET_USER', this.username);
-      this.$store.commit('SET_UID', auth.currentUser.uid);
+      const userData = {
+        email: this.useremail,
+        password: this.password,
+      };
 
-      this.initForm();
+      try {
+        const response = await this.$store.dispatch('FATCH_LOGIN', userData);
+        console.log(response);
+        alert('로그인되었습니다!😊');
+        this.initForm();
+        initRegistForm();
+      } catch (err) {
+        console.log('로그인폼 에러다!!!', err);
+      }
 
-      // this.$store.commit('set_value', this.inputValue);
-      console.log(auth.currentUser.uid);
-
-      // 로그인시 현재 유저가 안바뀜...
-      const usersDoc = db.collection('users').doc(auth.currentUser.uid);
-      const moneybooColl = usersDoc.collection('moneyboo').doc('userInfo');
+      // const usersDoc = db.collection('users').doc(auth.currentUser.uid);
+      // const moneybooColl = usersDoc.collection('moneyboo').doc('userInfo');
 
       // 로그인한 유저의 login_status를 true로 바꿔줌
-      moneybooColl.update({
-        login_status: true,
-      });
-
-      // db에서 유저의 이메일을 가져와 쿠키에 저장
-      moneybooColl.get().then(doc => {
-        // 로그인된 유저정보를 가져와서 쿠키에 저장
-        saveAuth('user_email', doc.data().email);
-      });
-      // uid도 쿠키 값에 저장
-      saveAuth('user_uid', auth.currentUser.uid);
-
-      initRegistForm();
+      // moneybooColl.update({
+      //   login_status: true,
+      // });
     },
     // 클릭 이벤트
     clickSignupForm(event) {
       clickFormEvent(event.target);
     },
     initForm() {
-      this.username = '';
+      this.useremail = '';
       this.password = '';
     },
     // 마우스오버 이벤트
@@ -134,6 +123,7 @@ export default {
     // 리셋 버튼
     resetBtnForm() {
       resetFormEvent('login');
+      this.initForm();
     },
     // 마우스 아웃 이벤트
     outLoginForm() {

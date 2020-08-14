@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import store from '@/store/index';
 
 Vue.use(VueRouter);
 
@@ -23,14 +24,23 @@ const routes = [
   {
     path: '/mypage',
     component: () => import('@/views/MyPage.vue'),
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: '/daily',
     component: () => import('@/views/DailyPage.vue'),
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: '/statistics',
     component: () => import('@/views/StatisticsPage.vue'),
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: '/sidebar',
@@ -43,12 +53,9 @@ const routes = [
   {
     path: '/setting',
     component: () => import('@/views/SettingPage.vue'),
-  },
-  // 존재하지 않는 모든 경로는 로그인 페이지로 리다이렉션
-  // 사용자인증이 됐을 경우에는 main 페이지로 로드되도록 설정
-  {
-    path: '*',
-    redirect: '/registration',
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: '/month',
@@ -61,4 +68,15 @@ const router = new VueRouter({
   routes,
 });
 
+router.beforeEach((to, from, next) => {
+  // 인증이 필요한 페이지이고,
+  // 사용자가 로그인하지 않았을때
+  // 로그인 페이지로 이동
+  if (to.meta.requiresAuth && !store.getters.isLogin) {
+    next('/');
+
+    return;
+  }
+  next();
+});
 export default router;
