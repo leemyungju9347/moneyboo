@@ -17,6 +17,7 @@ import {
   saveAuth,
 } from '../utils/cookies.js';
 import { loginUser } from '@/api/firebase';
+
 Vue.use(Vuex);
 console.log(Vuex.Store);
 
