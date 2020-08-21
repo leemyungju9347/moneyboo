@@ -66,7 +66,7 @@ import DatePicker from 'v-calendar/lib/components/date-picker.umd';
 // import DatePicker from '@/js/v-calendar.js';
 import { makeID } from '@/utils/filters.js';
 import { eventBus } from '@/main.js';
-import { moneybooRef } from '@/api/firebase';
+import { moneybooRef } from '@/api/firestore';
 import firebase from 'firebase';
 
 export default {
