@@ -18,6 +18,7 @@ import {
 } from '../utils/cookies.js';
 import { loginUser } from '@/api/fireAuth';
 
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
