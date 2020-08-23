@@ -492,7 +492,7 @@ export default {
 
     // firestore에 저장된 category DB 가져오기
 
-    this.setAssetRef()
+    this.settingListRef()
       .doc('categories')
       .get()
       .then(docSnapshot => {
@@ -527,10 +527,10 @@ export default {
     mbooRef() {
       return moneybooRef(this.currentUid);
     },
-    setAssetRef() {
+    settingListRef() {
       return this.mbooRef()
         .doc('settings')
-        .collection('setAsset');
+        .collection('settingList');
     },
     clickAddCategory() {
       // cookie에 저장할 때 함께 저장할 각각의 id생성.
@@ -541,13 +541,13 @@ export default {
       console.log(newCategory);
 
       // firestore에 category DB 저장
-      this.setAssetRef()
+      this.settingListRef()
         .doc('categories')
         .get()
         .then(docSnapshot => {
           // 만약 document에 데이터가 없으면 초기값 셋팅
           if (!docSnapshot.exists) {
-            this.setAssetRef()
+            this.settingListRef()
               .doc('categories')
               .set({ categories: [this.inputCategory] }); // 배열로 넘겨줌
 
@@ -555,7 +555,7 @@ export default {
 
             // 만약 document에 데이터가 있다면 배열을 업데이트
           } else {
-            this.setAssetRef()
+            this.settingListRef()
               .doc('categories')
               .update({
                 categories: firebase.firestore.FieldValue.arrayUnion(
@@ -578,7 +578,7 @@ export default {
 
     // firestore에 저장된 category DB 가져오기 (created()에서 함수 실행)
     getFirebase() {
-      this.setAssetRef()
+      this.settingListRef()
         .doc('categories')
         .onSnapshot(snapshot => {
           // console.log(snapshot.data());

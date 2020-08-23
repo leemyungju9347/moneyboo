@@ -191,7 +191,7 @@ export default {
 
     // firstore에서 asset DB 가져오기
     // --- assets
-    this.setAssetRef()
+    this.settingListRef()
       .doc('assets')
       .onSnapshot(snapshot => {
         // console.log(snapshot.data().setAsset);
@@ -208,7 +208,7 @@ export default {
       });
 
     // --- banks
-    this.setAssetRef()
+    this.settingListRef()
       .doc('banks')
       .onSnapshot(snapshot => {
         // console.log(snapshot.data().setAsset);
@@ -271,57 +271,57 @@ export default {
     mbooRef() {
       return moneybooRef(this.currentUid);
     },
-    setAssetRef() {
+    settingListRef() {
       return this.mbooRef()
         .doc('settings')
-        .collection('setAsset');
+        .collection('settingList');
     },
     clickAddBank() {
       this.saveAsset.banks.push({ bank: '', asset: '', id: makeID('bank') });
     },
     clickRemoveBank(bankList) {
       console.log(bankList);
-      this.setAssetRef()
+      this.settingListRef()
         .doc('banks')
         .update({ banks: firebase.firestore.FieldValue.arrayRemove(bankList) });
     },
     clickSaveAsset() {
       // firestore에 asset DB 저장
       // --- assets
-      this.setAssetRef()
+      this.settingListRef()
         .doc('assets')
         .get()
         .then(docSnapshot => {
           // documnet가 있으면 update
           console.log(docSnapshot);
           if (docSnapshot.exists) {
-            this.setAssetRef()
+            this.settingListRef()
               .doc('assets')
               .update({ assets: this.saveAsset.assets });
 
             // document가 없으면 set
           } else {
-            this.setAssetRef()
+            this.settingListRef()
               .doc('assets')
               .update({ assets: this.saveAsset.assets });
             this.logMassage = ''; // 데이터를 추가했으니 logMessage 없애기
           }
         });
       // --- banks
-      this.setAssetRef()
+      this.settingListRef()
         .doc('banks')
         .get()
         .then(docSnapshot => {
           // documnet가 있으면 update
           console.log(docSnapshot);
           if (docSnapshot.exists) {
-            this.setAssetRef()
+            this.settingListRef()
               .doc('banks')
               .update({ banks: this.saveAsset.banks });
 
             // document가 없으면 set
           } else {
-            this.setAssetRef()
+            this.settingListRef()
               .doc('banks')
               .update({ banks: this.saveAsset.banks });
             this.logMassage = ''; // 데이터를 추가했으니 logMessage 없애기
@@ -331,7 +331,7 @@ export default {
     // created()에서 사용할 함수(추가, 수정, 삭제 된 데이터 화면에 바로 반영되도록.)
     getFirebase() {
       // assets
-      this.setAssetRef()
+      this.settingListRef()
         .doc('assets')
         .onSnapshot(snapshot => {
           // console.log(snapshot.data().setAsset);
@@ -348,7 +348,7 @@ export default {
         });
 
       // banks
-      this.setAssetRef()
+      this.settingListRef()
         .doc('banks')
         .onSnapshot(snapshot => {
           // console.log(snapshot.data().setAsset);
