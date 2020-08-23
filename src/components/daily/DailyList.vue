@@ -64,7 +64,7 @@
 import { addComma, newConversionMonth } from '@/utils/filters';
 import { eventBus } from '@/main';
 import firebase from 'firebase';
-import { moneybooRef } from '@/api/firebase';
+import { moneybooRef } from '@/api/firestore';
 
 export default {
   created() {
