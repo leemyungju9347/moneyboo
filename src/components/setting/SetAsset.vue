@@ -9,7 +9,7 @@
         <input
           type="text"
           placeholder="총 목표 금액을 입력해 주세요"
-          v-model="saveAsset.totalGoal"
+          v-model="saveAsset.assets.totalGoal"
         />
       </div>
 
@@ -18,7 +18,7 @@
         <input
           type="text"
           placeholder="현금 목표 금액을 입력해 주세요"
-          v-model="saveAsset.cashGoal"
+          v-model="saveAsset.assets.cashGoal"
         />
       </div>
 
@@ -27,7 +27,7 @@
         <input
           type="text"
           placeholder="현금 자산을 입력해 주세요"
-          v-model="saveAsset.cashAsset"
+          v-model="saveAsset.assets.cashAsset"
         />
       </div>
 
@@ -82,6 +82,9 @@
               placeholder="해당 은행의 총 목표 금액을 입력해 주세요"
               v-model="bankList.asset"
             />
+            <span class="realTimeAsset"
+              >( 현재 {{ assetAddComma(bankList.asset) }}원 남음 )</span
+            >
             <!-- <button class="edit">수정</button> -->
             <button
               class="btn small remove"
@@ -121,7 +124,8 @@
 </template>
 
 <script>
-import { makeID } from '@/utils/filters.js';
+import { makeID, addComma } from '@/utils/filters.js';
+import firebase from 'firebase';
 import { moneybooRef } from '@/api/firestore';
 
 export default {
@@ -129,9 +133,11 @@ export default {
     return {
       // '입력한 값', 'firebase에서 불러온 저장된 값' 모두 saveAsset 이용.
       saveAsset: {
-        totalGoal: '',
-        cashGoal: '',
-        cashAsset: '',
+        assets: {
+          totalGoal: '',
+          cashGoal: '',
+          cashAsset: '',
+        },
         banks: [],
       },
       bankLength: 0, // 저장된 은행 개수 위해 필요.
@@ -184,42 +190,73 @@ export default {
     this.bankNum = this.$store.state.bankAsset.bank.length;
 
     // firstore에서 asset DB 가져오기
-    this.mbooRef()
-      .doc('settings')
-      .get()
-      .then(docSnapshot => {
+    // --- assets
+    this.setAssetRef()
+      .doc('assets')
+      .onSnapshot(snapshot => {
+        // console.log(snapshot.data().setAsset);
         // document의 값이 있으면
-        if (docSnapshot.exists) {
-          const setAsset = docSnapshot.data().setAsset;
-
-          // setAsset 데이터가 있으면
-          if (setAsset) {
-            // 불러온 목표금액,현금자산 getAsset 객체에 저장
-            this.saveAsset.totalGoal = setAsset.totalGoal;
-            this.saveAsset.cashAsset = setAsset.cashAsset;
-            this.saveAsset.cashGoal = setAsset.cashGoal;
-
-            // 불러온 은행 자산들 getBanks에 저장
-            setAsset.banks.forEach(data => {
-              this.saveAsset.banks.push(data);
-              this.getBanks.push(data);
-            });
-
-            // setAsset 데이터가 없으면
-          } else {
-            this.logMassage = '자산과 목표값을 입력해주세요!';
-            console.log('setAsset 데이터가 없습니다!', docSnapshot);
+        if (snapshot.exists) {
+          const assets = snapshot.data().assets;
+          console.log(assets);
+          if (assets) {
+            this.saveAsset.assets.totalGoal = assets.totalGoal;
+            this.saveAsset.assets.cashAsset = assets.cashAsset;
+            this.saveAsset.assets.cashGoal = assets.cashGoal;
           }
-
-          // document 값이 없으면
-        } else {
-          console.log('settings 값이 없음', docSnapshot);
-          this.logMassage = '셋팅 값을 입력해주세요!';
         }
-      })
-      .catch(err => {
-        console.log(err);
       });
+
+    // --- banks
+    this.setAssetRef()
+      .doc('banks')
+      .onSnapshot(snapshot => {
+        // console.log(snapshot.data().setAsset);
+        // document의 값이 있으면
+        if (snapshot.exists) {
+          const banks = snapshot.data().banks;
+          if (banks) {
+            this.saveAsset.banks = banks;
+            this.bankLength = banks.length;
+          }
+        }
+      });
+    // this.mbooRef()
+    //   .doc('settings')
+    //   .get()
+    //   .then(docSnapshot => {
+    //     // document의 값이 있으면
+    //     if (docSnapshot.exists) {
+    //       const setAsset = docSnapshot.data().setAsset;
+
+    //       // setAsset 데이터가 있으면
+    //       if (setAsset) {
+    //         // 불러온 목표금액,현금자산 getAsset 객체에 저장
+    //         this.saveAsset.assets.totalGoal = setAsset.assets.totalGoal;
+    //         this.saveAsset.assets.cashAsset = setAsset.assets.cashAsset;
+    //         this.saveAsset.assets.cashGoal = setAsset.assets.cashGoal;
+
+    //         // 불러온 은행 자산들 getBanks에 저장
+    //         setAsset.banks.forEach(data => {
+    //           this.saveAsset.banks.push(data);
+    //           this.getBanks.push(data);
+    //         });
+
+    //         // setAsset 데이터가 없으면
+    //       } else {
+    //         this.logMassage = '자산과 목표값을 입력해주세요!';
+    //         console.log('setAsset 데이터가 없습니다!', docSnapshot);
+    //       }
+
+    //       // document 값이 없으면
+    //     } else {
+    //       console.log('settings 값이 없음', docSnapshot);
+    //       this.logMassage = '셋팅 값을 입력해주세요!';
+    //     }
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //   });
 
     // // 페이지 로딩 시 기본적으로 은행 별 자산 입력 칸 하나 생성시켜줌.
     // // if (this.saveAsset.banks === []) {
@@ -231,63 +268,102 @@ export default {
   },
   computed: {},
   methods: {
+    mbooRef() {
+      return moneybooRef(this.currentUid);
+    },
+    setAssetRef() {
+      return this.mbooRef()
+        .doc('settings')
+        .collection('setAsset');
+    },
     clickAddBank() {
       this.saveAsset.banks.push({ bank: '', asset: '', id: makeID('bank') });
     },
     clickRemoveBank(bankList) {
-      this.banks.$remove(bankList);
-    },
-    mbooRef() {
-      return moneybooRef(this.currentUid);
+      console.log(bankList);
+      this.setAssetRef()
+        .doc('banks')
+        .update({ banks: firebase.firestore.FieldValue.arrayRemove(bankList) });
     },
     clickSaveAsset() {
-      // // 총 목표 금액 저장
-      // saveTotalGoal(this.saveAsset.totalGoal);
-      // // 현금 목표 금액 저장
-      // saveCashGoal(this.saveAsset.cashGoal);
-      // // 현금 자산 저장
-      // saveCashAsset(this.saveAsset.cashAsset);
-      // // 은행 별 자산 저장(은행명+자산금액+id 묶어서)
-      // saveBankAsset(this.saveAsset.banks);
-
       // firestore에 asset DB 저장
-      this.mbooRef()
-        .doc('settings')
+      // --- assets
+      this.setAssetRef()
+        .doc('assets')
         .get()
         .then(docSnapshot => {
           // documnet가 있으면 update
+          console.log(docSnapshot);
           if (docSnapshot.exists) {
-            this.mbooRef()
-              .doc('settings')
-              .update({ setAsset: this.saveAsset });
+            this.setAssetRef()
+              .doc('assets')
+              .update({ assets: this.saveAsset.assets });
 
             // document가 없으면 set
           } else {
-            this.mbooRef()
-              .doc('settings')
-              .set({ setAsset: this.saveAsset });
+            this.setAssetRef()
+              .doc('assets')
+              .update({ assets: this.saveAsset.assets });
+            this.logMassage = ''; // 데이터를 추가했으니 logMessage 없애기
+          }
+        });
+      // --- banks
+      this.setAssetRef()
+        .doc('banks')
+        .get()
+        .then(docSnapshot => {
+          // documnet가 있으면 update
+          console.log(docSnapshot);
+          if (docSnapshot.exists) {
+            this.setAssetRef()
+              .doc('banks')
+              .update({ banks: this.saveAsset.banks });
+
+            // document가 없으면 set
+          } else {
+            this.setAssetRef()
+              .doc('banks')
+              .update({ banks: this.saveAsset.banks });
             this.logMassage = ''; // 데이터를 추가했으니 logMessage 없애기
           }
         });
     },
     // created()에서 사용할 함수(추가, 수정, 삭제 된 데이터 화면에 바로 반영되도록.)
     getFirebase() {
-      this.mbooRef()
-        .doc('settings')
+      // assets
+      this.setAssetRef()
+        .doc('assets')
         .onSnapshot(snapshot => {
           // console.log(snapshot.data().setAsset);
           // document의 값이 있으면
           if (snapshot.exists) {
-            const setAsset = snapshot.data().setAsset;
-            if (setAsset) {
-              this.saveAsset.totalGoal = setAsset.totalGoal;
-              this.saveAsset.cashAsset = setAsset.cashAsset;
-              this.saveAsset.cashGoal = setAsset.cashGoal;
-              this.saveAsset.banks = setAsset.banks;
-              this.bankLength = setAsset.banks.length;
+            const assets = snapshot.data().assets;
+            console.log(assets);
+            if (assets) {
+              this.saveAsset.assets.totalGoal = assets.totalGoal;
+              this.saveAsset.assets.cashAsset = assets.cashAsset;
+              this.saveAsset.assets.cashGoal = assets.cashGoal;
             }
           }
         });
+
+      // banks
+      this.setAssetRef()
+        .doc('banks')
+        .onSnapshot(snapshot => {
+          // console.log(snapshot.data().setAsset);
+          // document의 값이 있으면
+          if (snapshot.exists) {
+            const banks = snapshot.data().banks;
+            if (banks) {
+              this.saveAsset.banks = banks;
+              this.bankLength = banks.length;
+            }
+          }
+        });
+    },
+    assetAddComma(asset) {
+      return addComma(asset);
     },
   },
 };
