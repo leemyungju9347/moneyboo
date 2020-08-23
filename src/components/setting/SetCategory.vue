@@ -492,17 +492,17 @@ export default {
 
     // firestore에 저장된 category DB 가져오기
 
-    this.mbooRef()
-      .doc('settings')
+    this.settingListRef()
+      .doc('categories')
       .get()
       .then(docSnapshot => {
         // document가 존재하면
         if (docSnapshot.exists) {
-          const setCategory = docSnapshot.data().setCategory;
+          const categories = docSnapshot.data().categories;
 
           // setCategory 데이터가 있으면
-          if (setCategory) {
-            setCategory.forEach(data => {
+          if (categories) {
+            categories.forEach(data => {
               this.getCategory.push(data);
             });
 
@@ -523,6 +523,15 @@ export default {
     this.getFirebase();
   },
   methods: {
+    // 머니부 참조값
+    mbooRef() {
+      return moneybooRef(this.currentUid);
+    },
+    settingListRef() {
+      return this.mbooRef()
+        .doc('settings')
+        .collection('settingList');
+    },
     clickAddCategory() {
       // cookie에 저장할 때 함께 저장할 각각의 id생성.
       this.inputCategory.id = makeID('category');
@@ -532,24 +541,24 @@ export default {
       console.log(newCategory);
 
       // firestore에 category DB 저장
-      this.mbooRef()
-        .doc('settings')
+      this.settingListRef()
+        .doc('categories')
         .get()
         .then(docSnapshot => {
           // 만약 document에 데이터가 없으면 초기값 셋팅
           if (!docSnapshot.exists) {
-            this.mbooRef()
-              .doc('settings')
-              .set({ setCategory: [this.inputCategory] }); // 배열로 넘겨줌
+            this.settingListRef()
+              .doc('categories')
+              .set({ categories: [this.inputCategory] }); // 배열로 넘겨줌
 
             this.logMessage = '';
 
             // 만약 document에 데이터가 있다면 배열을 업데이트
           } else {
-            this.mbooRef()
-              .doc('settings')
+            this.settingListRef()
+              .doc('categories')
               .update({
-                setCategory: firebase.firestore.FieldValue.arrayUnion(
+                categories: firebase.firestore.FieldValue.arrayUnion(
                   this.inputCategory,
                 ),
               });
@@ -567,23 +576,19 @@ export default {
       this.inputCategory.id = '';
     },
 
-    // 머니부 참조값
-    mbooRef() {
-      return moneybooRef(this.currentUid);
-    },
     // firestore에 저장된 category DB 가져오기 (created()에서 함수 실행)
     getFirebase() {
-      this.mbooRef()
-        .doc('settings')
+      this.settingListRef()
+        .doc('categories')
         .onSnapshot(snapshot => {
           // console.log(snapshot.data());
           // console.log(snapshot.data().setCategory);
           // document가 존재하면
           if (snapshot.exists) {
-            const setCategory = snapshot.data().setCategory;
+            const categories = snapshot.data().categories;
             // setCategory 데이터가 있으면
-            if (setCategory) {
-              this.getCategory = setCategory;
+            if (categories) {
+              this.getCategory = categories;
             }
           }
         });
@@ -602,23 +607,6 @@ export default {
       console.log('이 카테고리 삭제하자!!!');
       // 클릭한 카테고리의 id를 구해서 이 함수로 보내줄 수 있으면 편할 것 같은데...!
       console.log(this.getCategory);
-
-      this.mbooRef()
-        .where(typeof 'settings.setCategory.id', '==', 'string')
-        .onSnapshot(snapshot => {
-          console.log(snapshot);
-          snapshot.docChanges().forEach(change => {
-            if (change.type === 'added') {
-              console.log('New city: ', change.doc.data());
-            }
-            if (change.type === 'modified') {
-              console.log('Modified city: ', change.doc.data());
-            }
-            if (change.type === 'removed') {
-              console.log('Removed city: ', change.doc.data());
-            }
-          });
-        });
     },
     clickCategoryEdit() {
       console.log('이 카테고리 수정하자!!!!');
