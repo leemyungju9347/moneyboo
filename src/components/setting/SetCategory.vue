@@ -17,7 +17,10 @@
               ><input type="radio" name="category" />
               <!-- 추후에 span 옆에 선택한 아이콘도 넣어줄 것 -->
               <div
-                :class="{ click: categoryCardClick === true }"
+                :class="{
+                  click: categoryCardClick === true,
+                  disabled: editStatus === true,
+                }"
                 @click="clickCategoryCard(category)"
               >
                 <i :class="category.icon"></i>
@@ -28,6 +31,7 @@
               <button
                 :class="{ click: categoryCardClick === true }"
                 @click.prevent="clickRemoveCategory(category)"
+                :disabled="editStatus === true"
               >
                 ✕
               </button>
@@ -37,8 +41,12 @@
 
         <button
           class="btn small"
-          :class="{ click: categoryCardClick === true }"
+          :class="{
+            click: categoryCardClick === true,
+            disabled: editStatus === true,
+          }"
           @click.prevent="clickCategoryEdit(clickCategory)"
+          :disabled="editStatus === true"
         >
           수정
         </button>
@@ -482,7 +490,6 @@
 import { makeID } from '@/utils/filters.js';
 import { moneybooRef } from '@/api/firestore';
 import firebase from 'firebase';
-
 export default {
   data() {
     return {
@@ -511,9 +518,7 @@ export default {
   },
   created() {
     this.categoryNum = this.$store.state.categorys.name.length;
-
     // firestore에 저장된 category DB 가져오기
-
     this.settingListRef()
       .doc('categories')
       .get()
@@ -521,18 +526,15 @@ export default {
         // document가 존재하면
         if (docSnapshot.exists) {
           const categories = docSnapshot.data().categories;
-
           // setCategory 데이터가 있으면
           if (categories) {
             categories.forEach(data => {
               this.getCategory.push(data);
             });
-
             // setCategory 데이터가 없으면
           } else {
             this.logMessage = '카테고리 값을 입력해주세요!';
           }
-
           // document가 없으면
         } else {
           this.logMessage = '셋팅 값을 입력해주세요!';
@@ -541,7 +543,6 @@ export default {
       .catch(err => {
         console.log('에러 발생한 위치 setCategory.vue created부분', err);
       });
-
     this.getFirebase();
   },
   methods: {
@@ -557,11 +558,9 @@ export default {
     clickAddCategory() {
       // cookie에 저장할 때 함께 저장할 각각의 id생성.
       this.inputCategory.id = makeID('category');
-
       // cookies.js에 있는 saveCategory()함수 실행.
       let newCategory = `${this.inputCategory.name}|${this.inputCategory.icon}|${this.inputCategory.id}`;
       console.log(newCategory);
-
       // firestore에 category DB 저장
       this.settingListRef()
         .doc('categories')
@@ -572,9 +571,7 @@ export default {
             this.settingListRef()
               .doc('categories')
               .set({ categories: [this.inputCategory] }); // 배열로 넘겨줌
-
             this.logMessage = '';
-
             // 만약 document에 데이터가 있다면 배열을 업데이트
           } else {
             this.settingListRef()
@@ -585,10 +582,8 @@ export default {
                 ),
               });
           }
-
           this.resetInputCategory(); // category input창 리셋.
         });
-
       // saveCategory(newCategory); // cookie에 category 저장.
     },
     // [추가]버튼 클릭 시 category 입력 창 비워줌.
@@ -597,7 +592,6 @@ export default {
       this.inputCategory.icon = '';
       this.inputCategory.id = '';
     },
-
     // firestore에 저장된 category DB 가져오기 (created()에서 함수 실행)
     getFirebase() {
       this.settingListRef()
@@ -615,7 +609,6 @@ export default {
           }
         });
     },
-
     clickCategoryCard(category) {
       // 화면에 보이는 카테고리 클릭할 때마다 ture, false값을 줘서 [수정]버튼 활성, 비활성화 되게 해줌. + 클릭한 해당 카테고리의 배경색, 글자색 변경하기 위한 :class 주는 용도.
       if (this.categoryCardClick === false) {
@@ -623,15 +616,11 @@ export default {
       } else {
         this.categoryCardClick = false;
       }
-      console.log('click', this.categoryCardClick);
-      console.log(category);
 
       this.clickCategory = category;
-      console.log(this.clickCategory);
     },
     clickRemoveCategory(category) {
       console.log('이 카테고리 삭제하자!!!');
-
       this.settingListRef()
         .doc('categories')
         .update({
@@ -642,9 +631,7 @@ export default {
     clickCategoryEdit(category) {
       console.log('이 카테고리 수정하자!!!!');
       console.log(category);
-
       this.editStatus = true;
-
       this.inputCategory.name = category.name;
       this.inputCategory.icon = category.icon;
       this.inputCategory.id = category.id;
@@ -663,7 +650,6 @@ export default {
             this.inputCategory,
           ),
         });
-
       this.categoryCardClick = false;
       this.editStatus = false;
       this.resetInputCategory();
