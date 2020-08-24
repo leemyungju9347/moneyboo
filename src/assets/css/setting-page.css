@@ -482,6 +482,13 @@
     background-color: #348f6c;
     float: right;
   }
+  .set-category > .category-edit-cont > form > button.editCancel{
+    width: auto;
+    margin-left: 10px;
+  }
+  .set-category > .category-edit-cont > form > button.edit{ 
+    background-color: #DB8439;
+  }
 
   
 
