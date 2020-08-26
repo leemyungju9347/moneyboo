@@ -128,7 +128,6 @@ import { makeID, addComma } from '@/utils/filters.js';
 import { moneybooRef, settingColRef } from '@/api/firestore';
 import firebase from 'firebase';
 
-
 export default {
   data() {
     return {
@@ -273,9 +272,8 @@ export default {
       return moneybooRef(this.currentUid);
     },
     settingListRef() {
-      return this.mbooRef()
-        .doc('settings')
-        .collection('settingList');
+      // settings document > settingList collection 참조값
+      return settingColRef(this.currentUid);
     },
     clickAddBank() {
       this.saveAsset.banks.push({ bank: '', asset: '', id: makeID('bank') });
@@ -286,34 +284,8 @@ export default {
         .doc('banks')
         .update({ banks: firebase.firestore.FieldValue.arrayRemove(bankList) });
     },
-    // --------0826 setting 구조 바꿈 (확인하시고 삭제부탁드립니다!) 😀
-    // settings document > settingList collection 참조값
-    settingListRef() {
-      return settingColRef(this.currentUid);
-    },
     clickSaveAsset() {
       // firestore에 asset DB 저장
-
-      // this.mbooRef()
-      //   .doc('settings')
-      //   .get()
-      //   .then(docSnapshot => {
-      //     // documnet가 있으면 update
-      //     if (docSnapshot.exists) {
-      //       this.mbooRef()
-      //         .doc('settings')
-      //         .update({ setAsset: this.saveAsset });
-
-      //       // document가 없으면 set
-      //     } else {
-      //       this.mbooRef()
-      //         .doc('settings')
-      //         .set({ setAsset: this.saveAsset });
-      //       this.logMassage = ''; // 데이터를 추가했으니 logMessage 없애기
-      //     }
-      //   });
-
-      // --------0826 setting 구조 바꿈 (확인하시고 삭제부탁드립니다!) 😀
       const setAssetList = {
         cashAsset: this.saveAsset.cashAsset,
         cashGoal: this.saveAsset.cashGoal,
@@ -364,7 +336,6 @@ export default {
             this.logMassage = ''; // 데이터를 추가했으니 logMessage 없애기
           }
         });
-
     },
     // created()에서 사용할 함수(추가, 수정, 삭제 된 데이터 화면에 바로 반영되도록.)
     getFirebase() {
@@ -400,7 +371,6 @@ export default {
           }
         });
     },
-    // --------0826 setting 구조 바꿈 (확인하시고 삭제부탁드립니다!) 😀
     // asset 저장
     saveAssetListForm(setAssetList) {
       this.settingListRef()
@@ -455,9 +425,9 @@ export default {
         .catch(err => {
           console.log('SetAsset.vue 에 있는 setBankListForm', err);
         });
+    },
     assetAddComma(asset) {
       return addComma(asset);
-
     },
   },
 };
