@@ -62,7 +62,7 @@
 
 <script>
 import DatePicker from 'v-calendar/lib/components/date-picker.umd';
-import { makeID, newConversionMonth } from '@/utils/filters.js';
+import { makeID } from '@/utils/filters.js';
 import { eventBus } from '@/main.js';
 import { moneybooRef } from '@/api/firestore';
 import firebase from 'firebase';
@@ -224,7 +224,7 @@ export default {
       }
 
       // firestore에 listData 저장
-      const yearsMonth = newConversionMonth();
+      const yearsMonth = this.selectDateConversionMonth(this.date);
 
       if (this.edit === true) {
         // 수정했을때 수정후 저장 함수 실행
@@ -274,7 +274,7 @@ export default {
       // 출력 형식 : 7.17
     },
     submitEditList(listData) {
-      const yearsMonth = newConversionMonth();
+      const yearsMonth = this.selectDateConversionMonth();
 
       // 기존의 배열 삭제
       this.dailyListAddRef()
@@ -288,6 +288,16 @@ export default {
         .update({
           listData: firebase.firestore.FieldValue.arrayUnion(listData),
         });
+    },
+    selectDateConversionMonth(date) {
+      const year = String(new Date(date).getFullYear()).substr(2, 2);
+
+      const month =
+        new Date(date).getMonth() < 10
+          ? `0${new Date(date).getMonth() + 1}`
+          : new Date(date).getMonth() + 1;
+
+      return `${year}.${month}`;
     },
   },
 };

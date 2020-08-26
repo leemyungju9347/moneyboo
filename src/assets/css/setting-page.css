@@ -127,6 +127,12 @@
     padding: 0 10px;
     background-color: #fff;
   }
+  .set-asset > form > .credit-goal-cont > ul > li > .realTimeAsset{
+    color: rgba(59, 59, 59, 0.5);
+    position: absolute;
+    bottom: 7px;
+    right: 30px;
+  }
   .set-asset > form > .credit-goal-cont > ul > li > button.edit{
     border:none;
     /* border-radius: 2px; */
