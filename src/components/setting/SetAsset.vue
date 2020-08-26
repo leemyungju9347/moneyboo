@@ -175,17 +175,6 @@ export default {
       this.saveAsset.banks.push({ bank: '', asset: '', id: '' });
     }
 
-    // // cookie에 저장 된 은행 별 자산 불러옴.
-    // for (let i = 0; i < this.$store.state.bankAsset.bank.length; i++) {
-    //   // 1) cookie에 저장된 은행 수만큼 화면에 상자 생기게 해줌.
-    //   this.saveAsset.banks.push({ bank: '', asset: '', id: '' });
-    //   // 2) 은행명, 은행별 자산, 은행별 아이디 각각 넣어줌.
-    //   this.saveAsset.banks[i].bank = this.$store.state.bankAsset.bank[i];
-    //   this.saveAsset.banks[i].asset = this.$store.state.bankAsset.asset[i];
-    //   this.saveAsset.banks[i].id = this.$store.state.bankAsset.id[i];
-    //   console.log(this.$store.state.bankAsset.id[i]);
-    // }
-
     // 저장된 은행 수 data에 넣어줌.
     this.bankNum = this.$store.state.bankAsset.bank.length;
 
@@ -221,42 +210,6 @@ export default {
           }
         }
       });
-    // this.mbooRef()
-    //   .doc('settings')
-    //   .get()
-    //   .then(docSnapshot => {
-    //     // document의 값이 있으면
-    //     if (docSnapshot.exists) {
-    //       const setAsset = docSnapshot.data().setAsset;
-
-    //       // setAsset 데이터가 있으면
-    //       if (setAsset) {
-    //         // 불러온 목표금액,현금자산 getAsset 객체에 저장
-    //         this.saveAsset.assets.totalGoal = setAsset.assets.totalGoal;
-    //         this.saveAsset.assets.cashAsset = setAsset.assets.cashAsset;
-    //         this.saveAsset.assets.cashGoal = setAsset.assets.cashGoal;
-
-    //         // 불러온 은행 자산들 getBanks에 저장
-    //         setAsset.banks.forEach(data => {
-    //           this.saveAsset.banks.push(data);
-    //           this.getBanks.push(data);
-    //         });
-
-    //         // setAsset 데이터가 없으면
-    //       } else {
-    //         this.logMassage = '자산과 목표값을 입력해주세요!';
-    //         console.log('setAsset 데이터가 없습니다!', docSnapshot);
-    //       }
-
-    //       // document 값이 없으면
-    //     } else {
-    //       console.log('settings 값이 없음', docSnapshot);
-    //       this.logMassage = '셋팅 값을 입력해주세요!';
-    //     }
-    //   })
-    //   .catch(err => {
-    //     console.log(err);
-    //   });
 
     // // 페이지 로딩 시 기본적으로 은행 별 자산 입력 칸 하나 생성시켜줌.
     // // if (this.saveAsset.banks === []) {
@@ -271,6 +224,10 @@ export default {
     mbooRef() {
       return moneybooRef(this.currentUid);
     },
+    settingListRef() {
+      // settings document > settingList collection 참조값
+      return settingColRef(this.currentUid);
+    },
     clickAddBank() {
       this.saveAsset.banks.push({ bank: '', asset: '', id: makeID('bank') });
     },
@@ -280,58 +237,11 @@ export default {
         .doc('banks')
         .update({ banks: firebase.firestore.FieldValue.arrayRemove(bankList) });
     },
-    // --------0826 setting 구조 바꿈 (확인하시고 삭제부탁드립니다!) 😀
-    // settings document > settingList collection 참조값
-    settingListRef() {
-      return settingColRef(this.currentUid);
-    },
     clickSaveAsset() {
-      // --------0826 setting 구조 바꿈 (확인하시고 삭제부탁드립니다!) 😀
       // 에셋리스트 저장
       this.saveAssetListForm();
       // bank 저장
       this.setBankListForm();
-
-      // --- assets
-      // this.settingListRef()
-      //   .doc('assets')
-      //   .get()
-      //   .then(docSnapshot => {
-      //     // documnet가 있으면 update
-      //     console.log(docSnapshot);
-      //     if (docSnapshot.exists) {
-      //       this.settingListRef()
-      //         .doc('assets')
-      //         .update({ assets: this.saveAsset.assets });
-
-      //       // document가 없으면 set
-      //     } else {
-      //       this.settingListRef()
-      //         .doc('assets')
-      //         .update({ assets: this.saveAsset.assets });
-      //       this.logMassage = ''; // 데이터를 추가했으니 logMessage 없애기
-      //     }
-      //   });
-      // // --- banks
-      // this.settingListRef()
-      //   .doc('banks')
-      //   .get()
-      //   .then(docSnapshot => {
-      //     // documnet가 있으면 update
-      //     console.log(docSnapshot);
-      //     if (docSnapshot.exists) {
-      //       this.settingListRef()
-      //         .doc('banks')
-      //         .update({ banks: this.saveAsset.banks });
-
-      //       // document가 없으면 set
-      //     } else {
-      //       this.settingListRef()
-      //         .doc('banks')
-      //         .update({ banks: this.saveAsset.banks });
-      //       this.logMassage = ''; // 데이터를 추가했으니 logMessage 없애기
-      //     }
-      //   });
     },
     // created()에서 사용할 함수(추가, 수정, 삭제 된 데이터 화면에 바로 반영되도록.)
     getFirebase() {
@@ -378,9 +288,7 @@ export default {
           if (doc.exists) {
             this.settingListRef()
               .doc('assets')
-              .update({
-                assets: this.saveAsset.assets,
-              });
+              .update({ assets: this.saveAsset.assets });
 
             // asset doc이 없다면?
           } else {
