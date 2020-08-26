@@ -460,7 +460,7 @@
 <script>
 // import { saveCategory } from '@/utils/cookies.js';
 import { makeID } from '@/utils/filters.js';
-import { moneybooRef } from '@/api/firestore';
+import { moneybooRef, settingColRef } from '@/api/firestore';
 import firebase from 'firebase';
 
 export default {
@@ -535,11 +535,21 @@ export default {
     clickAddCategory() {
       // cookie에 저장할 때 함께 저장할 각각의 id생성.
       this.inputCategory.id = makeID('category');
-
       // cookies.js에 있는 saveCategory()함수 실행.
       let newCategory = `${this.inputCategory.name}|${this.inputCategory.icon}|${this.inputCategory.id}`;
       console.log(newCategory);
 
+      // console.log('newCategory', newCategory);
+      // // firestore에 category DB 저장
+      // this.mbooRef()
+      //   .doc('settings')
+      //   .get()
+      //   .then(docSnapshot => {
+      //     // 만약 document에 데이터가 없으면 초기값 셋팅
+      //     if (!docSnapshot.exists) {
+      //       this.mbooRef()
+      //         .doc('settings')
+      //         .set({ setCategory: [this.inputCategory] }); // 배열로 넘겨줌
       // firestore에 category DB 저장
       this.settingListRef()
         .doc('categories')
@@ -551,10 +561,36 @@ export default {
               .doc('categories')
               .set({ categories: [this.inputCategory] }); // 배열로 넘겨줌
 
-            this.logMessage = '';
 
+      //       this.logMessage = '';
+
+      //       // 만약 document에 데이터가 있다면 배열을 업데이트
+      //     } else {
+      //       this.mbooRef()
+      //         .doc('settings')
+      //         .update({
+      //           setCategory: firebase.firestore.FieldValue.arrayUnion(
+      //             this.inputCategory,
+      //           ),
+      //         });
+      //     }
+
+      //     //this.resetInputCategory(); // category input창 리셋.
+      //   });
+      // saveCategory(newCategory); // cookie에 category 저장.
+
+      // --------0826 setting 구조 바꿈 (확인하시고 삭제부탁드립니다!) 😀
+      // categories doc에 저장
+      this.settingListRef()
+        .doc('categories')
+        .get()
+        .then(doc => {
+          console.log(doc);
+          // categories doc이 있으면? => update
+          if (doc.exists) {
             // 만약 document에 데이터가 있다면 배열을 업데이트
           } else {
+
             this.settingListRef()
               .doc('categories')
               .update({
@@ -562,12 +598,23 @@ export default {
                   this.inputCategory,
                 ),
               });
+            // categories doc이 없으면? => set
+          } else {
+            this.settingListRef()
+              .doc('categories')
+              .set({
+                categories: [this.inputCategory],
+              });
           }
 
-          this.resetInputCategory(); // category input창 리셋.
+          this.resetInputCategory();
+        })
+        .catch(err => {
+          console.log(
+            'setCategory.vue에 있는 clickAddCategory함수에서 나온 에러!!',
+            err,
+          );
         });
-
-      // saveCategory(newCategory); // cookie에 category 저장.
     },
     // [추가]버튼 클릭 시 category 입력 창 비워줌.
     resetInputCategory() {
@@ -575,7 +622,14 @@ export default {
       this.inputCategory.icon = '';
       this.inputCategory.id = '';
     },
-
+    mbooRef() {
+      return moneybooRef(this.currentUid);
+    },
+    // --------0826 setting 구조 바꿈 (확인하시고 삭제부탁드립니다!) 😀
+    // settings document > settingList collection 참조값
+    settingListRef() {
+      return settingColRef(this.currentUid);
+    },
     // firestore에 저장된 category DB 가져오기 (created()에서 함수 실행)
     getFirebase() {
       this.settingListRef()

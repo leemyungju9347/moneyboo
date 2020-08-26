@@ -125,8 +125,9 @@
 
 <script>
 import { makeID, addComma } from '@/utils/filters.js';
+import { moneybooRef, settingColRef } from '@/api/firestore';
 import firebase from 'firebase';
-import { moneybooRef } from '@/api/firestore';
+
 
 export default {
   data() {
@@ -285,8 +286,44 @@ export default {
         .doc('banks')
         .update({ banks: firebase.firestore.FieldValue.arrayRemove(bankList) });
     },
+    // --------0826 setting 구조 바꿈 (확인하시고 삭제부탁드립니다!) 😀
+    // settings document > settingList collection 참조값
+    settingListRef() {
+      return settingColRef(this.currentUid);
+    },
     clickSaveAsset() {
       // firestore에 asset DB 저장
+
+      // this.mbooRef()
+      //   .doc('settings')
+      //   .get()
+      //   .then(docSnapshot => {
+      //     // documnet가 있으면 update
+      //     if (docSnapshot.exists) {
+      //       this.mbooRef()
+      //         .doc('settings')
+      //         .update({ setAsset: this.saveAsset });
+
+      //       // document가 없으면 set
+      //     } else {
+      //       this.mbooRef()
+      //         .doc('settings')
+      //         .set({ setAsset: this.saveAsset });
+      //       this.logMassage = ''; // 데이터를 추가했으니 logMessage 없애기
+      //     }
+      //   });
+
+      // --------0826 setting 구조 바꿈 (확인하시고 삭제부탁드립니다!) 😀
+      const setAssetList = {
+        cashAsset: this.saveAsset.cashAsset,
+        cashGoal: this.saveAsset.cashGoal,
+        totalGoal: this.saveAsset.totalGoal,
+      };
+      // 에셋리스트 저장
+      this.saveAssetListForm(setAssetList);
+      // bank 저장
+      this.setBankListForm();
+
       // --- assets
       this.settingListRef()
         .doc('assets')
@@ -327,6 +364,7 @@ export default {
             this.logMassage = ''; // 데이터를 추가했으니 logMessage 없애기
           }
         });
+
     },
     // created()에서 사용할 함수(추가, 수정, 삭제 된 데이터 화면에 바로 반영되도록.)
     getFirebase() {
@@ -362,8 +400,64 @@ export default {
           }
         });
     },
+    // --------0826 setting 구조 바꿈 (확인하시고 삭제부탁드립니다!) 😀
+    // asset 저장
+    saveAssetListForm(setAssetList) {
+      this.settingListRef()
+        .doc('assets')
+        .get()
+        .then(doc => {
+          console.log(doc);
+          // asset doc이 있다면?
+          if (doc.exists) {
+            this.settingListRef()
+              .doc('assets')
+              .update({
+                assets: setAssetList,
+              });
+
+            // asset doc이 없다면?
+          } else {
+            this.settingListRef()
+              .doc('assets')
+              .set({
+                assets: setAssetList,
+              });
+          }
+        })
+        .catch(err => {
+          console.log('여기는 setAsset.vue에서 saveAssetListForm', err);
+        });
+    },
+    // bank 저장
+    setBankListForm() {
+      this.settingListRef()
+        .doc('banks')
+        .get()
+        .then(doc => {
+          // banks doc이 있다면
+          if (doc.exists) {
+            this.settingListRef()
+              .doc('banks')
+              .update({
+                banks: this.saveAsset.banks,
+              });
+
+            // banks doc이 없다면
+          } else {
+            this.settingListRef()
+              .doc('banks')
+              .set({
+                banks: this.saveAsset.banks,
+              });
+          }
+        })
+        .catch(err => {
+          console.log('SetAsset.vue 에 있는 setBankListForm', err);
+        });
     assetAddComma(asset) {
       return addComma(asset);
+
     },
   },
 };

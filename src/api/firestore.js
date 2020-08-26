@@ -14,4 +14,11 @@ function moneybooRef(curUid) {
     .collection('moneyboo');
 }
 
-export { db, getUsersRef, moneybooRef };
+// settingList collection
+function settingColRef(uid) {
+  return moneybooRef(uid)
+    .doc('settings')
+    .collection('settingList');
+}
+
+export { db, getUsersRef, moneybooRef, settingColRef };
