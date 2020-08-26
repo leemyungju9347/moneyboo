@@ -367,7 +367,6 @@ export default {
           }
         });
     },
-    // --------0826 setting 구조 바꿈 (확인하시고 삭제부탁드립니다!) 😀
     // asset 저장
     saveAssetListForm() {
       this.settingListRef()
