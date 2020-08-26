@@ -125,8 +125,8 @@
 
 <script>
 import { makeID, addComma } from '@/utils/filters.js';
+import { moneybooRef, settingColRef } from '@/api/firestore';
 import firebase from 'firebase';
-import { moneybooRef } from '@/api/firestore';
 
 export default {
   data() {
@@ -272,9 +272,8 @@ export default {
       return moneybooRef(this.currentUid);
     },
     settingListRef() {
-      return this.mbooRef()
-        .doc('settings')
-        .collection('settingList');
+      // settings document > settingList collection 참조값
+      return settingColRef(this.currentUid);
     },
     clickAddBank() {
       this.saveAsset.banks.push({ bank: '', asset: '', id: makeID('bank') });
@@ -287,6 +286,16 @@ export default {
     },
     clickSaveAsset() {
       // firestore에 asset DB 저장
+      const setAssetList = {
+        cashAsset: this.saveAsset.cashAsset,
+        cashGoal: this.saveAsset.cashGoal,
+        totalGoal: this.saveAsset.totalGoal,
+      };
+      // 에셋리스트 저장
+      this.saveAssetListForm(setAssetList);
+      // bank 저장
+      this.setBankListForm();
+
       // --- assets
       this.settingListRef()
         .doc('assets')
@@ -360,6 +369,61 @@ export default {
               this.bankLength = banks.length;
             }
           }
+        });
+    },
+    // asset 저장
+    saveAssetListForm(setAssetList) {
+      this.settingListRef()
+        .doc('assets')
+        .get()
+        .then(doc => {
+          console.log(doc);
+          // asset doc이 있다면?
+          if (doc.exists) {
+            this.settingListRef()
+              .doc('assets')
+              .update({
+                assets: setAssetList,
+              });
+
+            // asset doc이 없다면?
+          } else {
+            this.settingListRef()
+              .doc('assets')
+              .set({
+                assets: setAssetList,
+              });
+          }
+        })
+        .catch(err => {
+          console.log('여기는 setAsset.vue에서 saveAssetListForm', err);
+        });
+    },
+    // bank 저장
+    setBankListForm() {
+      this.settingListRef()
+        .doc('banks')
+        .get()
+        .then(doc => {
+          // banks doc이 있다면
+          if (doc.exists) {
+            this.settingListRef()
+              .doc('banks')
+              .update({
+                banks: this.saveAsset.banks,
+              });
+
+            // banks doc이 없다면
+          } else {
+            this.settingListRef()
+              .doc('banks')
+              .set({
+                banks: this.saveAsset.banks,
+              });
+          }
+        })
+        .catch(err => {
+          console.log('SetAsset.vue 에 있는 setBankListForm', err);
         });
     },
     assetAddComma(asset) {

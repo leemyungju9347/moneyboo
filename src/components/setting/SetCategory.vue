@@ -488,7 +488,7 @@
 <script>
 // import { saveCategory } from '@/utils/cookies.js';
 import { makeID } from '@/utils/filters.js';
-import { moneybooRef } from '@/api/firestore';
+import { moneybooRef, settingColRef } from '@/api/firestore';
 import firebase from 'firebase';
 export default {
   data() {
@@ -499,14 +499,6 @@ export default {
         icon: '',
         id: '',
       },
-      // // cookie에 저장 된 category 개수
-      // categoryNum: '',
-      // // 불러온 카테고리명
-      // showCategoryName: this.$store.state.categorys.name,
-      // // 불러온 카테고리 아이콘명
-      // showCategoryIcon: this.$store.state.categorys.icon,
-      // // 불러온 카테고리 id
-      // showCategoryId: this.$store.state.categorys.id,
       // 카테고리 클릭 여부 확인용
       categoryCardClick: false,
       currentUid: this.$store.state.uid, // 현재 로그인한 유저의 uid
@@ -551,9 +543,8 @@ export default {
       return moneybooRef(this.currentUid);
     },
     settingListRef() {
-      return this.mbooRef()
-        .doc('settings')
-        .collection('settingList');
+      // settings document > settingList collection 참조값
+      return settingColRef(this.currentUid);
     },
     clickAddCategory() {
       // cookie에 저장할 때 함께 저장할 각각의 id생성.
@@ -582,9 +573,14 @@ export default {
                 ),
               });
           }
-          this.resetInputCategory(); // category input창 리셋.
+          this.resetInputCategory();
+        })
+        .catch(err => {
+          console.log(
+            'setCategory.vue에 있는 clickAddCategory함수에서 나온 에러!!',
+            err,
+          );
         });
-      // saveCategory(newCategory); // cookie에 category 저장.
     },
     // [추가]버튼 클릭 시 category 입력 창 비워줌.
     resetInputCategory() {
