@@ -31,7 +31,7 @@
 
 <script>
 import { addComma } from '@/utils/filters.js';
-import { moneybooRef } from '@/api/firebase';
+import { moneybooRef } from '@/api/firestore';
 // firebase를 사용하기 위해서 불러와야 한다.
 
 export default {
