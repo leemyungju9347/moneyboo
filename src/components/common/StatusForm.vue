@@ -17,7 +17,7 @@
 
 <script>
 import { newConversionMonth } from '@/utils/filters';
-import { moneybooRef } from '@/api/firestore';
+import { moneybooRef, settingColRef } from '@/api/firestore';
 
 export default {
   created() {
@@ -37,33 +37,18 @@ export default {
   methods: {
     // firstore에서 totalGoal DB 가져오기
     getTotalGoal() {
-      this.mbooRef()
-        .doc('settings')
-        .get()
-        .then(docSnapshot => {
+      this.settingListRef()
+        .doc('assets')
+        .onSnapshot(snapshot => {
+          // console.log(snapshot.data().setAsset);
           // document의 값이 있으면
-          if (docSnapshot.exists) {
-            const setAsset = docSnapshot.data().setAsset;
-
-            // setAsset 데이터가 있으면
-            if (setAsset) {
-              // 불러온 목표금액,현금자산 getAsset 객체에 저장
-              this.totalGoal = setAsset.totalGoal;
-
-              // setAsset 데이터가 없으면
-            } else {
-              this.logMassage = '자산과 목표값을 입력해주세요!';
-              console.log('setAsset 데이터가 없습니다!', docSnapshot);
+          if (snapshot.exists) {
+            const assets = snapshot.data().assets;
+            console.log(assets);
+            if (assets) {
+              this.totalGoal = assets.totalGoal;
             }
-
-            // document 값이 없으면
-          } else {
-            console.log('settings 값이 없음', docSnapshot);
-            this.logMassage = '셋팅 값을 입력해주세요!';
           }
-        })
-        .catch(err => {
-          console.log(err);
         });
     },
     // firestore에 있는 저장된 ListData DB를 가져오는 함수
@@ -89,6 +74,10 @@ export default {
     },
     mbooRef() {
       return moneybooRef(this.currentUid);
+    },
+    settingListRef() {
+      // settings document > settingList collection 참조값
+      return settingColRef(this.currentUid);
     },
     // 지출값 더하는 함수
     addExpend() {
