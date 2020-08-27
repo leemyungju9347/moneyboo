@@ -34,6 +34,37 @@ function makeID(type) {
   return idDate;
 }
 
+// ------ cookie에 저장할 때 부여해줄 id 생성 ------
+function makeDateListID(type, selectDate) {
+  // date 구함.
+  let year = String(selectDate.getFullYear()).substr(2, 2);
+  let month =
+    selectDate.getMonth() < 10
+      ? `0${selectDate.getMonth() + 1}`
+      : selectDate.getMonth() + 1;
+  let date =
+    selectDate.getDate() < 10
+      ? `0${selectDate.getDate()}`
+      : selectDate.getDate();
+
+  let hh = new Date().getHours().toString();
+  let mm = new Date().getMinutes().toString();
+  let ss = new Date().getSeconds().toString();
+
+  const nowTime = `${hh < 10 ? `0${hh}` : hh}${mm < 10 ? `0${mm}` : mm}${
+    ss < 10 ? `0${ss}` : ss
+  } `;
+
+  // type구함.
+  type === 'category' ? (type = 'c') : type === 'bank' ? (type = 'b') : 'l';
+
+  // type + date + 시분초 조합해 id생성.
+  let idDate = `${type}${year}${month}${date}-${nowTime}`;
+  console.log(idDate);
+
+  return idDate;
+}
+
 // 오늘의 년 + 월 을 가져오는 함수
 function newConversionMonth() {
   const year = String(new Date().getFullYear()).substr(2, 2);
@@ -55,4 +86,4 @@ function dateFormat(date) {
   return `${year}-${month}-${day}`;
 }
 
-export { addComma, makeID, newConversionMonth, dateFormat };
+export { addComma, makeID, makeDateListID, newConversionMonth, dateFormat };

@@ -64,12 +64,14 @@
 import { addComma, newConversionMonth } from '@/utils/filters';
 import { eventBus } from '@/main';
 import firebase from 'firebase';
-import { moneybooRef } from '@/api/firestore';
+import { moneybooRef, settingColRef } from '@/api/firestore';
 
 export default {
   created() {
     this.getListData();
-    this.getCategoryData();
+    // this.getCategoryData();
+    this.getBanksData();
+    this.getCategoriesData();
   },
   data() {
     return {
@@ -82,35 +84,45 @@ export default {
     };
   },
   methods: {
+    // firestore에 있는 저장된 은행 DB 불러오기
+    getBanksData() {
+      this.settingListRef()
+        .doc('banks')
+        .onSnapshot(snapshot => {
+          // document의 값이 있으면
+          if (snapshot.exists) {
+            const banks = snapshot.data().banks;
+            if (banks) {
+              this.getBankAsset = banks;
+            }
+          } else {
+            alert(
+              '관리 페이지에서 은행값을 등록해주세요! 관리페이지로 이동합니다.',
+            );
+            this.$router.push('/setting');
+          }
+        });
+    },
     // firestore에 있는 저장된 카테고리 DB 불러오기
-    getCategoryData() {
-      this.mbooRef()
-        .doc('settings')
-        .get()
-        .then(docSnapshot => {
-          // document 값이 있으면
-          if (docSnapshot.exists) {
-            const setCategory = docSnapshot.data().setCategory;
-
-            // category와 asset이 셋팅되어있을때만 실행
-            if (setCategory) {
-              // 카테고리
-              setCategory.forEach(data => {
+    getCategoriesData() {
+      this.settingListRef()
+        .doc('categories')
+        .onSnapshot(snapshot => {
+          // document의 값이 있으면
+          if (snapshot.exists) {
+            const categories = snapshot.data().categories;
+            if (categories) {
+              // this.getCategory 에 category 이름만 넣어라.
+              categories.forEach(data => {
                 this.getCategory.push(data);
               });
-
-              // category나 asset이 설정되어 있지 않을 경우만 실행
-            } else {
-              console.log('setAsset 데이터가 없습니다!', docSnapshot);
             }
-            // document 값이 없으면
           } else {
-            // setting 페이지로 이동
-            console.log('settings 값이 없음', docSnapshot);
+            alert(
+              '관리 페이지에서 카테고리값을 등록해주세요! 관리페이지로 이동합니다.',
+            );
+            this.$router.push('/setting');
           }
-        })
-        .catch(err => {
-          console.log('에러가 발생한 위치는 listAdd Created', err);
         });
     },
     getListData() {
@@ -133,6 +145,10 @@ export default {
     },
     mbooRef() {
       return moneybooRef(this.currentUid);
+    },
+    settingListRef() {
+      // settings document > settingList collection 참조값
+      return settingColRef(this.currentUid);
     },
     // 날짜 정렬 함수
     sortListDate() {

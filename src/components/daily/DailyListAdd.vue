@@ -62,9 +62,9 @@
 
 <script>
 import DatePicker from 'v-calendar/lib/components/date-picker.umd';
-import { makeID } from '@/utils/filters.js';
+import { makeDateListID } from '@/utils/filters.js';
 import { eventBus } from '@/main.js';
-import { moneybooRef } from '@/api/firestore';
+import { moneybooRef, settingColRef } from '@/api/firestore';
 import firebase from 'firebase';
 
 export default {
@@ -86,8 +86,9 @@ export default {
       this.editId = data.id;
       this.listText = data.text;
     });
-    // 셋팅페이지에 있는 데이터 불러오기
-    this.getSettingData();
+    // 셋팅페이지에 있는 은행, 카테고리 불러오기
+    this.getBanksData();
+    this.getCategoriesData();
   },
   data() {
     return {
@@ -106,61 +107,53 @@ export default {
     };
   },
   methods: {
-    getSettingData() {
-      // 셋팅페이지에 있는 데이터 불러오기
-      this.mbooRef()
-        .doc('settings')
-        .get()
-        .then(docSnapshot => {
-          // document 값이 있으면
-          if (docSnapshot.exists) {
-            const setCategory = docSnapshot.data().setCategory;
-            const setAsset = docSnapshot.data().setAsset;
-
-            // category와 asset이 셋팅되어있을때만 실행
-            if (setCategory && setAsset) {
-              // 카테고리
-              setCategory.forEach(data => {
-                this.getCategory.push(data.name);
-              });
-
-              // 에셋
-              setAsset.banks.forEach(data => {
-                this.getBankAsset.push(data);
-              });
-
-              // category나 asset이 설정되어 있지 않을 경우만 실행
-            } else {
-              // 에러메세지 undefined 값인 데이터에 문자 삽입
-              const errMessage =
-                setAsset === undefined
-                  ? '목표금액과 자산'
-                  : setCategory === undefined
-                  ? '카테고리'
-                  : '관리페이지';
-
-              // 경고창 실행하고 셋팅페이지로 이동
-              alert(
-                errMessage +
-                  '에서 설정값을(를) 등록해주세요! 관리페이지로 이동합니다.',
-              );
-              this.$router.push('/setting');
+    // firestore에 있는 저장된 은행 DB 불러오기
+    getBanksData() {
+      this.settingListRef()
+        .doc('banks')
+        .onSnapshot(snapshot => {
+          // document의 값이 있으면
+          if (snapshot.exists) {
+            const banks = snapshot.data().banks;
+            if (banks) {
+              this.getBankAsset = banks;
             }
-            // document 값이 없으면
           } else {
-            // setting 페이지로 이동
             alert(
-              '관리 페이지에서 초기값을 등록해주세요! 관리페이지로 이동합니다.',
+              '관리 페이지에서 은행값을 등록해주세요! 관리페이지로 이동합니다.',
             );
             this.$router.push('/setting');
           }
-        })
-        .catch(err => {
-          console.log('에러가 발생한 위치는 listAdd Created', err);
+        });
+    },
+    // firestore에 있는 저장된 카테고리 DB 불러오기
+    getCategoriesData() {
+      this.settingListRef()
+        .doc('categories')
+        .onSnapshot(snapshot => {
+          // document의 값이 있으면
+          if (snapshot.exists) {
+            const categories = snapshot.data().categories;
+            if (categories) {
+              // this.getCategory 에 category 이름만 넣어라.
+              categories.forEach(data => {
+                this.getCategory.push(data.name);
+              });
+            }
+          } else {
+            alert(
+              '관리 페이지에서 카테고리값을 등록해주세요! 관리페이지로 이동합니다.',
+            );
+            this.$router.push('/setting');
+          }
         });
     },
     mbooRef() {
       return moneybooRef(this.currentUid);
+    },
+    settingListRef() {
+      // settings document > settingList collection 참조값
+      return settingColRef(this.currentUid);
     },
     dailyListAddRef() {
       return this.mbooRef()
@@ -213,7 +206,7 @@ export default {
         };
       } else {
         listData = {
-          id: makeID('l'),
+          id: makeDateListID('l', this.date),
           date: this.conversionDate(this.date), // 한국날짜로 변환
           item: this.inputControl,
           category: this.selectCategory,
