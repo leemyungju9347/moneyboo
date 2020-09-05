@@ -28,7 +28,7 @@ body {
 	padding:2% 3%;
 	color: #3B3B3B;
 
-	position: fixed;
+	/* position: fixed; */
 }
 h1, h2, h3, h4, h5, h6 {font-size:1em; font-family:'Jua';}
 h1, h2, h3, h4, h5, h6, div, p, dl, dt, dd, ul, ol, li, form, fieldset, blockquote, address, table, thead, tbody, tfoot, tr, td, caption {
