@@ -147,52 +147,59 @@ button.btn.small {
 .side-gnb-form a, .side-gnb-form h1, .calender-cont > * {font-family: 'IBMPlexSansKR-Text';}
 
 .side-gnb-form{
-    padding:10px 20px 20px;
     position: relative;
     height: 100%;
 }
 .side-gnb-form > .logo-cont {
     padding-bottom: 20px;
-    position: relative;
     position: absolute;
     bottom: 0;
+    left: 15px;
 }
-.side-gnb-form > .logo-cont .logo {color: #fff;font-size: 2em;}
-.side-gnb-form > .logo-cont .logo > img {width:70%;height:auto;}
+.side-gnb-form > .logo-cont .logo {
+  color: #fff;
+  font-size: 2em;
+}
+.side-gnb-form > .logo-cont .logo > img {
+  width:80%;
+  height:auto;
+}
 .side-gnb-form > .username-cont {
-  padding-top: 14px;
-  display: block;
-  white-space: nowrap;
   width: 100%;
-}
-.side-gnb-form > .username-cont > strong{
-  color: rgb(255, 255, 255); 
-  font-weight: 700;
-  letter-spacing:2px;
-  font-size: 1.4em;
+  padding: 0 5px;
   position: absolute;
-  left: 65px;
-  padding-left:5px;
-}
-.side-gnb-form > .username-cont > strong > .user-icon{
-  background: url('../images/user.png') no-repeat 0 0;
-  background-size: 100%;
-  width: 29px;
-  height: 30px;
-  position: absolute;
-  left: -37px;
-  top: -2px;
+  left: 25px;
+  top: 25px;
 
+}
+.side-gnb-form > .username-cont > a {
+  font-weight: bold;
+  color: #fff;
+}
+
+.side-gnb-form > .username-cont > a > i {
+  margin-right: 5px;
+  font-size: 1.7em;
+}
+.side-gnb-form > .username-cont > a > span {
+  color: #fff;
+  font-size: 1.3em;
+}
+.side-gnb-form > .username-cont.on > a {
+  letter-spacing: 1.5px;
 }
 
 .side-gnb-form > .gnb-list-cont {
   position: absolute;
-  top: 86px;
+  top: 70px;
   left:0;
   right: 0;
   padding-left:5px
 }
-.side-gnb-form > .gnb-list-cont > ul{padding:15px 0;position: relative;}
+.side-gnb-form > .gnb-list-cont > ul{
+  padding:15px 0;
+  position: relative;
+}
 .side-gnb-form > .gnb-list-cont > ul::before{
   content: '';
   display: block;
@@ -217,7 +224,6 @@ button.btn.small {
 }
 .side-gnb-form > .gnb-list-cont > ul > li.transparent-bar{
   padding:10px 0;
-  margin-top:10px;
 }
 .side-gnb-form > .gnb-list-cont > ul > li.transparent-bar::before{
   content: '';
@@ -229,7 +235,7 @@ button.btn.small {
   left:14px;
   background-color: #4a9b7b
 }
-.side-gnb-form > .gnb-list-cont > ul > li > a{
+.side-gnb-form > .gnb-list-cont > ul > li > a {
     line-height:56px;
     font-size:1.4em;
     display: block;
@@ -353,3 +359,103 @@ button.btn.small {
   background-size: 100%;
 }
 .side-gnb-form > .calender-cont > .desc { position: absolute;top:55px;}
+
+
+/* PC : 1024px ~
+테블릿 : 768 ~ 1023px
+모바일 : ~ 768px */
+
+/* 태블릿사이즈 */
+@media screen and (max-width:1023px){
+  /*------ SideGnbForm--------------------------------------------------------*/
+  .side-gnb-form > .username-cont {
+    left: 14px;
+    padding: 0;
+  }
+  .side-gnb-form > .username-cont > a {
+  }
+  .side-gnb-form > .username-cont > a > span {
+    font-size: 1.2em;
+  }
+  .side-gnb-form > .username-cont > a > i {
+    display: none;
+  }
+  .side-gnb-form > .gnb-list-cont {
+    top: 60px;
+  }
+  .side-gnb-form > .gnb-list-cont > ul {
+    padding: 10px 0;
+  }
+  .side-gnb-form > .gnb-list-cont > ul::before {
+    left: 5px;
+  }
+  .side-gnb-form > .gnb-list-cont > ul > li { 
+    padding-left: 4px;
+  }
+  .side-gnb-form > .gnb-list-cont > ul > li:hover {
+    background-color: unset;
+    width: 100%;
+  }
+  .side-gnb-form > .gnb-list-cont > ul > li > a {
+    font-size: 1.3em;
+    padding-left: 48px;
+  }
+  .side-gnb-form > .gnb-list-cont > ul > li > a > .gnb-icon {
+    width: 22px;
+    height: 22px;
+    top: 17px;
+    transform: none;
+  }
+
+  .side-gnb-form > .gnb-list-cont > ul > li.transparent-bar::before {
+    left: 5px;
+  }
+
+
+  
+}
+
+/* 모바일사이즈 */
+@media screen and (max-width:768px) {
+  /*------ SideGnbForm--------------------------------------------------------*/
+  .side-gnb-form > .gnb-list-cont > ul > li > a > .gnb-icon {
+    width: 27px;
+    height: 27px;
+    top: 16px;
+    left: 33px;
+  }
+
+  .side-gnb-form > .logo-cont { 
+    bottom: 40px;
+    transform: rotateZ(-90deg);
+  }
+
+  .side-gnb-form > .logo-cont .logo > img {
+    width: 100%;
+  }
+  .side-gnb-form > .gnb-list-cont > ul > li > a {
+    font-size: 0;
+  }
+  .side-gnb-form > .username-cont > a > i {
+    display: block;
+  }
+  .side-gnb-form > .username-cont {
+    left:35px;
+    top: 17px;
+  }
+  .side-gnb-form > .username-cont > a > i {
+    font-size: 2.5em;
+  }
+  .side-gnb-form > .username-cont > a > span {
+    display: none;
+  }
+  .side-gnb-form > .gnb-list-cont {
+    padding-left: 0;
+  }
+
+  .side-gnb-form > .gnb-list-cont > ul > li {
+    padding-left: 0;
+  }
+
+
+}

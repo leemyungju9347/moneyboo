@@ -10,10 +10,12 @@
       </h1>
     </div>
     <!-- username -->
-    <a href="" @click.prevent="goMypage()" class="username-cont"
-      ><strong><i class="user-icon"></i>{{ useremail }}</strong></a
-    >
-
+    <div class="username-cont" :class="setUserClassName">
+      <a href="" @click.prevent="goMypage()">
+        <i class="fas" :class="`fa-user-${userIcon}`"></i>
+        <span>{{ useremail }}</span>
+      </a>
+    </div>
     <!-- GNB 메뉴 -->
     <div class="gnb-list-cont">
       <ul>
@@ -29,7 +31,7 @@
           </a>
         </li>
         <!-- 로그아웃 버튼 -->
-        <li class="logout" v-if="isUserLogin" @click.prevent="logoutUser()">
+        <li class="logout" v-if="isLogin" @click.prevent="logoutUser()">
           <a href=""><i class="gnb-icon logout-icon"></i>로그아웃</a>
         </li>
       </ul>
@@ -41,6 +43,7 @@
 import { deleteCookie } from '@/utils/cookies';
 import { auth } from '@/api/fireAuth';
 import bus from '@/utils/bus';
+import { mapState, mapGetters, mapMutations } from 'vuex';
 export default {
   data() {
     return {
@@ -77,20 +80,23 @@ export default {
     };
   },
   computed: {
-    isUserLogin() {
-      return this.$store.getters.isLogin;
-    },
+    ...mapState(['nickname', 'currentRouter']),
+    ...mapGetters(['isLogin']),
     useremail() {
-      return this.isUserLogin ? this.$store.state.email : '로그인을 해주세요.';
+      return this.isLogin ? this.nickname : '로그인을 해주세요.';
+    },
+    userIcon() {
+      return this.isLogin ? 'cog' : 'lock';
     },
     logoLink() {
-      return this.$store.getters.isLogin ? '/main' : '/registration';
+      return this.isLogin ? '/main' : '/registration';
     },
-    currentRouter() {
-      return this.$store.state.currentRouter;
+    setUserClassName() {
+      return this.isLogin ? 'on' : '';
     },
   },
   methods: {
+    ...mapMutations(['CLEAR_USER']),
     // Gnb메뉴 클릭시 라우터 이동
     setRouterPath(item) {
       // 투명바는 active 애니메이션을 적용하지 않는다.
@@ -110,12 +116,10 @@ export default {
       if (this.$router.currentRoute.path !== '/registration') {
         setTimeout(() => {
           // 스토어에 저장된 유저정보 삭제
-          this.$store.commit('CLEAR_USER');
-          this.$store.commit('CLEAR_UID');
+          this.CLEAR_USER();
 
           // 쿠키에 저장된 유저정보 삭제
-          deleteCookie('user_email');
-          deleteCookie('user_uid');
+          this.deleteCookies();
 
           // 첫 로드됐을때 페이지로 이동
           this.$router.push('/').catch(err => {
@@ -127,6 +131,11 @@ export default {
       } else return;
 
       this.firebaseLogout();
+    },
+    deleteCookies() {
+      deleteCookie('user_email');
+      deleteCookie('user_uid');
+      deleteCookie('user_nickname');
     },
     // 파이어베이스 로그아웃
     firebaseLogout() {
@@ -146,7 +155,7 @@ export default {
     // 유저 아이디 클릭시 마이페이지로 이동하도록 하는 함수
     goMypage() {
       // 로그인 했을때만 마이페이지로 이동
-      if (this.isUserLogin) {
+      if (this.isLogin) {
         // 현재 위치가 마이페이지가 아니면 라우터 이동
         if (this.$router.currentRoute.path !== '/mypage') {
           this.$router.push('/mypage');
@@ -156,7 +165,7 @@ export default {
 
         // 로그인 요청 알림
       } else {
-        alert('로그인을 해주세요.');
+        bus.$emit('show:toast', '로그인이 필요한 기능입니다.', 'warning');
       }
     },
   },

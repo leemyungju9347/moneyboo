@@ -63,9 +63,14 @@ export default new Vuex.Store({
     // 로그아웃
     CLEAR_USER(state) {
       state.email = '';
+      state.uid = '';
+      state.nickname = '';
     },
     CLEAR_UID(state) {
       state.uid = '';
+    },
+    CLEAR_NICKNAME(state) {
+      state.nickname = '';
     },
     // 라우터 경로
     SET_ROUTER_PATH(state, router) {

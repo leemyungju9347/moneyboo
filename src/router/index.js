@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import store from '@/store/index';
+import bus from '@/utils/bus';
 
 Vue.use(VueRouter);
 
@@ -78,11 +79,13 @@ router.beforeEach((to, from, next) => {
   // 사용자가 로그인하지 않았을때
   // 로그인 페이지로 이동
   if (to.meta.requiresAuth && !store.getters.isLogin) {
-    from.path === '/registration'
-      ? alert('로그인이 필요한 메뉴입니다.')
-      : next('/');
+    from.path === '/registration' ? warning() : next('/');
     return;
   }
   next();
 });
+
+function warning() {
+  bus.$emit('show:toast', '로그인이 필요한 메뉴입니다.', 'warning');
+}
 export default router;

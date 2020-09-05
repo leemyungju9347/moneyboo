@@ -7,6 +7,7 @@
       v-bind="saveRouterLocation()"
     ></router-view>
     <LoadingSpinner :loading="loadingStatus"></LoadingSpinner>
+    <ToastPopup></ToastPopup>
   </div>
 </template>
 
@@ -15,6 +16,7 @@ import Sidebar from '@/views/Sidebar.vue';
 import StatusHeader from '@/views/StatusHeader.vue';
 import { saveAuth } from '@/utils/cookies.js';
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue';
+import ToastPopup from '@/components/common/ToastPopup.vue';
 import bus from '@/utils/bus.js';
 
 export default {
@@ -22,6 +24,7 @@ export default {
     Sidebar,
     StatusHeader,
     LoadingSpinner,
+    ToastPopup,
   },
   data() {
     return {
@@ -75,4 +78,6 @@ export default {
 @import './assets/css/statistics-page.css';
 @import './assets/css/registration.css';
 @import './assets/css/daily-page.css';
+@import './assets/css/common/toast-popup.css';
+@import './assets/css/common/loading-spinner.css';
 </style>
