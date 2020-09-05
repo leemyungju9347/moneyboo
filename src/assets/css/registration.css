@@ -8,14 +8,29 @@
     position: relative;
     height: 100%;
     width: 50%;
-    padding:95px 0 0 110px;
-    transition:all 0.7s ease;
+    transition:all 0.7s ease; 
+    display: block;
 }
-.registration-page-wrap > .regist-form > .regist-form-cont {display:none;position: relative;}
-.registration-page-wrap > .regist-form > .regist-form-cont > form {position: relative;margin-top:90px;width:80%;}
-.registration-page-wrap > .login-form > .regist-form-cont > form {margin-top:110px;}
-.registration-page-wrap > .regist-form > .regist-form-cont > form > div {position: relative;width: 100%;}
-.registration-page-wrap > .regist-form > .regist-form-cont > form > div + div {margin-top:40px;}
+.registration-page-wrap > .regist-form > .regist-form-cont {
+    display:none;
+    position: relative;
+    width: 70%;
+    margin: 120px auto 0;
+}
+.registration-page-wrap > .regist-form > .regist-form-cont > form {
+    position: relative;
+    margin-top: 85px;
+}
+.registration-page-wrap > .login-form > .regist-form-cont > form {
+    margin-top:110px;
+}
+.registration-page-wrap > .regist-form > .regist-form-cont > form > div {
+    position: relative;
+    width: 100%;
+}
+.registration-page-wrap > .regist-form > .regist-form-cont > form > div + div {
+    margin-top:40px;
+}
 .registration-page-wrap > .regist-form > .regist-form-cont > form > div > label {
     position: absolute;
     left:10px;
@@ -36,12 +51,12 @@
     letter-spacing: 1.8px;
     padding: 5px 10px 15px;
 }
+
 .registration-page-wrap > .regist-form > .regist-form-cont > form > div:focus-within > label{
     visibility: hidden;
 }
-.registration-page-wrap > .regist-form > .regist-form-cont > form > div:focus-within > input:after{
-    content: '입력해주세요';
-}
+
+
 .registration-page-wrap > .regist-form > .regist-form-cont > form > div.active > input {
     border-color: #187b55;
     border-color:#3f9c79;
@@ -59,15 +74,6 @@
     font-size: 1.2em;
     font-weight: bold;
 }
-/* .logmessages-box > button {
-    border: transparent;
-    color: #fff;
-    padding: 10px;
-    background-color:#348F6C;
-    margin-bottom: 5px;
-    
-} */
-
 
 .registration-page-wrap > .regist-form > .regist-form-cont > form > p {
     font-weight:600;
@@ -125,8 +131,8 @@
 .registration-page-wrap > .regist-form > .regist-form-cont > .reset-btn{
     position: absolute;
     font-size: 0;
-    right:50px;
-    top:-45px;
+    right: -30px;
+    top: -65px;
     background: url('../images/return.png') no-repeat 0 0;
     background-size: 100%;
     border:none;
@@ -135,6 +141,43 @@
     cursor: pointer;
     opacity: 0.7;
 }
+
+.registration-page-wrap > .regist-form > .regist-form-cont > .go-btn {
+    border: transparent;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #3a3939;
+    position: absolute;
+    border-radius: 30px;
+    padding: 10px 20px;
+    top: -95px;
+    right:-40px;
+    display: none;
+}
+
+
+/* 로그인페이지에서 회원가입으로 넘어가는 버튼 */
+.registration-page-wrap > .regist-form > .regist-form-cont > .go-btn.signup {
+    background: #aedccbbd;
+}
+
+.registration-page-wrap > .regist-form > .regist-form-cont > .go-btn.login {
+    background: #f1f5f4;
+    border: 3px solid #d3d3d3;
+}
+
+.registration-page-wrap > .regist-form > .regist-form-cont > .go-btn.active{
+    display: block;
+}
+
+
+.registration-page-wrap > .regist-form > .regist-form-cont > .go-btn.signup > i {
+    margin-left:5px;
+}
+.registration-page-wrap > .regist-form > .regist-form-cont > .go-btn.login > i {
+    margin-right:10px;
+}
+
 .registration-page-wrap > .signup-form {
     background-color: #348f6c2f 
 }
@@ -183,7 +226,7 @@
 .registration-page-wrap > .regist-form > .mask > strong {
     position: absolute;
     font-size:2.8em;
-    top:52%;
+    top:50%;
     left: 50%;
     transform: translateX(-50%);
     opacity: 0.4;
@@ -208,6 +251,83 @@
     to {
         opacity:1;
     }
+}
+
+/* 회원가입 */
+.change-right {
+    -webkit-animation: scaleUpRight .4s ease-out both;
+    animation: scaleUpRight .4s ease-out both;
+}
+
+@-webkit-keyframes scaleUpRight {
+    0%{
+        transform: translateX(20%);
+      }
+      /* 50%{
+        transform: translateX(50%);
+      } */
+      100%{
+        transform: translateX(0);
+      }
+}
+
+/* 로그인 */
+.change-left {
+    -webkit-animation: scaleUpLeft .4s ease-out both;
+    animation: scaleUpLeft .4s ease-out both;
+}
+
+@-webkit-keyframes scaleUpLeft {
+    0%{
+        transform: translateX(-20%);
+      }
+      /* 50%{
+        transform: translateX(50%);
+      } */
+      100%{
+        transform: translateX(0);
+      }
+}
+
+/* PC : 1024px ~
+테블릿 : 768 ~ 1023px
+모바일 : ~ 768px */
+
+/* 태블릿사이즈 */
+@media screen and (max-width:1023px){
+    .registration-page-wrap > .regist-form > .regist-form-cont > .reset-btn {
+        display: none;
+    } 
+    .registration-page-wrap > .regist-form > .regist-form-cont > form > .add-btn {
+        width: 100%;
+    }
+  
+}
+
+/* 모바일사이즈 */
+@media screen and (max-width:768px) {
+
+    .registration-page-wrap > .regist-form > .regist-form-cont > h3 {
+        text-align: center;
+    }
+    .registration-page-wrap > .regist-form > .regist-form-cont > .go-btn {
+        font-size: 1.3em;
+    }
+
+    .registration-page-wrap > .regist-form > .regist-form-cont > form > div > .logmessage-box {
+        bottom: -25px;
+        padding: 0;
+        top: unset;
+    }
+
+    .registration-page-wrap > .regist-form > .regist-form-cont > form > div > .logmessage-box > p {
+        font-size: 1.12em;
+    }
+
+    
+
+    
+
 }
 
 

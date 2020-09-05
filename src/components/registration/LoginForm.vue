@@ -1,13 +1,19 @@
 <template>
   <!-- 로그인 페이지 -->
   <div class="regist-form login-form">
-    <div class="regist-form-cont fade">
+    <div class="regist-form-cont">
       <h3>로그인</h3>
+      <!-- autocomplete="off" -->
       <form class="form" action="" @submit.prevent="submitForm">
         <!-- 아이디 -->
         <div :class="{ active: useremail }">
           <label for="useremail" v-if="!useremail">이메일</label>
-          <input id="useremail" type="text" v-model="useremail" />
+          <input
+            id="useremail"
+            type="text"
+            v-model="useremail"
+            autocomplete="off"
+          />
           <!-- 이메일 유효성 검사 메세지 -->
           <div class="logmessage-box">
             <p v-if="useremail && !emailCheck">
@@ -18,7 +24,12 @@
         <!-- 비밀번호 -->
         <div :class="{ active: password }">
           <label for="password" v-if="!password">비밀번호</label>
-          <input id="password" type="text" v-model="password" />
+          <input
+            id="password"
+            type="text"
+            v-model="password"
+            autocomplete="off"
+          />
           <!-- 비밀번호 유효성 검사 메세지 -->
           <div class="logmessage-box">
             <p v-if="password && !passwordCheck">
@@ -36,10 +47,11 @@
           로그인
         </button>
       </form>
-      <!-- 경고메세지 -->
-      <p class="warning">{{ errMessage }}</p>
       <button class="reset-btn" @click.prevent="resetBtnForm()">
         되돌아가기
+      </button>
+      <button class="go-btn signup font-jua" @click.prevent="goSignupBtn()">
+        회원가입 <i class="fas fa-arrow-right"></i>
       </button>
     </div>
     <!-- 첫 화면 마스크 -->
@@ -63,17 +75,19 @@ import {
   resetFormEvent,
   outFormEvent,
   initRegistForm,
+  goSignupEvent,
 } from '@/js/registration.js';
 import { passwordValidation, emailValidation } from '@/utils/validation';
 import { moneybooRef } from '@/api/firestore';
 import bus from '@/utils/bus';
+
 export default {
   data() {
     return {
       // register
       useremail: '',
       password: '',
-      // event
+      // log message
       errMessage: '',
       alertMessage: '',
     };
@@ -82,6 +96,7 @@ export default {
   mounted() {
     // 이벤트 함수를 담당하는 js 함수에 element를 넘겨줘서 쉽게 dom을 제어할 수 있도록 함.
     globalMountedInLogin(this.$el);
+    // init(this.$el);
   },
   computed: {
     // user가 입력됐는지 확인
@@ -117,47 +132,35 @@ export default {
           const response = await this.$store.dispatch('FATCH_LOGIN', userData);
 
           console.log(response);
-          this.initForm();
-          initRegistForm();
-          this.errMessage = '';
+          // this.initForm();
+          if (window.innerWidth > 1023) {
+            initRegistForm();
+          }
           // settings에 데이터 확인하고 라우터 이동
           this.settingsRef(response.user.uid)
             .get()
             .then(doc => {
               // settings에 값이 있으면?
               if (doc.exists) {
-                bus.$emit('start:spinner');
-                setTimeout(() => {
-                  this.$router.push('/main');
-                }, 2500);
+                this.loginSuccess('main');
               } else {
-                // settings에 값이 없으면?
-                bus.$emit('start:spinner');
-                setTimeout(() => {
-                  this.$router.push('/setting');
-                }, 2500);
+                this.loginSuccess('setting');
               }
             });
+
+          bus.$emit('start:spinner');
+
+          this.alertMessage = '';
 
           // 유효성 검사가 맞지않으면
         } else {
           // 에러메세지
-          this.errMessage =
-            !this.emailCheck && !this.passwordCheck
-              ? '이메일과 비밀번호 형식이 맞지 않습니다.'
-              : !this.emailCheck
-              ? '이메일 형식이 맞지 않습니다.'
-              : '비밀번호 형식이 맞지 않습니다.';
+          this.validCheckMessage(this.emailCheck, this.passwordCheck);
         }
       } catch (err) {
         console.log('로그인폼 에러다!!!', err);
         // 에러메세지
-        this.errMessage =
-          err.code === 'auth/user-not-found'
-            ? '등록되지 않은 사용자입니다.'
-            : err.code === 'auth/wrong-password'
-            ? '비밀번호를 확인해주세요.'
-            : '';
+        this.errorMessage(err);
       }
     },
     // 클릭 이벤트
@@ -168,6 +171,7 @@ export default {
     initForm() {
       this.useremail = '';
       this.password = '';
+      this.errMessage = '';
     },
     // 마우스오버 이벤트
     overLoginForm(event) {
@@ -181,6 +185,54 @@ export default {
     // 마우스 아웃 이벤트
     outLoginForm() {
       outFormEvent();
+    },
+    // 회원가입 페이지로 이동
+    goSignupBtn() {
+      goSignupEvent();
+      this.initForm();
+    },
+    // 이메일 유효성 검사 경고 메세지
+    validCheckMessage(email, password) {
+      this.errMessage =
+        !email && !password
+          ? '이메일과 비밀번호 형식이 맞지 않습니다.'
+          : !email
+          ? '이메일 형식이 맞지 않습니다.'
+          : '비밀번호 형식이 맞지 않습니다.';
+      bus.$emit('show:toast', this.errMessage, 'warning');
+    },
+    // 에러메세지
+    errorMessage(err) {
+      this.errMessage =
+        err.code === 'auth/user-not-found'
+          ? '등록되지 않은 사용자입니다.'
+          : err.code === 'auth/wrong-password'
+          ? '비밀번호를 확인해주세요.'
+          : '';
+
+      bus.$emit('show:toast', this.errMessage, 'warning');
+    },
+    // 로그인 성공한뒤 로직
+    loginSuccess(position) {
+      console.log('로그인 성공 ===> 위치는??', position);
+      // 첫 로그인 셋팅페이지로 갈때
+      if (position === 'setting') {
+        console.log('여기는 관리페이지');
+
+        this.alertMessage =
+          '첫 로그인 성공 ! 관리페이지에서 목표금액과 자산을 설정해주세요.';
+        // 셋팅되어 있을때, main 페이지로 갈때
+      } else {
+        console.log('여기는 메인페이지');
+        this.alertMessage = '로그인 성공 ! 메인페이지로 이동합니다.';
+      }
+      // 팝업
+      bus.$emit('show:toast', this.alertMessage, 'check');
+
+      // 라우터 이동
+      setTimeout(() => {
+        this.$router.push(`/${position}`);
+      }, 2500);
     },
     // settings DB
     settingsRef(uid) {

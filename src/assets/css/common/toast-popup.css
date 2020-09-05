@@ -1,0 +1,42 @@
+.toast-popup {
+    position: fixed;
+    top: -80px;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 60px;
+    background-color: #242424;
+    color: #fff;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.2);
+    transition: all 750ms ease;
+    font-weight: bold;
+    font-size: 1.3em;
+    z-index: 1000;
+    padding: 0 40px
+  }
+  
+  .toast-popup > i {
+    margin-right: 15px;
+  }
+  
+  .toast-popup.show {
+    top: 30px;
+  }
+
+
+  /* 태블릿사이즈 */
+@media screen and (max-width:1023px) {
+  .toast-popup {
+    font-size: 1.15em;
+    padding: 0 20px
+  }
+}
+
+@media screen and (max-width:768px) {
+  .toast-popup {
+    font-size: 1em;
+  }
+}

@@ -1,5 +1,7 @@
 // 전역변수
 
+// const mql = window.matchMedia('screen and (max-width: 768px)');
+
 //회원가입 변수
 let signupForm = null; // width 제어
 let signupCont = null; // display : none or block
@@ -9,14 +11,18 @@ let signupMask = null;
 // click이벤트일때는 false를 줘서 click 했을때 크기가 줄어들지 않도록 도와주는 역할을 한다.
 let outCheck = true;
 let clickCheck = true; // 클릭이벤트가 실행 중인지 체크해주는 변수
-// let transitionCheck = false;
 
 //로그인 변수
 let loginForm = null;
 let loginCont = null;
 let loginMask = null;
 
+let signupBtn = null;
+let loginBtn = null;
 const setWidth = 50; // 초기 고정 width 값
+let timer;
+
+let currentPage = 'login';
 
 // 회원가입 페이지가 마운티드 됐을때 실행
 function globalMountedInSingup(elm) {
@@ -24,6 +30,8 @@ function globalMountedInSingup(elm) {
   signupForm = elm;
   signupCont = elm.querySelector('.regist-form-cont');
   signupMask = elm.querySelector('.mask');
+  loginBtn = signupCont.querySelector('.go-btn.login');
+  console.log(loginBtn);
 }
 
 // 로그인 페이지가 마운티드 됐을때 실행
@@ -32,6 +40,122 @@ function globalMountedInLogin(elm) {
   loginForm = elm;
   loginCont = elm.querySelector('.regist-form-cont');
   loginMask = elm.querySelector('.mask');
+  signupBtn = loginCont.querySelector('.go-btn.signup');
+}
+
+function resizeEvent() {
+  window.addEventListener('resize', function() {
+    changeClassRemove();
+
+    // 태블릿
+    if (window.innerWidth <= 1023) {
+      signupBtn.classList.add('active');
+      loginBtn.classList.add('active');
+
+      if (currentPage === 'login') {
+        currentPage = 'login';
+
+        loginForm.style.width = '100%';
+        loginCont.style.display = 'block';
+        loginForm.style.display = 'block';
+
+        loginMask.style.display = 'none';
+        signupForm.style.display = 'none';
+
+        transitionReset();
+      } else if (currentPage === 'signup') {
+        currentPage = 'signup';
+
+        loginCont.style.display = 'none';
+        loginForm.style.display = 'none';
+        loginMask.style.display = 'none';
+
+        signupForm.style.display = 'block';
+        signupForm.style.width = '100%';
+        signupCont.style.display = 'block';
+        signupMask.style.display = 'none';
+
+        transitionReset();
+      }
+
+      // pc
+    } else if (window.innerWidth > 1023) {
+      currentPage = 'login';
+
+      loginCont.style.display = 'block';
+      loginForm.style.display = 'block';
+      signupMask.style.display = 'block';
+      signupForm.style.display = 'block';
+      loginForm.style.width = '50%';
+      signupForm.style.width = '50%';
+      signupCont.style.display = 'block';
+      signupBtn.classList.remove('active');
+      loginBtn.classList.remove('active');
+
+      initRegistForm();
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        loginForm.style.transition = '0.7s ease';
+        signupForm.style.transition = '0.7s ease';
+      }, 100);
+    }
+  });
+}
+
+function transitionReset() {
+  loginForm.style.transition = '0s';
+  signupForm.style.transition = '0s';
+}
+
+function sizeInit() {
+  changeClassRemove();
+  currentPage = 'login';
+  if (window.innerWidth <= 1023) {
+    loginForm.style.width = '100%';
+    loginCont.style.display = 'block';
+
+    loginMask.style.display = 'none';
+    signupForm.style.display = 'none';
+    signupBtn.classList.add('active');
+    loginBtn.classList.add('active');
+  } else {
+    signupBtn.classList.remove('active');
+    loginBtn.classList.remove('active');
+  }
+}
+
+function goSignupEvent() {
+  currentPage = 'signup';
+  loginForm.style.display = 'none';
+  signupForm.style.display = 'block';
+  signupCont.style.display = 'block';
+  signupForm.style.width = '100%';
+  signupMask.style.display = 'none';
+
+  // loginCont.classList.add('change');
+  // signupCont.classList.add('change');
+  changeClassAdd();
+}
+
+function goLoginEvent() {
+  currentPage = 'login';
+  loginForm.style.display = 'block';
+  loginForm.style.width = '100%';
+  loginCont.style.display = 'block';
+  signupForm.style.display = 'none';
+  signupCont.style.display = 'none';
+
+  changeClassAdd();
+}
+
+function changeClassAdd() {
+  loginCont.classList.add('change-left');
+  signupCont.classList.add('change-right');
+}
+
+function changeClassRemove() {
+  loginCont.classList.remove('change-left');
+  signupCont.classList.remove('change-right');
 }
 
 // 클릭 이벤트
@@ -71,18 +195,6 @@ function overWidthChange(kinds, target, login, signup) {
       login.style.width = `${setWidth + over.plus}%`;
     }
   }
-  // if (kinds === 'over' && !clickCheck) {
-  //   // 타겟이 회원가입일 경우
-  //   if (target.classList.contains('mask-signup')) {
-  //     signup.style.width = `${setWidth - mini.plus}%`;
-  //     login.style.width = `${setWidth + mini.minus}%`;
-
-  //     // 타겟이 로그인일 경우
-  //   } else if (target.classList.contains('mask-login')) {
-  //     signup.style.width = `${setWidth + mini.minus}%`;
-  //     login.style.width = `${setWidth - mini.plus}%`;
-  //   }
-  // }
 
   // 클릭이벤트
   if (kinds === 'click') {
@@ -177,13 +289,6 @@ function initRegistForm() {
   loginForm.style.width = '50%';
 }
 
-// function transitionaSetting() {
-//   signupForm.style.transition = 'all 0.7s ease;';
-//   loginForm.style.transition = 'all 0.7s ease;';
-// }
-
-// function displayControl(login, signup) {}
-
 export {
   clickFormEvent,
   globalMountedInSingup,
@@ -193,4 +298,8 @@ export {
   resetFormEvent,
   outFormEvent,
   initRegistForm,
+  resizeEvent,
+  sizeInit,
+  goSignupEvent,
+  goLoginEvent,
 };
