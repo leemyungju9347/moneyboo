@@ -11,7 +11,7 @@
   max-width: 1280px;
   min-width: 350px;
   margin: 0 auto;
-  min-height: 680px;
+  min-height: calc(680px - 4%);
   overflow: hidden;
 }
 .router-area {
@@ -418,6 +418,9 @@ button.btn.small {
 
 /* 모바일사이즈 */
 @media screen and (max-width:768px) {
+  #app {
+    min-height: calc(640px - 4%);
+  }
   /*------ SideGnbForm--------------------------------------------------------*/
   .side-gnb-form > .gnb-list-cont > ul > li > a > .gnb-icon {
     width: 27px;
