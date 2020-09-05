@@ -5,8 +5,8 @@
 	height: 100%;
 	width: 100%;
 	box-sizing: border-box;
-	/* position: fixed; */
-	position: relative;
+  position: relative;
+  /* position: fixed; */
   padding:15px ;
   max-width: 1280px;
   min-width: 480px;
