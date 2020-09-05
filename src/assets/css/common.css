@@ -9,9 +9,9 @@
   /* position: fixed; */
   padding:15px ;
   max-width: 1280px;
-  min-width: 480px;
+  min-width: 350px;
   margin: 0 auto;
-  min-height: 700px;
+  /* min-height: 700px; */
   overflow: hidden;
 }
 .router-area {
