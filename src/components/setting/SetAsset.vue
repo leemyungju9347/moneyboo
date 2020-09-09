@@ -77,9 +77,21 @@
               placeholder="해당 은행의 총 목표 금액을 입력해 주세요"
               v-model="bankList.asset"
             />
-            <span class="realTimeAsset"
+            <!-- <span class="realTimeAsset"
               >( 현재 {{ assetAddComma(bankList.asset) }}원 남음 )</span
+            > -->
+            <span class="realTimeAsset"
+              >( 현재
+              {{
+                matchBankPrice(getAllListData, bankList.bank, bankList.asset)
+              }}원 남음 )</span
             >
+            <!-- <span
+              class="realTimeAsset"
+              v-for="listdata in getAllListData"
+              :key="listdata.id"
+              >( 현재 {{ matchBankPrice(listdata) }}원 남음 )</span
+            > -->
             <button
               class="btn small remove"
               @click.prevent="clickRemoveBank(bankList)"
@@ -118,7 +130,7 @@
 </template>
 
 <script>
-import { makeID, addComma } from '@/utils/filters.js';
+import { makeID, addComma, newConversionMonth } from '@/utils/filters.js';
 import { moneybooRef, settingColRef } from '@/api/firestore';
 import firebase from 'firebase';
 
@@ -136,6 +148,8 @@ export default {
       },
       bankLength: 0, // 저장된 은행 개수 위해 필요.
       currentUid: this.$store.state.uid, // 현재 로그인한 유저의 uid
+      // 은행 별 지출 금액 데이터 불러옴(from DailyList)
+      getAllListData: [], // (현재 얼마남았는지 나타내는 tag에서 사용.)
     };
   },
   created() {
@@ -212,6 +226,9 @@ export default {
 
     // firstore에서 asset DB 가져오기
     this.getFirebase();
+
+    // 은행 별 남은 자산 구하는 함수 실행시켜 줌
+    this.getBankBalance();
   },
   computed: {},
   methods: {
@@ -221,6 +238,12 @@ export default {
     settingListRef() {
       // settings document > settingList collection 참조값
       return settingColRef(this.currentUid);
+    },
+    // listAdd collection 참조 값
+    dailyListAddRef() {
+      return this.mbooRef()
+        .doc('daily')
+        .collection('listAdd');
     },
     // 숫자만 입력되었는지 확인.
     checkNum(inputData) {
@@ -385,6 +408,43 @@ export default {
         .catch(err => {
           console.log('SetAsset.vue 에 있는 setBankListForm', err);
         });
+    },
+
+    // DailyList.vue의 지출 내역 불러옴.
+    getBankBalance() {
+      const yearsMonth = newConversionMonth();
+
+      // listAdd collection 하위에 있는 document 전체를 불러옴
+      this.dailyListAddRef()
+        .doc(yearsMonth)
+        .onSnapshot(snapshot => {
+          console.log(snapshot);
+          snapshot.exists
+            ? (this.getAllListData = snapshot.data().listData)
+            : console.log('값이 없습니다!');
+        });
+    },
+    // 각 은행 별 자산 사용 후 남은 금액.
+    matchBankPrice(allListdata, bankAssetName, bankAssetNum) {
+      // '각 은행 별 사용금액의 총 합' 변수 선언.
+      let priceSum = 0;
+
+      // 'dailyList'에서 불러온 지출/수입 내역 foreEach로 확인.
+      allListdata.forEach(listdata => {
+        // bankAsset과 같은 은행의 지출 내역 구함.
+        if (listdata.bank === bankAssetName && listdata.item === 'expend') {
+          priceSum += listdata.price * 1;
+        } else if (
+          // bankAsset과 같은 은행의 수입 내역 구함.
+          listdata.bank === bankAssetName &&
+          listdata.item === 'income'
+        ) {
+          priceSum += -listdata.price * 1;
+        }
+      });
+
+      // bankAsset에서 해당은행사 지출내역 뺴줌.(1000단위로 콤마 찍어줌)
+      return this.assetAddComma(bankAssetNum * 1 - priceSum);
     },
 
     assetAddComma(asset) {
