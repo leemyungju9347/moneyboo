@@ -33,14 +33,9 @@
 
       <div action="" class="credit-goal-cont">
         <strong>은행 별 자산 입력</strong>
-        <!-- <b class="explanation" v-if="getBanks.length === 0">
-          ( 우측 <span>+</span> 버튼을 눌러 은행 별 자산 입력창을 추가해 주세요.
-          )
-        </b> -->
         <b class="explanation" v-if="bankLength !== 0">
           <!-- 저장되어 있는 은행 개수를 불러와야 하기 때문에 firebase에 저장되어있는 banks의 length를 이용. -->
           ( 현재 {{ bankLength }}개의 은행 자산이 저장되어 있습니다.)
-          <!-- ( 현재 {{ getBanks.length }}개의 은행 자산이 저장되어 있습니다.) -->
         </b>
         <button @click.prevent="clickAddBank()">+</button>
         <ul>
@@ -85,7 +80,6 @@
             <span class="realTimeAsset"
               >( 현재 {{ assetAddComma(bankList.asset) }}원 남음 )</span
             >
-            <!-- <button class="edit">수정</button> -->
             <button
               class="btn small remove"
               @click.prevent="clickRemoveBank(bankList)"
@@ -228,6 +222,31 @@ export default {
       // settings document > settingList collection 참조값
       return settingColRef(this.currentUid);
     },
+    // 숫자만 입력되었는지 확인.
+    checkNum(inputData) {
+      console.log(inputData);
+      let title = '';
+      if (inputData === this.saveAsset.assets.totalGoal) {
+        title = '총 목표 금액';
+      } else if (inputData === this.saveAsset.assets.cashAsset) {
+        title = '현금 자산';
+      } else if (inputData === this.saveAsset.assets.cashAsset) {
+        title = '현금 자산';
+      } else if (inputData === this.saveAsset.assets.cashGoal) {
+        title = '현금 목표 금액';
+      }
+      for (let i = 0; i < this.saveAsset.banks.length; i++) {
+        if (inputData === this.saveAsset.banks[i].asset) {
+          title = '은행 별 자산';
+        }
+      }
+      console.log('아래 내용은 title');
+      console.log(title);
+      if (isNaN(inputData)) {
+        alert(`'${title}'에 숫자만 입력해주세요.`);
+        return 'notNum';
+      }
+    },
     clickAddBank() {
       this.saveAsset.banks.push({ bank: '', asset: '', id: makeID('bank') });
     },
@@ -279,6 +298,25 @@ export default {
     },
     // asset 저장
     saveAssetListForm() {
+      // 숫자만 입력했는지 확인.
+      if (this.checkNum(this.saveAsset.assets.totalGoal) === 'notNum') return;
+      if (this.checkNum(this.saveAsset.assets.cashAsset) === 'notNum') return;
+      if (this.checkNum(this.saveAsset.assets.cashGoal) === 'notNum') return;
+      // 총 목표금액이 공백일 경우 알림창 뜨게 함.
+      if (this.saveAsset.assets.totalGoal === '') {
+        alert("'총 목표 금액'을 입력해 주세요.");
+        return;
+      }
+
+      // '현금 목표금액', '현금 자산'을 입력하지 않았을 경우 '0'원으로 저장 함.
+      if (this.saveAsset.assets.cashAsset === '') {
+        this.saveAsset.assets.cashAsset = 0;
+      }
+      if (this.saveAsset.assets.cashGoal === '') {
+        this.saveAsset.assets.cashGoal = 0;
+      }
+
+      // 숫자만 입력되었으면 입력값 저장.
       this.settingListRef()
         .doc('assets')
         .get()
@@ -305,6 +343,24 @@ export default {
     },
     // bank 저장
     setBankListForm() {
+      for (let i = 0; i < this.saveAsset.banks.length; i++) {
+        console.log(i);
+        console.log(this.saveAsset.banks.length);
+        console.log(this.saveAsset.banks[i].asset);
+        // 은행이 선택되었는지 확인.
+        if (this.saveAsset.banks[i].bank === '') {
+          alert("'은행'을 선택해 주세요.");
+          return;
+        }
+        // 은행 별 자산에 숫자만 입력되었는지 확인.
+        if (this.checkNum(this.saveAsset.banks[i].asset) === 'notNum') return;
+        // 각 은행별 자산이 공백일 경우 알림창 뜨게 함.
+        if (this.saveAsset.banks[i].asset === '') {
+          alert("'은행 별 자산 금액'을 입력해 주세요.");
+          return;
+        }
+      }
+
       this.settingListRef()
         .doc('banks')
         .get()
@@ -330,6 +386,7 @@ export default {
           console.log('SetAsset.vue 에 있는 setBankListForm', err);
         });
     },
+
     assetAddComma(asset) {
       return addComma(asset);
     },
