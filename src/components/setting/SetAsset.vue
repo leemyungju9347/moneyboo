@@ -153,31 +153,6 @@ export default {
     };
   },
   created() {
-    // ***********코드 연구중....**********
-    console.log(this.saveAsset.banks);
-    let saveAssetBank = this.saveAsset.banks;
-    console.log(saveAssetBank);
-    console.log(saveAssetBank.length);
-    console.log(...this.saveAsset.banks);
-    console.log(typeof this.saveAsset.banks);
-    console.log(this.saveAsset.banks.length);
-    console.log(JSON.parse(JSON.stringify(this.saveAsset.banks)));
-    this.$root.log = function log() {
-      for (let i = 0; i < saveAssetBank.length; i++) {
-        console.log('hgello');
-        console.log(saveAssetBank.length);
-        if (typeof saveAssetBanks === 'object') {
-          try {
-            saveAssetBank[i] = JSON.parse(JSON.stringify(saveAssetBank));
-          } catch (error) {
-            console.log(error);
-          }
-        }
-      }
-      console.log(...saveAssetBank);
-    };
-    // ************************
-
     // 페이지 로딩 시 기본적으로 은행 별 자산 입력 칸 하나 생성시켜줌.
     if (this.saveAsset.banks === []) {
       this.saveAsset.banks.push({ bank: '', asset: '', id: '' });
@@ -185,44 +160,6 @@ export default {
 
     // 저장된 은행 수 data에 넣어줌.
     this.bankNum = this.$store.state.bankAsset.bank.length;
-
-    // firstore에서 asset DB 가져오기
-    // --- assets
-    this.settingListRef()
-      .doc('assets')
-      .onSnapshot(snapshot => {
-        // console.log(snapshot.data().setAsset);
-        // document의 값이 있으면
-        if (snapshot.exists) {
-          const assets = snapshot.data().assets;
-          console.log(assets);
-          if (assets) {
-            this.saveAsset.assets.totalGoal = assets.totalGoal;
-            this.saveAsset.assets.cashAsset = assets.cashAsset;
-            this.saveAsset.assets.cashGoal = assets.cashGoal;
-          }
-        }
-      });
-
-    // --- banks
-    this.settingListRef()
-      .doc('banks')
-      .onSnapshot(snapshot => {
-        // console.log(snapshot.data().setAsset);
-        // document의 값이 있으면
-        if (snapshot.exists) {
-          const banks = snapshot.data().banks;
-          if (banks) {
-            this.saveAsset.banks = banks;
-            this.bankLength = banks.length;
-          }
-        }
-      });
-
-    // // 페이지 로딩 시 기본적으로 은행 별 자산 입력 칸 하나 생성시켜줌.
-    // // if (this.saveAsset.banks === []) {
-    // this.saveAsset.banks.push({ bank: '', asset: '', id: '' });
-    // // }
 
     // firstore에서 asset DB 가져오기
     this.getFirebase();
