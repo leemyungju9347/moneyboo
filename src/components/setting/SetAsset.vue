@@ -77,21 +77,12 @@
               placeholder="해당 은행의 총 목표 금액을 입력해 주세요"
               v-model="bankList.asset"
             />
-            <!-- <span class="realTimeAsset"
-              >( 현재 {{ assetAddComma(bankList.asset) }}원 남음 )</span
-            > -->
             <span class="realTimeAsset"
               >( 현재
               {{
                 matchBankPrice(getAllListData, bankList.bank, bankList.asset)
               }}원 남음 )</span
             >
-            <!-- <span
-              class="realTimeAsset"
-              v-for="listdata in getAllListData"
-              :key="listdata.id"
-              >( 현재 {{ matchBankPrice(listdata) }}원 남음 )</span
-            > -->
             <button
               class="btn small remove"
               @click.prevent="clickRemoveBank(bankList)"
@@ -184,7 +175,9 @@ export default {
     },
     // 숫자만 입력되었는지 확인.
     checkNum(inputData) {
-      console.log(inputData);
+      // 콤마 있으면 지워줌.
+      inputData = this.removeComma(inputData);
+
       let title = '';
       if (inputData === this.saveAsset.assets.totalGoal) {
         title = '총 목표 금액';
@@ -200,6 +193,7 @@ export default {
           title = '은행 별 자산';
         }
       }
+
       console.log('아래 내용은 title');
       console.log(title);
       if (isNaN(inputData)) {
@@ -221,6 +215,10 @@ export default {
       this.saveAssetListForm();
       // bank 저장
       this.setBankListForm();
+
+      // 저장되었다는 안내창 뜨게 한 후 새로고침.
+      alert('목표 금액이 수정되었습니다.');
+      // location.reload();
     },
     // created()에서 사용할 함수(추가, 수정, 삭제 된 데이터 화면에 바로 반영되도록.)
     getFirebase() {
@@ -234,9 +232,18 @@ export default {
             const assets = snapshot.data().assets;
             console.log(assets);
             if (assets) {
-              this.saveAsset.assets.totalGoal = assets.totalGoal;
-              this.saveAsset.assets.cashAsset = assets.cashAsset;
-              this.saveAsset.assets.cashGoal = assets.cashGoal;
+              this.saveAsset.assets.totalGoal = this.assetAddComma(
+                // 저장 후 화면에 금액 나타날 때 1000단위 콤마 적용.
+                assets.totalGoal,
+              );
+              this.saveAsset.assets.cashAsset = this.assetAddComma(
+                // 저장 후 화면에 금액 나타날 때 1000단위 콤마 적용.
+                assets.cashAsset,
+              );
+              this.saveAsset.assets.cashGoal = this.assetAddComma(
+                // 저장 후 화면에 금액 나타날 때 1000단위 콤마 적용.
+                assets.cashGoal,
+              );
             }
           }
         });
@@ -249,19 +256,39 @@ export default {
           // document의 값이 있으면
           if (snapshot.exists) {
             const banks = snapshot.data().banks;
+            console.log(banks);
             if (banks) {
               this.saveAsset.banks = banks;
               this.bankLength = banks.length;
+
+              // 저장 후 화면에 금액 나타날 때 1000단위 콤마 적용.
+              for (let i = 0; i < banks.length; i++) {
+                this.saveAsset.banks[i].asset = this.assetAddComma(
+                  banks[i].asset,
+                );
+              }
             }
           }
         });
     },
     // asset 저장
     saveAssetListForm() {
+      // 저장하려는 값에 적힌 콤마 제거.
+      this.saveAsset.assets.totalGoal = this.removeComma(
+        this.saveAsset.assets.totalGoal,
+      );
+      this.saveAsset.assets.cashAsset = this.removeComma(
+        this.saveAsset.assets.cashAsset,
+      );
+      this.saveAsset.assets.cashGoal = this.removeComma(
+        this.saveAsset.assets.cashGoal,
+      );
+
       // 숫자만 입력했는지 확인.
       if (this.checkNum(this.saveAsset.assets.totalGoal) === 'notNum') return;
       if (this.checkNum(this.saveAsset.assets.cashAsset) === 'notNum') return;
       if (this.checkNum(this.saveAsset.assets.cashGoal) === 'notNum') return;
+
       // 총 목표금액이 공백일 경우 알림창 뜨게 함.
       if (this.saveAsset.assets.totalGoal === '') {
         alert("'총 목표 금액'을 입력해 주세요.");
@@ -276,6 +303,7 @@ export default {
         this.saveAsset.assets.cashGoal = 0;
       }
 
+      console.log(this.saveAsset.assets);
       // 숫자만 입력되었으면 입력값 저장.
       this.settingListRef()
         .doc('assets')
@@ -304,9 +332,11 @@ export default {
     // bank 저장
     setBankListForm() {
       for (let i = 0; i < this.saveAsset.banks.length; i++) {
-        console.log(i);
-        console.log(this.saveAsset.banks.length);
-        console.log(this.saveAsset.banks[i].asset);
+        // 저장하려는 값에 적힌 콤마 제거.
+        this.saveAsset.banks[i].asset = this.removeComma(
+          this.saveAsset.banks[i].asset,
+        );
+
         // 은행이 선택되었는지 확인.
         if (this.saveAsset.banks[i].bank === '') {
           alert("'은행'을 선택해 주세요.");
@@ -381,11 +411,14 @@ export default {
       });
 
       // bankAsset에서 해당은행사 지출내역 뺴줌.(1000단위로 콤마 찍어줌)
-      return this.assetAddComma(bankAssetNum * 1 - priceSum);
+      return this.assetAddComma(this.removeComma(bankAssetNum) * 1 - priceSum);
     },
 
     assetAddComma(asset) {
       return addComma(asset);
+    },
+    removeComma(asset) {
+      return asset.replace(/,/g, '');
     },
   },
 };

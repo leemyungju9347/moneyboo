@@ -552,6 +552,9 @@ export default {
                     this.inputCategory,
                   ),
                 });
+
+              // 저장 후 안내창 뜨게 함.
+              alert(`'${this.inputCategory.name}' 카테고리가 추가되었습니다.`);
             }
             this.resetInputCategory();
           })
@@ -634,6 +637,12 @@ export default {
           });
         this.categoryCardClick = false;
         this.editStatus = false;
+
+        // 저장 후 안내창 뜨게 함.
+        alert(
+          `'${category.name}' 카테고리가 '${this.inputCategory.name}' 카테고리로 수정 되었습니다.`,
+        );
+
         this.resetInputCategory();
       }
     },

@@ -37,12 +37,10 @@ export default {
       let dailyList = this.dailyList;
       let mExpend = this.mExpend;
       let cDetail = this.cDetail;
-
       // 월 & 지출
       mExpend = dailyList.filter(val => {
         let item = val.item;
         let date = Number(val.date.split('')[0]);
-
         return date == this.monthCk && item == 'expend';
       });
       console.dir(mExpend.lenght);
@@ -51,7 +49,6 @@ export default {
       // 카테고리별 상세 내용 리스트
       for (let i = 0; i < mExpend.lenght; i++) {
         let idx = sameKey(cDetail, mExpend[i]);
-
         if (idx > -1) {
           cDetail[idx].price += ', ' + mExpend[i].price;
         } else {
