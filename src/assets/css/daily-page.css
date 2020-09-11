@@ -59,20 +59,10 @@
   padding-top: 10px;
 }
 
-/* .daily-list-add ul {
-  position: relative;
-  text-align: center;
-} */
-/* .daily-list-add ul li {
-  padding-top: 10px;
-} */
-
-/* .daily-list-add .what-date .vc-w-full {
-  width: 20px;
-} */
 
 .daily-list-add select, .daily-list-add .what-date {
-  /* padding:4px 2%; */
+  height: 100%;
+  width: 32%;
   padding: 10px 6vw;
   margin: 0 2px;
   border:none;
@@ -81,9 +71,7 @@
   border-radius: 10px;
   border-bottom: 2px solid #fdfaf3;
 }
-/* .daily-list-add select.add-bank {
-  padding: 4px 2.5%;
-} */
+
 .daily-list-add input {
   padding:4px 2%;
   margin: 0 2px;
