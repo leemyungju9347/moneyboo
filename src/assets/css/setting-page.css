@@ -24,6 +24,11 @@
 
 
 /* ------ SettingPage.vue 공통 ------ */
+.clear:after {
+  content: '';
+  display: block;
+  clear: both;
+}
 h3 {
   margin: 10px 0;
   font-size: 2em;
@@ -337,44 +342,7 @@ input {
   color: #fff;
   background-color: #348f6c;
 }
-/* .set-category
-  > .category-list-cont
-  > form 
-  > ul
-  > li
-  > label
-  > input[type='radio']:checked
-  + div,
-.set-category
-  > .category-list-cont
-  > form 
-  > ul
-  > li
-  > label
-  > input[type='radio']:checked
-  + div 
-  + button,
-.set-category
-  > .category-list-cont
-  > form 
-  > ul
-  > li
-  > label
-  > input[type='radio']:checked
-  + div 
-  > span ,
-.set-category
-  > .category-list-cont
-  > form 
-  > ul
-  > li
-  > label
-  > input[type='radio']:checked
-  + div 
-  > i {
-  color: #fff;
-  background-color: #348f6c;
-} */
+
 .set-category
   > .category-list-cont
   > form 
@@ -499,4 +467,86 @@ input {
 
 
 
-/* 추후 button은 하나의 css를 줘서 동일한 class명으로 통일해줄것~~~ */
+/* PC(1024px~) / 태블릿(768px ~ 1023px) / 모바일 (~768px) */
+
+/* 태블릿(768px ~ 1023px) */
+@media screen and (max-width:1023px){
+  .setting-page-wrap > * {
+    width: calc(100% - 160px);
+    margin: 30px 80px 40px;
+    background-color: rgba(253, 242, 228, 0.3);
+    float: inherit;
+  }
+  /* .setting-page-wrap > *:before{
+    content: '';
+    display: block;
+    border: 7px solid rgba(226, 201, 146, 0.2);
+    width: calc(100% - 120px);
+    height: calc(100% - 40px);
+    background-color: rgba(253, 242, 228, 0.7);
+    position: absolute;
+    top: 20px;
+    left: 60px;
+    z-index: 0;
+  } */
+  .setting-page-wrap > .set-asset{
+    margin-right: 80px;
+    margin-bottom: 80px; 
+    padding: 20px 40px;
+  } 
+  .setting-page-wrap > .set-category  {
+    margin-left: 80px;
+    margin-bottom: 50px;
+    padding: 20px 40px;
+  }
+
+  /* ------ SetCategory.vue ------ */
+  .set-category > .category-edit-cont > form > ul {
+    height:300px;
+    margin-top: 10px;
+  }
+}
+
+/* 모바일 (~768px) */
+@media screen and (max-width:768px){
+  .setting-page-wrap > * {
+    width: calc(100% - 30px);
+    margin: 30px 15px 40px;
+  }
+  .setting-page-wrap > .set-asset{
+    margin-right: 15px;
+    margin-bottom: 70px;
+    padding: 10px;
+  } 
+  .setting-page-wrap > .set-category  {
+    margin-left: 15px;
+    padding: 10px;
+  }
+}
+
+/* 은행 별 자산 입력 칸 사이즈 조정용 */
+@media screen and (max-width:600px) {
+  /* ------ SetAsset.vue ------ */ 
+  .set-asset > form > .credit-goal-cont > ul > li {
+    height: 100px;
+    margin: 0 0 10px;
+  }
+  .set-asset > form > .credit-goal-cont > ul > li > select {
+    width: 100%;
+    height: 30%;
+    padding-top: 10px;
+  }
+  .set-asset > form > .credit-goal-cont > ul > li > input {
+    width: calc(100% - 15px);
+    height: calc(50% - 14px);
+    margin: 7px 4px 7px 7px;
+    padding: 0 10px;
+  }
+  .set-asset > form > .credit-goal-cont > ul > li > button.remove{
+    top: 50%;
+  }
+  .set-asset > form > .credit-goal-cont > ul > li > .realTimeAsset{
+    bottom: 3px;
+    right: 10px;
+  }
+}

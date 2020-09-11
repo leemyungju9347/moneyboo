@@ -3,7 +3,7 @@
     <!-- 1.목표금액 설정 2.각 자산들 설정 -->
     <h3 class="font-jua">목표 금액 설정 - 개인작업용</h3>
     <b class="explanation">* 모든 금액은 숫자만 기입해 주세요</b>
-    <form action="">
+    <form action="" class="clear">
       <div action="" class="total-goal-cont">
         <strong>총 목표 금액</strong>
         <input
