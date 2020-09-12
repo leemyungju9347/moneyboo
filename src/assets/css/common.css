@@ -419,6 +419,7 @@ button.btn.small {
 /* 모바일사이즈 */
 @media screen and (max-width:768px) {
   #app {
+    border-radius: 0;
     min-height: calc(640px - 4%);
   }
   /*------ SideGnbForm--------------------------------------------------------*/

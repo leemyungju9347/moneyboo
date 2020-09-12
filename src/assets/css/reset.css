@@ -63,3 +63,11 @@ button {
 *:before {
     box-sizing: border-box;
 }
+
+
+/* 모바일 (~768px) */
+@media screen and (max-width:768px){
+	body {
+		padding:0;
+	}
+}
