@@ -1,6 +1,5 @@
 <template>
   <div class="daily-list" :class="{ 'list-empty': getAllListData.length == 0 }">
-    {{ getAllListData }}
     <ul class="daily-list-cont">
       <li v-if="getAllListData.length == 0">
         등록한 내역이 없습니다.

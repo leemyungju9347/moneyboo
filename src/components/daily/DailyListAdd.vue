@@ -75,6 +75,7 @@ export default {
 
       // 수정 해야 할 원본 배열 editList 에 할당
       this.editList = data;
+      console.log(this.editList);
 
       // 각 v-model에 연결
       this.date = new Date(`2020 ${data.date}`);
@@ -221,7 +222,7 @@ export default {
 
       if (this.edit === true) {
         // 수정했을때 수정후 저장 함수 실행
-        this.submitEditList(listData);
+        this.submitEditList(listData, yearsMonth);
       } else {
         this.dailyListAddRef()
           .doc(yearsMonth)
@@ -266,15 +267,14 @@ export default {
       return `${month + 1}.${todayDate}`;
       // 출력 형식 : 7.17
     },
-    submitEditList(listData) {
-      const yearsMonth = this.selectDateConversionMonth();
-
+    submitEditList(listData, yearsMonth) {
       // 기존의 배열 삭제
       this.dailyListAddRef()
         .doc(yearsMonth)
         .update({
           listData: firebase.firestore.FieldValue.arrayRemove(this.editList),
         });
+
       // 수정된 배열 추가
       this.dailyListAddRef()
         .doc(yearsMonth)
