@@ -3,7 +3,7 @@
     <div class="bar-graph">
       <h3>{{ whatYear() }}</h3>
       <div id="canvas-holder">
-        <canvas id="b-graph"></canvas>
+        <canvas ref="bGraph"></canvas>
       </div>
     </div>
     <ListOfyears></ListOfyears>
@@ -11,7 +11,6 @@
 </template>
 
 <script>
-import Chart from 'chart.js';
 import ListOfyears from './ListOfyears';
 import { yearCheck } from '@/utils/statistics.js';
 
@@ -25,12 +24,12 @@ export default {
     },
   },
   mounted() {
-    var ctx = document.getElementById('b-graph').getContext('2d');
+    var ctx = this.$refs.bGraph;
 
-    Chart.defaults.global.defaultFontColor = '#3b3b3b';
-    Chart.defaults.global.defaultFontFamily = 'Jua';
+    this.$_Chart.defaults.global.defaultFontColor = '#3b3b3b';
+    this.$_Chart.defaults.global.defaultFontFamily = 'Jua';
 
-    new Chart(ctx, {
+    let myChart = new this.$_Chart(ctx, {
       // The type of chart we want to create
       type: 'horizontalBar',
 
@@ -79,6 +78,8 @@ export default {
         // },
       },
     });
+
+    return myChart;
   },
 };
 </script>

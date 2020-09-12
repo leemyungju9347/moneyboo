@@ -25,13 +25,12 @@
 
       <button @click="addBtn" class="btn big main">추가</button>
     </form>
-    {{ bankArr }}
   </div>
 </template>
 
 <script>
 import { addComma } from '@/utils/filters.js';
-import { moneybooRef } from '@/api/firestore';
+import { moneybooRef, settingColRef } from '@/api/firestore';
 // firebase를 사용하기 위해서 불러와야 한다.
 
 export default {
@@ -39,7 +38,6 @@ export default {
     return {
       assetTotal: '',
       bankArr: [],
-      bankTotal: [],
       cash: '',
       currentUID: '',
     };
@@ -47,8 +45,8 @@ export default {
   created() {
     this.currentUID = this.$store.state.uid; // 로그인한 유저 uid
 
-    this.getSettingDB();
-    // this.totalCalculate();
+    this.getAssetsDB();
+    this.getBanksDB();
   },
   methods: {
     addBtn() {
@@ -58,33 +56,15 @@ export default {
       return addComma(val);
     },
 
-    mBooRef() {
-      return moneybooRef(this.currentUID);
-    },
-    getSettingDB() {
-      this.mBooRef()
-        .doc('settings')
+    // assets
+    getAssetsDB() {
+      this.settingListRef()
+        .doc('assets')
         .get()
-        .then(snapShot => {
-          // console.log(snapShot.data().setAsset);
-          // data값이 있을 경우.
-          if (snapShot.exists) {
-            const setAssetList = snapShot.data().setAsset;
-            if (setAssetList) {
-              const banks = [];
-              setAssetList.banks.forEach(data => {
-                banks.push(data);
-                // this.totalCalculate(data.asset * 1);
-              });
-              this.bankArr = banks;
-
-              // this.bankArr = setAssetList.banks;
-              // console.log(this.bankArr);
-              // [{…}, {…}, {…}, {…}, __ob__: Observer]
-              // vue.js 에 구현되어 있는 ...observer를 붙여서 내부 변화를 감지하게 만들어둔 독자적인 array객체다.
-
-              this.cash = setAssetList.cashAsset;
-            }
+        .then(doc => {
+          // console.log(doc);
+          if (doc.exists) {
+            this.getFirebase();
           } else {
             // 값이 없을 경우
             alert(
@@ -97,12 +77,72 @@ export default {
           console.log('메인페이지 에러:', err);
         });
     },
+
+    // banks
+    getBanksDB() {
+      this.settingListRef()
+        .doc('banks')
+        .get()
+        .then(doc => {
+          //console.log(doc);
+          if (doc.exists) {
+            this.getFirebase();
+          } else {
+            // 값이 없을 경우
+            alert(
+              '관리 페이지에서 은행별 자산 초기값을 입력해 주세요. 확인을 누르면 해당 페이지로 이동합니다.',
+            );
+            this.$router.push('/setting');
+          }
+        })
+        .catch(err => {
+          console.log('메인페이지 에러:', err);
+        });
+    },
+
+    //firebase에서 db를 가져온다.
+    getFirebase() {
+      this.settingListRef()
+        .doc('assets')
+        .onSnapshot(snapshot => {
+          if (snapshot.exists) {
+            const assets = snapshot.data().assets;
+            this.cash = assets.cashAsset;
+          }
+        });
+
+      this.settingListRef()
+        .doc('banks')
+        .onSnapshot(snapshot => {
+          // document의 값이 있으면
+          if (snapshot.exists) {
+            const banks = snapshot.data().banks;
+            if (banks) {
+              this.bankArr = banks;
+            }
+            this.totalCalculate();
+          }
+        });
+    },
+
+    mBooRef() {
+      return moneybooRef(this.currentUID);
+    },
+    // settings> settingList
+    settingListRef() {
+      return settingColRef(this.currentUID);
+    },
     // 총 자산 계산
     totalCalculate() {
-      let assets = this.bankArr;
-      console.log(assets);
-      // this.assetTotal = this.cash * 1 + totalBank;
-      // console.log(this.bankArr);
+      let bankArr = this.bankArr;
+      let assets = 0;
+
+      for (let i = 0; i < bankArr.length; i++) {
+        let asset = Number(bankArr[i].asset);
+        assets += asset;
+      }
+
+      this.assetTotal = Number(this.cash) + assets;
     },
   },
 };
