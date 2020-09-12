@@ -15,7 +15,6 @@
           <li v-for="category in getCategory" :key="category.id">
             <label
               ><input type="radio" name="category" />
-              <!-- 추후에 span 옆에 선택한 아이콘도 넣어줄 것 -->
               <div
                 :class="{
                   click: categoryCardClick === true,
@@ -509,32 +508,7 @@ export default {
     };
   },
   created() {
-    this.categoryNum = this.$store.state.categorys.name.length;
     // firestore에 저장된 category DB 가져오기
-    this.settingListRef()
-      .doc('categories')
-      .get()
-      .then(docSnapshot => {
-        // document가 존재하면
-        if (docSnapshot.exists) {
-          const categories = docSnapshot.data().categories;
-          // setCategory 데이터가 있으면
-          if (categories) {
-            categories.forEach(data => {
-              this.getCategory.push(data);
-            });
-            // setCategory 데이터가 없으면
-          } else {
-            this.logMessage = '카테고리 값을 입력해주세요!';
-          }
-          // document가 없으면
-        } else {
-          this.logMessage = '셋팅 값을 입력해주세요!';
-        }
-      })
-      .catch(err => {
-        console.log('에러 발생한 위치 setCategory.vue created부분', err);
-      });
     this.getFirebase();
   },
   methods: {
@@ -547,40 +521,50 @@ export default {
       return settingColRef(this.currentUid);
     },
     clickAddCategory() {
-      // cookie에 저장할 때 함께 저장할 각각의 id생성.
-      this.inputCategory.id = makeID('category');
-      // cookies.js에 있는 saveCategory()함수 실행.
-      let newCategory = `${this.inputCategory.name}|${this.inputCategory.icon}|${this.inputCategory.id}`;
-      console.log(newCategory);
-      // firestore에 category DB 저장
-      this.settingListRef()
-        .doc('categories')
-        .get()
-        .then(docSnapshot => {
-          // 만약 document에 데이터가 없으면 초기값 셋팅
-          if (!docSnapshot.exists) {
-            this.settingListRef()
-              .doc('categories')
-              .set({ categories: [this.inputCategory] }); // 배열로 넘겨줌
-            this.logMessage = '';
-            // 만약 document에 데이터가 있다면 배열을 업데이트
-          } else {
-            this.settingListRef()
-              .doc('categories')
-              .update({
-                categories: firebase.firestore.FieldValue.arrayUnion(
-                  this.inputCategory,
-                ),
-              });
-          }
-          this.resetInputCategory();
-        })
-        .catch(err => {
-          console.log(
-            'setCategory.vue에 있는 clickAddCategory함수에서 나온 에러!!',
-            err,
-          );
-        });
+      if (this.inputCategory.name === '') {
+        alert('카테고리명을 입력해주세요.');
+      } else if (this.inputCategory.icon === '') {
+        alert('아이콘을 선택해주세요.');
+      } else {
+        // cookie에 저장할 때 함께 저장할 각각의 id생성.
+        this.inputCategory.id = makeID('category');
+        // cookies.js에 있는 saveCategory()함수 실행.
+        let newCategory = `${this.inputCategory.name}|${this.inputCategory.icon}|${this.inputCategory.id}`;
+        console.log(newCategory);
+
+        // firestore에 category DB 저장
+        this.settingListRef()
+          .doc('categories')
+          .get()
+          .then(docSnapshot => {
+            // 만약 document에 데이터가 없으면 초기값 셋팅
+            if (!docSnapshot.exists) {
+              this.settingListRef()
+                .doc('categories')
+                .set({ categories: [this.inputCategory] }); // 배열로 넘겨줌
+              this.logMessage = '';
+              // 만약 document에 데이터가 있다면 배열을 업데이트
+            } else {
+              this.settingListRef()
+                .doc('categories')
+                .update({
+                  categories: firebase.firestore.FieldValue.arrayUnion(
+                    this.inputCategory,
+                  ),
+                });
+
+              // 저장 후 안내창 뜨게 함.
+              alert(`'${this.inputCategory.name}' 카테고리가 추가되었습니다.`);
+            }
+            this.resetInputCategory();
+          })
+          .catch(err => {
+            console.log(
+              'setCategory.vue에 있는 clickAddCategory함수에서 나온 에러!!',
+              err,
+            );
+          });
+      }
     },
     // [추가]버튼 클릭 시 category 입력 창 비워줌.
     resetInputCategory() {
@@ -634,21 +618,33 @@ export default {
     },
     // 수정할 카테고리명을 고친 후, 카테고리생성박스 우측 제일 아래 [수정] 버튼을 클릭 했을 경우.
     clickEditCategory(category) {
-      this.settingListRef()
-        .doc('categories')
-        .update({
-          categories: firebase.firestore.FieldValue.arrayRemove(category),
-        });
-      this.settingListRef()
-        .doc('categories')
-        .update({
-          categories: firebase.firestore.FieldValue.arrayUnion(
-            this.inputCategory,
-          ),
-        });
-      this.categoryCardClick = false;
-      this.editStatus = false;
-      this.resetInputCategory();
+      if (this.inputCategory.name === '') {
+        alert('카테고리명을 입력해주세요.');
+      } else if (this.inputCategory.icon === '') {
+        alert('아이콘을 선택해주세요.');
+      } else {
+        this.settingListRef()
+          .doc('categories')
+          .update({
+            categories: firebase.firestore.FieldValue.arrayRemove(category),
+          });
+        this.settingListRef()
+          .doc('categories')
+          .update({
+            categories: firebase.firestore.FieldValue.arrayUnion(
+              this.inputCategory,
+            ),
+          });
+        this.categoryCardClick = false;
+        this.editStatus = false;
+
+        // 저장 후 안내창 뜨게 함.
+        alert(
+          `'${category.name}' 카테고리가 '${this.inputCategory.name}' 카테고리로 수정 되었습니다.`,
+        );
+
+        this.resetInputCategory();
+      }
     },
     // 수정 [취소] 버튼 클릭 한 경우.
     editCancelBtn() {

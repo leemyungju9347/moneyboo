@@ -5,6 +5,9 @@
     display: block;
   }
 
+  .mypage-wrap{
+    overflow-y: scroll;
+  }
   .myinfo-form {
     /* outline: 1px solid blue; */
     border-radius: 5px;
@@ -15,6 +18,8 @@
 
   .myinfo-form > .status-inform-cont{
     border-radius: 10px;
+    width: 500px;
+    margin: 0 auto;
     padding: 50px 90px;
     background-color: rgba(226, 201, 146, 0.2);
   }
@@ -23,16 +28,17 @@
     display: block;
     clear: both;
   }
-  .myinfo-form > .status-inform-cont > *{
+  /* .myinfo-form > .status-inform-cont > *{
     float: left;
-  }
+  } */
 
   /* ------ .status-cont ------ */
   .myinfo-form > .status-inform-cont > div{
     /* outline:1px solid red; */
     width:200px;
     height: 200px;
-    display: inline-block;
+    margin: 0 auto;
+    /* display: inline-block; */
   }
   .myinfo-form > .status-inform-cont > div > i{
     width: 100%;
@@ -77,13 +83,14 @@
   /* ------ id, nickname ------ */
   .myinfo-form > .status-inform-cont > ul {
     /* outline: 1px solid blue; */
-    padding: 30px 20px 0 120px;
+    width: 100%;
+    padding: 30px 0 0;
     font-size: 1.5em;
     /* display: inline-block; */
     position: relative;
   }
 
-  .myinfo-form > .status-inform-cont > ul:before{
+  /* .myinfo-form > .status-inform-cont > ul:before{
     content: '';
     display: block;
     border-left: 2px solid rgba(226, 201, 146, .5);
@@ -91,21 +98,20 @@
     position:absolute;
     left: 50px;
     top:20px;
-  }
+  } */
   .myinfo-form > .status-inform-cont > ul > li {
     margin: 20px 0;
   }
   .myinfo-form > .status-inform-cont > ul > li > span {
     border-radius: 5px;
-    margin-left: 20px;
-    padding: 3px 10px;
+    margin: 10px 0 30px;
+    padding: 3px 20px;
     font-size: 1.1em;
     background-color: #e2c992;
     /* background-color: #fdf2e4; */
-    display: inline-block;
+    word-break: break-word; /* 글자가 칸보다 넘칠경우 줄바꿈 해줌 */
+    display: block;
   }
-
-
 
   /* ------ [정보수정하기] 버튼 ------ */
   .myinfo-form > button {
@@ -122,5 +128,41 @@
     z-index:200;
   }
 
+
+/* PC(1024px~) / 태블릿(768px ~ 1023px) / 모바일 (~768px) */
+
+/* 태블릿(768px ~ 1023px) */
+@media screen and (max-width:1023px){
+  /* ------ .status-cont ------ */
+  .myinfo-form > .status-inform-cont{
+    width: 100%;
+    max-width: 500px;
+  } 
+}
+
+/* 모바일 (~768px) */
+@media screen and (max-width:768px){
+  .myinfo-form{
+    padding: 100px 30px 60px;
+  }
+  .myinfo-form > .status-inform-cont{
+    padding: 50px 30px;
+  }
+  .myinfo-form > .status-inform-cont > div{
+    width: 100%;
+    max-width: 200px;
+  }
+  .myinfo-form > button{
+    right: 40px;
+  }
+}
+
+/* status 이모티콘용. */
+@media screen and (max-width:490px) {
+  .myinfo-form > .status-inform-cont > div{
+    width: 125px;
+    height: 125px;
+  }
+}
 
 

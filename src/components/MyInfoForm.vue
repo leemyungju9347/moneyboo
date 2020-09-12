@@ -11,15 +11,12 @@
         <li>
           ID
           <span>{{ id }}</span>
-          <!-- <span>asdfger12345</span> -->
         </li>
         <li>
           Nickname
           <span>{{ nickname }}</span>
         </li>
       </ul>
-      <!-- <span>ID : {{}}</span>
-    <span>Nickname : {{}}</span> -->
     </div>
 
     <!-- setting페이지로 연결버튼 -->
@@ -29,7 +26,7 @@
 
 <script>
 import { newConversionMonth } from '@/utils/filters';
-import { moneybooRef } from '@/api/firestore';
+import { moneybooRef, settingColRef } from '@/api/firestore';
 
 export default {
   data() {
@@ -47,75 +44,46 @@ export default {
     this.getTotalGoal();
   },
   methods: {
+    mbooRef() {
+      return moneybooRef(this.currentUid);
+    },
+    settingListRef() {
+      // settings document > settingList collection 참조값
+      return settingColRef(this.currentUid);
+    },
     clickMove() {
       this.$router.push('/setting');
     },
     // firstore에서 totalGoal DB 가져오기
     getTotalGoal() {
-      this.mbooRef()
-        .doc('settings')
+      this.settingListRef()
+        .doc('assets')
         .get()
         .then(docSnapshot => {
           // document의 값이 있으면
           if (docSnapshot.exists) {
-            const setAsset = docSnapshot.data().setAsset;
-
-            // setAsset 데이터가 있으면
-            if (setAsset) {
-              // 불러온 목표금액,현금자산 getAsset 객체에 저장
-              this.totalGoal = setAsset.totalGoal;
+            const assets = docSnapshot.data().assets;
+            // assets 데이터가 있으면
+            if (assets) {
+              this.totalGoal = assets.totalGoal;
               this.totalGoalPercent();
-
-              // setAsset 데이터가 없으면
-            } else {
-              this.logMassage = '자산과 목표값을 입력해주세요!';
-              console.log('setAsset 데이터가 없습니다!', docSnapshot);
             }
-
-            // document 값이 없으면
-          } else {
-            console.log('settings 값이 없음', docSnapshot);
-            this.logMassage = '셋팅 값을 입력해주세요!';
           }
-        })
-        .catch(err => {
-          console.log(err);
         });
     },
     // firestore에 있는 저장된 ListData DB를 가져오는 함수
     getListData() {
       const yearsMonth = newConversionMonth();
-      let pushArray = [];
       // listAdd collection 하위에 있는 document 전체를 불러옴
       this.dailyListAddRef()
-        .get()
-        .then(querySnapshot => {
-          const docSnapshot = querySnapshot.docs;
-          this.listArrLength = querySnapshot.size; // 문서의 값이 있는지 없는지 판단해서 처리할 용도
-
-          // 데이터가 생성되지 않았을 경우
-          if (querySnapshot.empty) {
-            this.logMessage = '등록한 내역이 없습니다!!';
-
-            // 데이터가 있을 경우 실행
+        .doc(yearsMonth)
+        .onSnapshot(snapshot => {
+          if (snapshot.exists) {
+            this.getAllListData = snapshot.data().listData;
+            this.addExpend();
           } else {
-            this.logMessage = ''; // 로그메세지 리셋
-            // document 출력
-
-            docSnapshot.forEach(doc => {
-              // 현재의 달에 해당하는 것만 담는다
-              if (doc.id == yearsMonth) {
-                pushArray.push(doc.data().listData);
-              }
-            });
+            return console.log('값이 없습니다!');
           }
-          // 이렇게 하는 이유가 배열안에 배열을 방지하기 위해서
-          this.getAllListData = pushArray[0];
-          // 지출값 다 더하는 함수 실행
-          this.addExpend();
-        })
-        .catch(err => {
-          console.log('위치는 DailyList 메쏘드', err);
         });
     },
     // listAdd collection 참조 값
@@ -123,9 +91,6 @@ export default {
       return this.mbooRef()
         .doc('daily')
         .collection('listAdd');
-    },
-    mbooRef() {
-      return moneybooRef(this.currentUid);
     },
     // 지출값 더하는 함수
     addExpend() {
