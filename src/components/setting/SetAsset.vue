@@ -205,7 +205,10 @@ export default {
       this.saveAsset.banks.push({ bank: '', asset: '', id: makeID('bank') });
     },
     clickRemoveBank(bankList) {
-      console.log(bankList);
+      // 삭제 전 은행 별 자산 금액에 콤마를 제거해 줌.(firebase에 저장된 은행자산 데이터와 형식 맞추기 위함.)
+      bankList.asset = this.removeComma(bankList.asset);
+
+      // 클릭한 은행 별 자산 삭제.
       this.settingListRef()
         .doc('banks')
         .update({ banks: firebase.firestore.FieldValue.arrayRemove(bankList) });
