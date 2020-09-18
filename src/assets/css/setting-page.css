@@ -137,26 +137,45 @@ strong {
   height: calc(50% - 14px);
 }
 .set-asset > form > .credit-goal-cont > ul > li > .realTimeAsset{
-  color: rgba(59, 59, 59, 0.5);
+  /* color: rgba(59, 59, 59, 0.5); */
   position: absolute;
   /* bottom: 7px; */
   bottom: 3px;
   right: 10px;
   /* right: 30px; */
 }
+.set-asset > form > .credit-goal-cont > ul > li > .show{ /* 은행 별 자산 남은 금액만 보일 떄 스타일 */
+  height: 55px;
+  overflow-X: scroll;
+  top: 50%; 
+  left: 50px;
+  right: 40px;
+  transform: translateY(-10px);
+}
+.set-asset > form > .credit-goal-cont > ul > li > .show > span{
+  height: 35px;
+  padding: 6px 10px 0;
+  font-size: 15px;
+  background-color: rgba(226, 201, 146, .3);
+  display: block;
+}
 .set-asset > form > .credit-goal-cont > ul > li > button.edit{
   border:none;
-  /* border-radius: 2px; */
-  padding:2px 3px;
+  border-radius: 3px;
+  padding:2px 4px;
   background-color:rgba(226, 201, 146, 0.4) /*#e2c992*/;
   font-size:12px;
   color:#fff;
   position: absolute;
-  top: 18px;
-  right: 18px;
+  top: 50%;
+  left: 14px;
+  transform: translateY(-2px);
 }
 .set-asset > form > .credit-goal-cont > ul > li > button.edit:hover{
   background-color:rgba(226, 201, 146, 0.9) /*#e2c992*/;
+}
+.set-asset > form > .credit-goal-cont > ul > li > button.hide{
+  display: none;
 }
 .set-asset > form > .credit-goal-cont > ul > li > button.remove{
   border: none;
