@@ -1,5 +1,7 @@
 <template>
   <div class="set-asset">
+    <!-- 페이지 로딩 시 은행 별 자산 남은 금액 구하기 위한 함수 실행 -->
+    {{ matchBankPrice() }}
     <!-- 1.목표금액 설정 2.각 자산들 설정 -->
     <h3 class="font-jua">목표 금액 설정</h3>
     <b class="explanation">* 모든 금액은 숫자만 기입해 주세요</b>
@@ -46,7 +48,7 @@
               주세요.
             </span>
           </li>
-          <li v-for="bankList in saveAsset.banks" :key="bankList.id">
+          <li v-for="(bankList, index) in saveAsset.banks" :key="bankList.id">
             <select name="bank" v-model="bankList.bank">
               <option value="">은행선택</option>
               <option value="경남은행">경남은행</option>
@@ -76,13 +78,41 @@
               type="text"
               placeholder="해당 은행의 총 목표 금액을 입력해 주세요"
               v-model="bankList.asset"
+              v-if="
+                bankLength === index ||
+                  (bankAssetClick.index === index &&
+                    bankAssetClick.click === true)
+              "
             />
-            <span class="realTimeAsset"
-              >( 현재
-              {{
-                matchBankPrice(getAllListData, bankList.bank, bankList.asset)
-              }}원 남음 )</span
+            <span
+              class="realTimeAsset"
+              :class="{
+                show: bankLength !== index && bankAssetClick.index !== index,
+              }"
+              v-if="bankLength !== index && bankAssetClick.index !== index"
             >
+              <span>
+                {{ bankBalance[index] }}원
+                <!-- >{{
+                  matchBankPrice(
+                    getAllListData,
+                    bankList.bank,
+                    bankList.asset,
+                    index,
+                  )
+                }}원 -->
+              </span>
+            </span>
+            <button
+              class="edit"
+              :class="{
+                hide: bankAssetClick.index === index,
+              }"
+              v-if="saveAsset.banks[index].asset !== '' && bankLength !== index"
+              @click.prevent="editBankAsset(index)"
+            >
+              수정
+            </button>
             <button
               class="btn small remove"
               @click.prevent="clickRemoveBank(bankList)"
@@ -138,9 +168,17 @@ export default {
         banks: [],
       },
       bankLength: 0, // 저장된 은행 개수 위해 필요.
+      expenditure: [],
       currentUid: this.$store.state.uid, // 현재 로그인한 유저의 uid
       // 은행 별 지출 금액 데이터 불러옴(from DailyList)
       getAllListData: [], // (현재 얼마남았는지 나타내는 tag에서 사용.)
+      // 은행 별 잔고(화면 출력용)
+      bankBalance: [],
+      // 은행 별 자산 [수정]버튼 클릭 판단 값.
+      bankAssetClick: {
+        index: '',
+        click: false,
+      },
     };
   },
   created() {
@@ -149,14 +187,14 @@ export default {
       this.saveAsset.banks.push({ bank: '', asset: '', id: '' });
     }
 
-    // 저장된 은행 수 data에 넣어줌.
-    this.bankNum = this.$store.state.bankAsset.bank.length;
-
     // firstore에서 asset DB 가져오기
     this.getFirebase();
 
-    // 은행 별 남은 자산 구하는 함수 실행시켜 줌
+    // DailyList.vue의 지출 내역 불러옴.
     this.getBankBalance();
+
+    // // 은행별 잔고 계산.
+    // this.matchBankPrice();
   },
   computed: {},
   methods: {
@@ -231,6 +269,8 @@ export default {
         alert('목표 금액이 수정되었습니다.');
         // location.reload();
       }
+
+      this.bankAssetClick = false;
     },
     // created()에서 사용할 함수(추가, 수정, 삭제 된 데이터 화면에 바로 반영되도록.)
     getFirebase() {
@@ -410,28 +450,106 @@ export default {
         });
     },
     // 각 은행 별 자산 사용 후 남은 금액.
-    matchBankPrice(allListdata, bankAssetName, bankAssetNum) {
-      // '각 은행 별 사용금액의 총 합' 변수 선언.
-      let priceSum = 0;
+    matchBankPrice() {
+      console.log('은행 남은 자산액 구하는 함수 돈다!!!');
+
+      let bankArr = [];
+      for (let i = 0; i < this.saveAsset.banks.length; i++) {
+        let bankArrCont = {
+          bank: this.saveAsset.banks[i].bank,
+          asset: this.removeComma(this.saveAsset.banks[i].asset) * 1,
+        };
+        bankArr[i] = bankArrCont;
+      }
+      console.log(bankArr);
 
       // 'dailyList'에서 불러온 지출/수입 내역 foreEach로 확인.
-      allListdata.forEach(listdata => {
+      this.getAllListData.forEach(listdata => {
         // bankAsset과 같은 은행의 지출 내역 구함.
-        if (listdata.bank === bankAssetName && listdata.item === 'expend') {
-          priceSum += listdata.price * 1;
-        } else if (
-          // bankAsset과 같은 은행의 수입 내역 구함.
-          listdata.bank === bankAssetName &&
-          listdata.item === 'income'
-        ) {
-          priceSum += -listdata.price * 1;
+        for (let i = 0; i < this.saveAsset.banks.length; i++) {
+          if (listdata.bank === bankArr[i].bank && listdata.item === 'expend') {
+            bankArr[i].asset += -listdata.price * 1;
+          } else if (
+            // bankAsset과 같은 은행의 수입 내역 구함.
+            listdata.bank === bankArr[i].bank &&
+            listdata.item === 'income'
+          ) {
+            bankArr[i].asset += listdata.price * 1;
+          }
         }
       });
 
-      // bankAsset에서 해당은행사 지출내역 뺴줌.(1000단위로 콤마 찍어줌)
-      return this.assetAddComma(this.removeComma(bankAssetNum) * 1 - priceSum);
+      // // 'dailyList'에서 불러온 지출/수입 내역 foreEach로 확인.
+      // this.getAllListData.forEach(listdata => {
+      //   // bankAsset과 같은 은행의 지출 내역 구함.
+      //   for (let i = 0; i < this.saveAsset.banks.length; i++) {
+      //     if (
+      //       listdata.bank === this.saveAsset.banks[i].bank &&
+      //       listdata.item === 'expend'
+      //     ) {
+      //       priceSum += listdata.price * 1;
+      //     } else if (
+      //       // bankAsset과 같은 은행의 수입 내역 구함.
+      //       listdata.bank === this.saveAsset.banks[i].bank &&
+      //       listdata.item === 'income'
+      //     ) {
+      //       priceSum += -listdata.price * 1;
+      //     }
+      //   }
+      // });
+
+      // // this.expenditure 배열에 남은 자산 배열 요소들을 넣어줌.( changeBankAsset()함수에서 사용하기 위함. )
+      // this.expenditure[index] = priceSum;
+      // console.log(this.expenditure);
+
+      console.log(bankArr);
+      console.log(this.saveAsset.banks);
+      for (let i = 0; i < bankArr.length; i++) {
+        console.log(bankArr[i].asset);
+        console.log(this.saveAsset.banks[i].asset);
+        // bankAsset에서 해당은행사 지출내역 뺴줌.(1000단위로 콤마 찍어줌)
+        this.bankBalance[i] = this.assetAddComma(bankArr[i].asset * 1);
+      }
+      console.log(this.bankBalance);
     },
-    checkBankAsset() {},
+    // matchBankPrice(allListdata, bankAssetName, bankAssetNum, index) {
+    //   // '각 은행 별 사용금액의 총 합' 변수 선언.
+    //   let priceSum = 0;
+
+    //   // 'dailyList'에서 불러온 지출/수입 내역 foreEach로 확인.
+    //   allListdata.forEach(listdata => {
+    //     // bankAsset과 같은 은행의 지출 내역 구함.
+    //     if (listdata.bank === bankAssetName && listdata.item === 'expend') {
+    //       priceSum += listdata.price * 1;
+    //     } else if (
+    //       // bankAsset과 같은 은행의 수입 내역 구함.
+    //       listdata.bank === bankAssetName &&
+    //       listdata.item === 'income'
+    //     ) {
+    //       priceSum += -listdata.price * 1;
+    //     }
+    //   });
+
+    //   // this.expenditure 배열에 남은 자산 배열 요소들을 넣어줌.( changeBankAsset()함수에서 사용하기 위함. )
+    //   this.expenditure[index] = priceSum;
+    //   console.log(this.expenditure);
+
+    //   // bankAsset에서 해당은행사 지출내역 뺴줌.(1000단위로 콤마 찍어줌)
+    //   return this.assetAddComma(this.removeComma(bankAssetNum) * 1 - priceSum);
+    // },
+    // 초기 은행 자산 입력 후, 자산 수정 버튼 클릭 함수.
+
+    // 은행 별 자산 [수정]버튼 클릭 시 input창에 남은 금액 뜨게 함.
+    editBankAsset(index) {
+      for (let i = 0; i < this.saveAsset.banks.length; i++) {
+        this.saveAsset.banks[index].asset = this.bankBalance[index];
+      }
+
+      this.bankAssetClick = {
+        index: index,
+        click: true,
+      };
+    },
 
     assetAddComma(asset) {
       return addComma(asset);
