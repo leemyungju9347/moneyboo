@@ -214,14 +214,23 @@ export default {
         .update({ banks: firebase.firestore.FieldValue.arrayRemove(bankList) });
     },
     clickSaveAsset() {
-      // 에셋리스트 저장
-      this.saveAssetListForm();
-      // bank 저장
-      this.setBankListForm();
+      // asset, bankasset이 모두 완벽하게 입력 되었는지 확인하기 위한 변수 선언.
+      let assetSaveErrorCheck = false;
+      let bankSaveErrorCheck = false;
 
-      // 저장되었다는 안내창 뜨게 한 후 새로고침.
-      alert('목표 금액이 수정되었습니다.');
-      // location.reload();
+      // (asset, bank 저장 시 input에 제대로 입력했을 때에만 true가 반환되도록 해줌.)
+      // 에셋리스트 저장
+      assetSaveErrorCheck = this.saveAssetListForm();
+      // bank 저장
+      bankSaveErrorCheck = this.setBankListForm();
+
+      console.log(assetSaveErrorCheck, bankSaveErrorCheck);
+      // asset, bank 모두 true값을 반환할 때만 alert창이 뜨도록 함.
+      if (assetSaveErrorCheck === true && bankSaveErrorCheck === true) {
+        // 저장되었다는 안내창 뜨게 한 후 새로고침.
+        alert('목표 금액이 수정되었습니다.');
+        // location.reload();
+      }
     },
     // created()에서 사용할 함수(추가, 수정, 삭제 된 데이터 화면에 바로 반영되도록.)
     getFirebase() {
@@ -331,6 +340,9 @@ export default {
         .catch(err => {
           console.log('여기는 setAsset.vue에서 saveAssetListForm', err);
         });
+
+      // asset의 input칸들이 제대로 입력되었을 경우 true반환.
+      return true;
     },
     // bank 저장
     setBankListForm() {
@@ -378,6 +390,9 @@ export default {
         .catch(err => {
           console.log('SetAsset.vue 에 있는 setBankListForm', err);
         });
+
+      // bank의 input칸들이 제대로 입력되었을 경우 true반환.
+      return true;
     },
 
     // DailyList.vue의 지출 내역 불러옴.
@@ -416,6 +431,7 @@ export default {
       // bankAsset에서 해당은행사 지출내역 뺴줌.(1000단위로 콤마 찍어줌)
       return this.assetAddComma(this.removeComma(bankAssetNum) * 1 - priceSum);
     },
+    checkBankAsset() {},
 
     assetAddComma(asset) {
       return addComma(asset);
