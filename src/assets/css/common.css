@@ -90,15 +90,12 @@ button.btn.small {
 }
 .loading-bar {
   position: relative;
-  width: 0px;
+  width: 0;
   /* 186px 가 최대 */
   height: 14px;
-  /* padding-right: 6px; */
-  /* margin: -0.5px 0 0 -1px; */
   border-radius: 10px;
   background-color: #348f6c;
   color: #fdf9f3;
-  /* line-height: 14px; */
   transition: all 1s ease 1s;
 }
 

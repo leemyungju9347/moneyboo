@@ -11,13 +11,13 @@
         :key="date"
       >
         <strong class="font-uto">{{ `${addMonth()}.${date}` }}</strong>
-        <em class="daily-list-income"
-          >수입 :
-          <b class="list-income">{{ checkDayItem(date, 'income') }}원</b></em
-        >
         <em class="daily-list-expend"
           >지출 :
           <b class="list-expend">{{ checkDayItem(date, 'expend') }}원</b></em
+        >
+        <em class="daily-list-income"
+          >수입 :
+          <b class="list-income">{{ checkDayItem(date, 'income') }}원</b></em
         >
         <ul>
           <li v-for="list in checkMatchDateList(date)" :key="list.id">
@@ -68,7 +68,6 @@ import { moneybooRef, settingColRef } from '@/api/firestore';
 export default {
   created() {
     this.getListData();
-    // this.getCategoryData();
     this.getBanksData();
     this.getCategoriesData();
   },
@@ -200,7 +199,6 @@ export default {
     },
     // 수정버튼 눌렀을때의 함수
     clickeEditList(data) {
-      console.log('수정해야할 리스트', data);
       eventBus.editList(data);
     },
     editCommaPrice(price) {
@@ -243,13 +241,6 @@ export default {
     addMonth() {
       const month = new Date().getMonth() + 1;
       return month;
-    },
-    conversionMonth(date) {
-      const years = String(date.getFullYear()).substr(2, 2);
-      const month =
-        date.getMonth() < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
-
-      return `${years}.${month}`;
     },
   },
 };

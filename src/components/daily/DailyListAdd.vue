@@ -3,19 +3,19 @@
     <form class="add-cont" @submit.prevent="submitList">
       <button
         type="button"
-        v-on:click="clickIncomeBtn()"
-        class="add-income-btn"
-        v-bind:class="{ inputOn: inputControl === 'income' }"
-      >
-        수입
-      </button>
-      <button
-        type="button"
         v-on:click="clickExpendBtn()"
         class="add-expend-btn"
         v-bind:class="{ inputOn: inputControl === 'expend' }"
       >
         지출
+      </button>
+      <button
+        type="button"
+        v-on:click="clickIncomeBtn()"
+        class="add-income-btn"
+        v-bind:class="{ inputOn: inputControl === 'income' }"
+      >
+        수입
       </button>
       <div>
         <DatePicker
@@ -75,7 +75,6 @@ export default {
 
       // 수정 해야 할 원본 배열 editList 에 할당
       this.editList = data;
-      console.log(this.editList);
 
       // 각 v-model에 연결
       this.date = new Date(`2020 ${data.date}`);
@@ -94,7 +93,7 @@ export default {
   data() {
     return {
       date: new Date(),
-      inputControl: 'income',
+      inputControl: 'expend',
       selectCategory: '',
       selectBank: '',
       price: null,
@@ -253,7 +252,6 @@ export default {
     resetData() {
       // 인풋창의 데이터를 리셋해주는 함수
       this.date = new Date();
-      this.inputControl = 'income';
       this.selectCategory = '';
       this.selectBank = '';
       this.price = null;
