@@ -37,12 +37,6 @@ export default {
       this.dailyListAddRef()
         .doc(yearsMonth)
         .onSnapshot(snapshot => {
-          // if (snapshot.exists) {
-          //   this.getAllListData = snapshot.data().listData;
-          //   this.incomeToday(this.date);
-          // } else {
-          //   console.log('값이 없습니다.');
-          // }
           snapshot.exists
             ? (this.getAllListData = snapshot.data().listData)
             : console.log('값이 없습니다!');
