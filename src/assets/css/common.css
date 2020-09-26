@@ -90,15 +90,12 @@ button.btn.small {
 }
 .loading-bar {
   position: relative;
-  width: 0px;
+  width: 0;
   /* 186px 가 최대 */
   height: 14px;
-  /* padding-right: 6px; */
-  /* margin: -0.5px 0 0 -1px; */
   border-radius: 10px;
   background-color: #348f6c;
   color: #fdf9f3;
-  /* line-height: 14px; */
   transition: all 1s ease 1s;
 }
 
@@ -144,35 +141,43 @@ button.btn.small {
 }
 
 /*------ SideGnbForm--------------------------------------------------------*/
-.sidebar-wrap{width: 20%;}
-.side-gnb-form a, .side-gnb-form h1, .calender-cont > * {font-family: 'IBMPlexSansKR-Text';}
+.sidebar-wrap{
+  width: 20%;
+}
+
+.side-gnb-form a, .side-gnb-form h1, .calender-cont > * {
+  font-family: 'IBMPlexSansKR-Text';
+}
 
 .side-gnb-form{
     position: relative;
     height: 100%;
 }
+
 .side-gnb-form > .logo-cont {
-    padding-bottom: 20px;
-    position: absolute;
-    bottom: 0;
-    left: 15px;
+  position: absolute;
+  bottom: 10px;
+  left: 15px;
+  width:150px;
 }
-.side-gnb-form > .logo-cont .logo {
-  color: #fff;
-  font-size: 2em;
+
+.side-gnb-form > .logo-cont > h1 > .logo {
+  display: block;
 }
-.side-gnb-form > .logo-cont .logo > img {
-  width:80%;
+
+.side-gnb-form > .logo-cont > h1 > .logo > img {
+  width:100%;
   height:auto;
 }
+
 .side-gnb-form > .username-cont {
   width: 100%;
   padding: 0 5px;
   position: absolute;
   left: 25px;
   top: 25px;
-
 }
+
 .side-gnb-form > .username-cont > a {
   font-weight: bold;
   color: #fff;
@@ -182,13 +187,34 @@ button.btn.small {
   margin-right: 5px;
   font-size: 1.7em;
 }
+
 .side-gnb-form > .username-cont > a > span {
   color: #fff;
   font-size: 1.3em;
 }
+
 .side-gnb-form > .username-cont.on > a {
   letter-spacing: 1.5px;
 }
+
+.side-gnb-form > .username-cont > .tooltip { 
+  background-color: #131313;
+  position: absolute;
+  padding: 10px 20px;
+  z-index: 500;
+  border-radius: 10px;
+  display: none;
+}
+
+
+
+.side-gnb-form > .username-cont > .tooltip > p {
+  color: #fff;
+  font-size:0.8em;
+  font-weight:bold;
+  letter-spacing: 2px;
+}
+
 
 .side-gnb-form > .gnb-list-cont {
   position: absolute;
@@ -369,6 +395,10 @@ button.btn.small {
 /* 태블릿사이즈 */
 @media screen and (max-width:1023px){
   /*------ SideGnbForm--------------------------------------------------------*/
+  .side-gnb-form > .logo-cont {
+    width:120px;
+  }
+
   .side-gnb-form > .username-cont {
     left: 14px;
     padding: 0;
@@ -380,14 +410,14 @@ button.btn.small {
   .side-gnb-form > .username-cont > a > i {
     display: none;
   }
-  .side-gnb-form > .gnb-list-cont {
-    top: 60px;
-  }
+
   .side-gnb-form > .gnb-list-cont > ul {
     padding: 10px 0;
   }
   .side-gnb-form > .gnb-list-cont > ul::before {
     left: 5px;
+    top: -6px;
+
   }
   .side-gnb-form > .gnb-list-cont > ul > li { 
     padding-left: 4px;
@@ -415,44 +445,45 @@ button.btn.small {
   
 }
 
-/* 모바일사이즈 */
+
+
+/* 모바일사이즈_01 */
+@media screen and (max-width:705px) {
+  .side-gnb-form > .username-cont > a > span {
+    display: none;
+  }
+}
+
+/* 모바일사이즈_02 */
 @media screen and (max-width:768px) {
   #app {
     border-radius: 0;
     min-height: calc(640px - 4%);
   }
+
   /*------ SideGnbForm--------------------------------------------------------*/
-  .side-gnb-form > .gnb-list-cont > ul > li > a > .gnb-icon {
-    width: 27px;
-    height: 27px;
-    top: 16px;
-    left: 33px;
-  }
-
   .side-gnb-form > .logo-cont { 
-    bottom: 40px;
     transform: rotateZ(-90deg);
+    bottom: 40px;
+    left: 0;
+    width: 100px;
   }
 
-  .side-gnb-form > .logo-cont .logo > img {
-    width: 100%;
-  }
-  .side-gnb-form > .gnb-list-cont > ul > li > a {
-    font-size: 0;
-  }
   .side-gnb-form > .username-cont > a > i {
-    display: block;
+    display: inline-block;
   }
+  
   .side-gnb-form > .username-cont {
-    left:35px;
-    top: 17px;
+    top: 30px;
+    left: 20px;
   }
   .side-gnb-form > .username-cont > a > i {
-    font-size: 2.5em;
+    font-size: 1.5em;
   }
   .side-gnb-form > .username-cont > a > span {
-    display: none;
+    font-size: 0.9em;
   }
+
   .side-gnb-form > .gnb-list-cont {
     padding-left: 0;
   }
@@ -460,4 +491,48 @@ button.btn.small {
   .side-gnb-form > .gnb-list-cont > ul > li {
     padding-left: 0;
   }
+
+  .side-gnb-form > .gnb-list-cont > ul > li.active::before {
+    top: 0;
+    right: 19px;
+  }
+
+  .side-gnb-form > .gnb-list-cont > ul > li.active::after {
+    top: -6px;
+    right: 0;
+  }
+
+  .side-gnb-form > .gnb-list-cont > ul > li > a {
+    line-height: 45px;
+    font-size: 0.9em;
+  }
+
+  .side-gnb-form > .gnb-list-cont > ul > li > a > .gnb-icon {
+    width: 23px;
+    height: 23px;
+    top: 10px;
+    left: 16px;
+  }
+
+
+}
+
+
+/* 모바일사이즈_03 */
+@media screen and (max-width:560px) {
+  .side-gnb-form > .logo-cont {
+    width:60px;
+  }
+  .side-gnb-form > .gnb-list-cont > ul > li > a {
+    font-size:0;
+  }
+
+  .side-gnb-form > .username-cont > a > span {
+    display: none;
+  }
+
+  .side-gnb-form > .username-cont:hover > .tooltip {
+    display: block;
+  }
+
 }

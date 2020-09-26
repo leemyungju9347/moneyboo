@@ -3,19 +3,19 @@
     <form class="add-cont" @submit.prevent="submitList">
       <button
         type="button"
-        v-on:click="clickIncomeBtn()"
-        class="add-income-btn"
-        v-bind:class="{ inputOn: inputControl === 'income' }"
-      >
-        수입
-      </button>
-      <button
-        type="button"
         v-on:click="clickExpendBtn()"
         class="add-expend-btn"
         v-bind:class="{ inputOn: inputControl === 'expend' }"
       >
         지출
+      </button>
+      <button
+        type="button"
+        v-on:click="clickIncomeBtn()"
+        class="add-income-btn"
+        v-bind:class="{ inputOn: inputControl === 'income' }"
+      >
+        수입
       </button>
       <div>
         <DatePicker
@@ -61,6 +61,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import DatePicker from 'v-calendar/lib/components/date-picker.umd';
 import { makeDateListID } from '@/utils/filters.js';
 import { eventBus } from '@/main.js';
@@ -75,7 +76,6 @@ export default {
 
       // 수정 해야 할 원본 배열 editList 에 할당
       this.editList = data;
-      console.log(this.editList);
 
       // 각 v-model에 연결
       this.date = new Date(`2020 ${data.date}`);
@@ -91,17 +91,19 @@ export default {
     this.getBanksData();
     this.getCategoriesData();
   },
+  computed: {
+    ...mapState(['uid']), // 현재 로그인한 유저 uid
+  },
   data() {
     return {
       date: new Date(),
-      inputControl: 'income',
+      inputControl: 'expend',
       selectCategory: '',
       selectBank: '',
       price: null,
       listText: '',
       edit: false,
       editId: '',
-      currentUid: this.$store.state.uid,
       getCategory: [],
       getBankAsset: [],
       editList: {},
@@ -119,11 +121,6 @@ export default {
             if (banks) {
               this.getBankAsset = banks;
             }
-          } else {
-            alert(
-              '관리 페이지에서 은행값을 등록해주세요! 관리페이지로 이동합니다.',
-            );
-            this.$router.push('/setting');
           }
         });
     },
@@ -141,20 +138,15 @@ export default {
                 this.getCategory.push(data.name);
               });
             }
-          } else {
-            alert(
-              '관리 페이지에서 카테고리값을 등록해주세요! 관리페이지로 이동합니다.',
-            );
-            this.$router.push('/setting');
           }
         });
     },
     mbooRef() {
-      return moneybooRef(this.currentUid);
+      return moneybooRef(this.uid);
     },
     settingListRef() {
       // settings document > settingList collection 참조값
-      return settingColRef(this.currentUid);
+      return settingColRef(this.uid);
     },
     dailyListAddRef() {
       return this.mbooRef()
@@ -253,7 +245,6 @@ export default {
     resetData() {
       // 인풋창의 데이터를 리셋해주는 함수
       this.date = new Date();
-      this.inputControl = 'income';
       this.selectCategory = '';
       this.selectBank = '';
       this.price = null;

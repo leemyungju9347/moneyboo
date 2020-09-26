@@ -12,6 +12,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import { addComma, newConversionMonth } from '@/utils/filters';
 import { moneybooRef } from '@/api/firestore';
 
@@ -19,11 +20,12 @@ export default {
   created() {
     this.getListData();
   },
+  computed: {
+    ...mapState(['uid']), // 현재 로그인한 유저 uid
+  },
   data() {
     return {
-      listData: this.$store.state.listData,
       date: this.conversionDate(new Date()),
-      currentUid: this.$store.state.uid, // 현재 로그인한 유저 uid
       listArrLength: 0,
       getAllListData: [],
       allIncome: 0,
@@ -37,12 +39,6 @@ export default {
       this.dailyListAddRef()
         .doc(yearsMonth)
         .onSnapshot(snapshot => {
-          // if (snapshot.exists) {
-          //   this.getAllListData = snapshot.data().listData;
-          //   this.incomeToday(this.date);
-          // } else {
-          //   console.log('값이 없습니다.');
-          // }
           snapshot.exists
             ? (this.getAllListData = snapshot.data().listData)
             : console.log('값이 없습니다!');
@@ -55,7 +51,7 @@ export default {
         .collection('listAdd');
     },
     mbooRef() {
-      return moneybooRef(this.currentUid);
+      return moneybooRef(this.uid);
     },
     // 날짜 정렬
     conversionDate(date) {

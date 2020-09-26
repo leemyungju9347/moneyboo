@@ -22,6 +22,7 @@
 <script>
 import BarGraph from '@/components/statistics/BarGraph.vue';
 import RoundGraph from '@/components/statistics/RoundGraph.vue';
+
 import { todayCheck, yearCheck } from '../utils/statistics.js';
 
 export default {
@@ -36,6 +37,7 @@ export default {
     BarGraph,
     RoundGraph,
   },
+
   created() {
     window.addEventListener('resize', e => (this.size = e.target.innerWidth));
   },
@@ -53,6 +55,7 @@ export default {
       this.selectedTab = tabNum;
     },
   },
+
 };
 </script>
 

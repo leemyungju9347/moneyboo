@@ -13,8 +13,11 @@
     <div class="username-cont" :class="setUserClassName">
       <a href="" @click.prevent="goMypage()">
         <i class="fas" :class="`fa-user-${userIcon}`"></i>
-        <span>{{ useremail }}</span>
+        <span>{{ usernNickname }}</span>
       </a>
+      <div v-if="email" class="tooltip">
+        <p>{{ email }}</p>
+      </div>
     </div>
     <!-- GNB 메뉴 -->
     <div class="gnb-list-cont">
@@ -80,9 +83,9 @@ export default {
     };
   },
   computed: {
-    ...mapState(['nickname', 'currentRouter']),
+    ...mapState(['email', 'nickname', 'currentRouter']),
     ...mapGetters(['isLogin']),
-    useremail() {
+    usernNickname() {
       return this.isLogin ? this.nickname : '로그인을 해주세요.';
     },
     userIcon() {

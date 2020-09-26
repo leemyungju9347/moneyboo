@@ -57,7 +57,6 @@ strong {
 }
 
 
-
 /* ------ SetAsset.vue ------ */ 
 .set-asset > h3 {
   margin-bottom: 0;
@@ -99,7 +98,8 @@ strong {
 }
 .set-asset > form > .credit-goal-cont > ul > li {
   width: 100%;
-  height: 54px;
+  height: 100px;
+  /* height: 54px; */
   margin: 0 0 10px;
   background-color: rgba(226, 201, 146, 0.2) /*#e2c992*/;
   position: relative;
@@ -119,38 +119,63 @@ strong {
 .set-asset > form > .credit-goal-cont > ul > li > select {
   border: none;
   border-radius: 5px;
-  width: 25%;
-  height: 100%;
-  padding-left: 10px;
+  width: calc(100% - 20px);
+  height: 30%;
+  margin: 0 10px 0;
+  padding-top: 10px;
   background-color: transparent;
   cursor: pointer;
 }
 .set-asset > form > .credit-goal-cont > ul > li > input {
-  width: calc(75% - 15px);
-  height: calc(100% - 14px);
+  /* width: calc(75% - 15px);
+  height: calc(100% - 14px); */
   margin: 7px 4px 7px 7px;
   padding: 0 10px;
   background-color: #fff;
+
+  width: calc(100% - 15px);
+  height: calc(50% - 14px);
 }
 .set-asset > form > .credit-goal-cont > ul > li > .realTimeAsset{
-  color: rgba(59, 59, 59, 0.5);
+  /* color: rgba(59, 59, 59, 0.5); */
   position: absolute;
-  bottom: 7px;
-  right: 30px;
+  /* bottom: 7px; */
+  bottom: 3px;
+  right: 10px;
+  /* right: 30px; */
+}
+.set-asset > form > .credit-goal-cont > ul > li > .show{ /* 은행 별 자산 남은 금액만 보일 떄 스타일 */
+  height: 55px;
+  overflow-X: scroll;
+  top: 50%; 
+  left: 50px;
+  right: 40px;
+  transform: translateY(-10px);
+}
+.set-asset > form > .credit-goal-cont > ul > li > .show > span{
+  height: 35px;
+  padding: 6px 10px 0;
+  font-size: 15px;
+  background-color: rgba(226, 201, 146, .3);
+  display: block;
 }
 .set-asset > form > .credit-goal-cont > ul > li > button.edit{
   border:none;
-  /* border-radius: 2px; */
-  padding:2px 3px;
+  border-radius: 3px;
+  padding:2px 4px;
   background-color:rgba(226, 201, 146, 0.4) /*#e2c992*/;
   font-size:12px;
   color:#fff;
   position: absolute;
-  top: 18px;
-  right: 18px;
+  top: 50%;
+  left: 14px;
+  transform: translateY(-2px);
 }
 .set-asset > form > .credit-goal-cont > ul > li > button.edit:hover{
   background-color:rgba(226, 201, 146, 0.9) /*#e2c992*/;
+}
+.set-asset > form > .credit-goal-cont > ul > li > button.hide{
+  display: none;
 }
 .set-asset > form > .credit-goal-cont > ul > li > button.remove{
   border: none;
@@ -160,7 +185,8 @@ strong {
   font-size:11px;
   color: #fff;
   position: absolute;
-  top: 20px;
+  /* top: 20px; */
+  top: 50%;
   right: 11px;
 }
 .set-asset > form > .credit-goal-cont > ul > li > button.remove:hover{
@@ -524,29 +550,4 @@ input {
   }
 }
 
-/* 은행 별 자산 입력 칸 사이즈 조정용 */
-@media screen and (max-width:600px) {
-  /* ------ SetAsset.vue ------ */ 
-  .set-asset > form > .credit-goal-cont > ul > li {
-    height: 100px;
-    margin: 0 0 10px;
-  }
-  .set-asset > form > .credit-goal-cont > ul > li > select {
-    width: 100%;
-    height: 30%;
-    padding-top: 10px;
-  }
-  .set-asset > form > .credit-goal-cont > ul > li > input {
-    width: calc(100% - 15px);
-    height: calc(50% - 14px);
-    margin: 7px 4px 7px 7px;
-    padding: 0 10px;
-  }
-  .set-asset > form > .credit-goal-cont > ul > li > button.remove{
-    top: 50%;
-  }
-  .set-asset > form > .credit-goal-cont > ul > li > .realTimeAsset{
-    bottom: 3px;
-    right: 10px;
-  }
-}
+

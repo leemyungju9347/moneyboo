@@ -1,6 +1,11 @@
 <template>
   <div class="loader-cont" v-if="loading">
-    <div class="loader"></div>
+    <div class="loader">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
   </div>
 </template>
 

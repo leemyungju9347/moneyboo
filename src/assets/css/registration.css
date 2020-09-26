@@ -15,14 +15,16 @@
     display:none;
     position: relative;
     width: 70%;
-    margin: 120px auto 0;
+    margin:90px auto 0;
 }
 .registration-page-wrap > .regist-form > .regist-form-cont > form {
     position: relative;
-    margin-top: 85px;
+}
+.registration-page-wrap > .signup-form > .regist-form-cont > form {
+    margin-top:65px;
 }
 .registration-page-wrap > .login-form > .regist-form-cont > form {
-    margin-top:110px;
+    margin-top:90px;
 }
 .registration-page-wrap > .regist-form > .regist-form-cont > form > div {
     position: relative;
@@ -94,7 +96,7 @@
     background-size:cover;
     position: absolute;
     right:5px;
-    bottom:-155px;
+    bottom: -78px;
     cursor: pointer;
     font-size: 2em;
     line-height:39px;
@@ -105,6 +107,9 @@
     background-color: #348f6c2f;
     opacity:0.7;
     
+}
+.registration-page-wrap > .login-form > .regist-form-cont > form > .add-btn {
+    bottom: -105px;
 }
 .registration-page-wrap > .signup-form > .regist-form-cont > form > .add-btn {
     background-color:#348F6C;
@@ -131,8 +136,8 @@
 .registration-page-wrap > .regist-form > .regist-form-cont > .reset-btn{
     position: absolute;
     font-size: 0;
-    right: -30px;
-    top: -65px;
+    right: -40px;
+    top: -50px;
     background: url('../images/return.png') no-repeat 0 0;
     background-size: 100%;
     border:none;
@@ -148,7 +153,7 @@
     font-weight: bold;
     color: #3a3939;
     position: absolute;
-    border-radius: 30px;
+    border-radius:25px;
     padding: 10px 20px;
     top: -95px;
     right:-40px;
@@ -295,12 +300,20 @@
 
 /* 태블릿사이즈 */
 @media screen and (max-width:1023px){
+    .registration-page-wrap > .login-form > .regist-form-cont > form {
+        margin-top: 110px;
+    }
     .registration-page-wrap > .regist-form > .regist-form-cont > .reset-btn {
         display: none;
     } 
     .registration-page-wrap > .regist-form > .regist-form-cont > form > .add-btn {
         width: 100%;
+        bottom: -100px;
     }
+    .registration-page-wrap > .regist-form > .regist-form-cont > .go-btn {
+        top: -55px;
+    }
+    
   
 }
 
@@ -309,20 +322,84 @@
 
     .registration-page-wrap > .regist-form > .regist-form-cont > h3 {
         text-align: center;
+        font-size: 1.5em;
     }
     .registration-page-wrap > .regist-form > .regist-form-cont > .go-btn {
         font-size: 1.3em;
+        
+    }
+
+    .registration-page-wrap > .regist-form > .regist-form-cont {
+        /* margin: 80px auto 0; */
+    }
+
+    .registration-page-wrap > .login-form > .regist-form-cont > form {
+        margin-top:60px;
+
+    }
+
+    .registration-page-wrap > .signup-form > .regist-form-cont > form {
+        margin-top: 50px;
+    }
+
+
+    .registration-page-wrap > .login-form > .regist-form-cont > form > div + div,
+    .registration-page-wrap > .signup-form > .regist-form-cont > form > div + div {
+        margin-top: 25px;
+    }
+
+
+
+    .registration-page-wrap > .regist-form > .regist-form-cont > form > div > label {
+        left: 7px;
+        bottom: 4px;
+        font-size: 0.9em;
+    }
+
+    .registration-page-wrap > .regist-form > .regist-form-cont > form > div > input {
+        font-size: 0.9em;
+        padding: 5px;
+        height: auto;
     }
 
     .registration-page-wrap > .regist-form > .regist-form-cont > form > div > .logmessage-box {
-        bottom: -25px;
+        bottom: -17px;
         padding: 0;
         top: unset;
+        left: 5px;
+        right: unset;
     }
 
     .registration-page-wrap > .regist-form > .regist-form-cont > form > div > .logmessage-box > p {
-        font-size: 1.12em;
+        font-size:0.7em;
     }
+
+    .registration-page-wrap > .regist-form > .regist-form-cont > form > .add-btn {
+        font-size: 0.9em;
+        padding: 5px 30px;
+        line-height: 20px;
+        bottom: -75px;
+    }
+
+    .registration-page-wrap > .regist-form > .regist-form-cont > .go-btn {
+        font-size: 0.9em;
+        padding: 5px 30px;
+        width: 100%;
+        bottom: -125px;
+        line-height: 20px;
+        top: unset;
+        left:-5px
+    }
+
+    .registration-page-wrap > .regist-form > .regist-form-cont > .go-btn.signup {
+        
+    }
+
+    .registration-page-wrap > .regist-form > .regist-form-cont > .go-btn.login {
+        border: none;
+    }
+
+    
 
     
 

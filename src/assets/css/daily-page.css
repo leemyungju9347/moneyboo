@@ -102,16 +102,10 @@
   border: none;
   border-radius: 5px;
   background-color: #e2c992;
-  /* background-color: #3f9c79; */
   color: #fdfaf3;
-  /* background-color: #f0fbf7; */
-  /* color: #3f9c79; */
   height: 40px;
 }
 
-/* .daily-list-add .list-add-btn > i {
-  color: ;
-} */
 
 /* daily-list */
 
@@ -160,8 +154,6 @@
 }
 .daily-list-day li {
   padding-top: 26px;
-  /* display: flex;
-  justify-content: space-between; */
 }
 .daily-list-day li:first-child {
   padding-top: 0;
@@ -210,13 +202,7 @@
     display: block;
   }
   .daily-balance li {
-  width: 100%;
-  /* max-width: 340px;
-  height: 96px;
-  border-radius: 20px;
-  color: #3b3b3b;
-  font-size: 1.6em;
-  text-align: center; */
+    width: 100%;
   }
   .daily-balance li:first-child {
     margin: 0 auto;
@@ -258,24 +244,54 @@
   }
   .daily-list-day li i.category-icon.fas {
     width: 20%;
-    font-size: 2em;
   }
   .daily-list-day li span {
-    width: 35%;
+    width: 30%;
     position: absolute;
     left: 20%;
   }
   .daily-list-day li p {
-    width: 35%;
+    width: 30%;
     padding-top: 4vh;
   }
   .daily-list-day li b {
-    width: 35%;
+    width: 40%;
   }
   .daily-list-add .list-add-btn {
     position: absolute;
     top: -36px;
     right: 10px;
   }
+  .daily-list {
+    padding:20px 30px;
+  }
 
+
+}
+
+/* 모바일사이즈 */
+@media screen and (max-width:480px){
+  .daily-list .daily-list-day b {
+    border-radius: 12px;
+  }
+  .daily-list .daily-list-income > b{
+    background-color: #eff9ff;
+  }
+  .daily-list .daily-list-expend > b{
+    background-color: #faeff3;
+  }
+  .daily-list .daily-list-day em {
+    display: block;
+    background-color: transparent;
+    font-weight: bold;
+  }
+
+  .daily-list-day li p {
+    font-size: 0.8em;
+    overflow: scroll;
+  }
+
+  .daily-list-day li b a {
+    padding: 0;
+  }
 }
