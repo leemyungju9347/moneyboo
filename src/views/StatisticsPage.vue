@@ -10,12 +10,14 @@
 <script>
 import BarGraph from '@/components/statistics/BarGraph.vue';
 import RoundGraph from '@/components/statistics/RoundGraph.vue';
+import listMixins from '@/mixins/listMixins.js';
 
 export default {
   components: {
     BarGraph,
     RoundGraph,
   },
+  mixins: [listMixins],
 };
 </script>
 

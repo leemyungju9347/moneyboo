@@ -1,9 +1,9 @@
 .toast-popup {
     position: fixed;
-    top: -80px;
+    top: -120px;
     left: 50%;
     transform: translateX(-50%);
-    height: 60px;
+    /* height: 60px; */
     background-color: #242424;
     color: #fff;
     border-radius: 15px;
@@ -15,7 +15,7 @@
     font-weight: bold;
     font-size: 1.3em;
     z-index: 1000;
-    padding: 0 40px
+    padding: 20px 40px
   }
   
   .toast-popup > i {
@@ -31,12 +31,13 @@
 @media screen and (max-width:1023px) {
   .toast-popup {
     font-size: 1.15em;
-    padding: 0 20px
+    padding: 20px 30px;
   }
 }
 
 @media screen and (max-width:768px) {
   .toast-popup {
-    font-size: 1em;
+    font-size: 0.5em;
+    padding: 10px 20px;
   }
 }

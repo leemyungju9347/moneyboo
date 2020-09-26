@@ -31,6 +31,7 @@ export default {
       loadingStatus: false,
     };
   },
+
   computed: {},
   created() {
     bus.$on('start:spinner', this.startSpinner);
