@@ -1,43 +1,45 @@
 <template>
-  <div class="round-graph-cont">
+  <div class="round-graph-cont" :class="{ on: selectedTab === 0 }">
+    <!-- v-show="selectedTab === 1" -->
     <div class="round-graph">
       <h3>{{ whatMonth() }}월</h3>
       <div id="canvas-holder">
         <canvas ref="rGraph"></canvas>
       </div>
     </div>
-
-    <ListOfMonth :monthCk="whatMonth" @listM-data="cList"></ListOfMonth>
-    {{ pPrice }}
+    {{ percentage }}
+    <ListOfMonth></ListOfMonth>
   </div>
+  <!-- 내용 리스트 -->
 </template>
 
 <script>
 import { todayCheck } from '@/utils/statistics.js';
-import { addComma } from '@/utils/filters';
 import ListOfMonth from '@/components/statistics/ListOfMonth.vue';
 import { eventBus } from '../../main';
 
 export default {
+  props: ['selectedTab', 'size'],
   components: {
     ListOfMonth,
   },
   data() {
     return {
-      cList: [],
-      pPrice: [],
+      percentage: [],
     };
   },
   created() {
-    eventBus.$once('sM-data', cList => {
-      this.cList = cList;
-      this.Percentage();
+    eventBus.$on('percentage', value => {
+      this.percentage = value;
     });
   },
   mounted() {
-    console.log('this is mounted');
-    const ctx = this.$refs.rGraph;
+    // mounted 부분에서 this를 찍으면 data의 값이 잘 반영 되는데 this.pPrice를 찍으면 [__ob__: Observer] 이런 결과가 나온다.
+    // JSON.parse(JSON.stringfy(this.pPrice)) 를 해보면 빈 배열이 나온다.
+    // 순서는 created한후 mounted가 된다.
+    // 문제가 뭔지를 모르겠다...........
 
+    const ctx = this.$refs.rGraph;
     //chart default값 설정하기
     this.$_Chart.defaults.global.defaultFontColor = '#3b3b3b';
     this.$_Chart.defaults.global.defaultFontFamily = 'Jua';
@@ -45,10 +47,10 @@ export default {
     let myChart = new this.$_Chart(ctx, {
       type: 'pie',
       data: {
-        labels: ['sdf', 'zc', 'iwuqe'], // 마우스가 근처에 오면 해당 카테고리 이름이 나온다.
+        labels: [], // 마우스가 근처에 오면 해당 카테고리 이름이 나온다.
         datasets: [
           {
-            data: [],
+            data: [10, 20, 30],
             backgroundColor: [
               'rgb(224, 242, 241)',
               'rgb(178, 223, 219)',
@@ -81,41 +83,23 @@ export default {
         scales: {},
       },
     });
-    /*** 해결이 필요한 부분 , 생성주기의 문제 같은데 아직 찾지를 못하겠다. ***/
-    //data 값 setting하기
-    //console.log(this.pPrice); //[__ob__: Observer]
-    //console.log(this.cList); //[__ob__: Observer]
-    console.log(this.pPrice);
-    myChart.data.datasets[0].data = this.pPrice;
-    myChart.data.labels = Object.keys(this.cList);
 
+    //data 값 setting하기
+    // console.log(myChart.data.datasets[0].data);
+    //myChart.data.datasets[0].data = this.percentage;
+    // myChart.data.labels = Object.keys(this.cList);
+    // console.log('graph mounted');
     myChart.update();
     return myChart;
   },
-
-  methods: {
+  computed: {
     whatMonth() {
-      return todayCheck();
+      return todayCheck;
     },
-    addComma() {
-      return addComma;
-    },
-    Percentage() {
-      const cList = this.cList;
-      let pieP = [];
-      let EPprice = [];
-      let totalNum = 0;
-
-      for (let key in cList) {
-        let price = cList[key].price;
-        totalNum += price;
-        EPprice.push(price);
-      }
-
-      EPprice.sort((a, b) => a - b);
-      EPprice.filter(el => pieP.push(Math.round((el / totalNum) * 100)));
-
-      pieP = this.pPrice;
+  },
+  methods: {
+    function() {
+      console.log('sdlkfjlsdjkf');
     },
   },
 };

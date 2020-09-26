@@ -1,27 +1,38 @@
 <template>
-  <div class="bar-graph-cont">
+  <div class="bar-graph-cont" :class="{ on: selectedTab === 1 }">
+    <!-- v-show="selectedTab === 0" -->
     <div class="bar-graph">
       <h3>{{ whatYear() }}</h3>
       <div id="canvas-holder">
         <canvas ref="bGraph"></canvas>
       </div>
     </div>
+
+    <!-- 년도 리스트 -->
     <ListOfyears></ListOfyears>
+    {{ yearsExpend }}
   </div>
 </template>
 
 <script>
-import ListOfyears from './ListOfyears';
 import { yearCheck } from '@/utils/statistics.js';
+import ListOfyears from '@/components/statistics/ListOfyears.vue';
+import { eventBus } from '../../main';
 
 export default {
+  props: ['selectedTab', 'size'],
   components: {
     ListOfyears,
   },
-  methods: {
-    whatYear() {
-      return yearCheck();
-    },
+  data() {
+    return {
+      yearsExpend: {},
+    };
+  },
+  created() {
+    eventBus.$on('monthExpend', value => {
+      return (this.yearsExpend = value);
+    });
   },
   mounted() {
     var ctx = this.$refs.bGraph;
@@ -64,22 +75,21 @@ export default {
         legend: {
           display: false,
         },
-        // scales: {
-        //   xAxes: [
-        //     {
-        //       stacked: true,
-        //     },
-        //   ],
-        //   yAxes: [
-        //     {
-        //       stacked: true,
-        //     },
-        //   ],
-        // },
       },
     });
-
+    //data 값 setting하기
+    // console.log(this.yearsExpend);
+    // myChart.data.datasets[0].data = this.yearsExpend
+    // console.log(myChart.data.datasets[0].data);
+    // myChart.data.labels = Object.keys(this.yearsExpend);
+    // console.log('graph mounted');
+    myChart.update();
     return myChart;
+  },
+  methods: {
+    whatYear() {
+      return yearCheck();
+    },
   },
 };
 </script>

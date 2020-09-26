@@ -60,19 +60,14 @@
 	top: 0;
 }
 
-.statistics-list-cont{
-	bottom: 20px;
-	height: 50%;
-	text-align: left;
-	padding: 20px;
-
-}
 .statistics-list {
-
-	height: 100%;
-	border-top: 2px solid #f1f5f4 ;;
+	bottom: 0;
+	padding: 20px;
 }
-
+.statistics-list > ul {
+	border-top: 2px solid #f1f5f4 ;
+	height: 100%;
+}
 .statistics-list ul li {display: flex;}
 .statistics-list ul li + li {margin-top: 10px;}
 .statistics-list ul li b {
@@ -118,45 +113,52 @@
 
 
 /* @media query -------------------------------------------------  */
-#graph-list {
-	outline: 1px solid green;
-	position: relative;
-	display: none;
-}
-#graph-list> ul {
-	display: flex;
-	justify-content: center;
-	padding-bottom: 30px;
-}
-#graph-list > ul > li {
-	padding: 1px 17px;
-	font-size: 1.2em;
-	cursor: pointer;
-	margin-left: 3px;
-	background-color: cadetblue;
-	border-top-left-radius: 10px;
-	border-top-right-radius:10px;
-	font-weight: 700;
-}
-/* tablet */
-@media screen and (max-width:1023px){
-	body {
-		/* background-color: mediumaquamarine; */
+
+/* 테블릿 세로 */
+@media screen and (min-width:768px) and (max-width:1023px){
+	/* list */
+	.statistics-list ul li b {
+		width: 35%;
+	}
+	.statistics-list ul li span {
+		width: 65%;
 	}
 }
 
-/* phone */
-@media screen and (max-width:820px){
-	body {
-		background-color: rgb(198, 205, 102);
-	}
-	.round-graph-cont,
-	.bar-graph-cont {
+/* 모바일 가로, 테블릿 세로 */
+@media screen and (min-width:480px) and (max-width:767px){
+	.statistics-page-wrap h3 {
 		display: none;
+	}
+
+	.bar-graph-cont, .round-graph-cont {
 		width: 100%;
 	}
-	.on {
-		display: block;
+
+	
+}
+
+/* 모바일 가로, 모바일 세로*/
+@media screen and (max-width:479px){
+	.statistics-list{padding: 0;}
+	.statistics-page-wrap h3 {
+		display: none;
+	}
+	.bar-graph-cont, .round-graph-cont {
+	width: 100%;
+	}
+	.statistics-list ul li {
+		flex-direction: column;
+		border-bottom: 1px solid #348f6c2f;
+	}
+	.statistics-list ul li b,	
+	.statistics-list ul li span{
+		width: 100%;
+		font-size: 15px;
 	}
 
-} 
+	.statistics-list ul li span{
+		font-size: 17px;
+	}
+
+}
