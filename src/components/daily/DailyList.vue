@@ -60,6 +60,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import { addComma, newConversionMonth } from '@/utils/filters';
 import { eventBus } from '@/main';
 import firebase from 'firebase';
@@ -71,10 +72,12 @@ export default {
     this.getBanksData();
     this.getCategoriesData();
   },
+  computed: {
+    ...mapState(['uid']), // 현재 로그인한 유저 uid
+  },
   data() {
     return {
       listDateArray: [],
-      currentUid: this.$store.state.uid, // 현재 로그인한 유저 uid
       getAllListData: [],
       listArrLength: 0,
       logMessage: '',
@@ -93,7 +96,7 @@ export default {
             if (banks) {
               this.getBankAsset = banks;
             }
-          } else {
+          } else if (this.$router.currentRoute.path == '/daily') {
             alert(
               '관리 페이지에서 은행값을 등록해주세요! 관리페이지로 이동합니다.',
             );
@@ -115,7 +118,8 @@ export default {
                 this.getCategory.push(data);
               });
             }
-          } else {
+          } else if (this.$router.currentRoute.path == '/daily') {
+            console.log(this.$router.currentRoute.path);
             alert(
               '관리 페이지에서 카테고리값을 등록해주세요! 관리페이지로 이동합니다.',
             );
@@ -142,11 +146,11 @@ export default {
         .collection('listAdd');
     },
     mbooRef() {
-      return moneybooRef(this.currentUid);
+      return moneybooRef(this.uid);
     },
     settingListRef() {
       // settings document > settingList collection 참조값
-      return settingColRef(this.currentUid);
+      return settingColRef(this.uid);
     },
     // 날짜 정렬 함수
     sortListDate() {
