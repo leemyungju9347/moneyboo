@@ -44,7 +44,7 @@ export default {
           // document의 값이 있으면
           if (snapshot.exists) {
             const assets = snapshot.data().assets;
-            console.log(assets);
+            //console.log(assets);
             if (assets) {
               this.totalGoal = assets.totalGoal;
             }
@@ -81,7 +81,7 @@ export default {
     },
     // 지출값 더하는 함수
     addExpend() {
-      console.log('addexpend 실행!');
+      //console.log('addexpend 실행!');
 
       const copyList = this.getAllListData;
       let totalPrice = 0;

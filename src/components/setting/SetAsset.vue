@@ -395,7 +395,7 @@ export default {
     matchBankPrice(allListdata, bankAssetName, bankAssetNum) {
       // '각 은행 별 사용금액의 총 합' 변수 선언.
       let priceSum = 0;
-
+      console.log(bankAssetName);
       // 'dailyList'에서 불러온 지출/수입 내역 foreEach로 확인.
       allListdata.forEach(listdata => {
         // bankAsset과 같은 은행의 지출 내역 구함.

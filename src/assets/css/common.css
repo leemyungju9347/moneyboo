@@ -373,8 +373,7 @@ button.btn.small {
     left: 14px;
     padding: 0;
   }
-  .side-gnb-form > .username-cont > a {
-  }
+
   .side-gnb-form > .username-cont > a > span {
     font-size: 1.2em;
   }
@@ -461,6 +460,4 @@ button.btn.small {
   .side-gnb-form > .gnb-list-cont > ul > li {
     padding-left: 0;
   }
-
-
 }

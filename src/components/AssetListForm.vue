@@ -13,7 +13,9 @@
         <ul>
           <li v-for="nInfo in bankArr" :key="nInfo.id">
             <span>{{ nInfo.bank }}</span>
-            <b id="ani-money">{{ makeComma(nInfo.asset) }}원</b>
+            <b id="ani-money"
+              >{{ totalBankAssets(dailyList, nInfo.bank, nInfo.asset) }}원</b
+            >
           </li>
         </ul>
       </div>
@@ -29,24 +31,28 @@
 </template>
 
 <script>
-import { addComma } from '@/utils/filters.js';
+import { addComma, newConversionMonth } from '@/utils/filters.js';
 import { moneybooRef, settingColRef } from '@/api/firestore';
+//import { todayCheck } from '@/utils/statistics.js';
+// import { eventBus } from '../../main';
 // firebase를 사용하기 위해서 불러와야 한다.
 
 export default {
   data() {
     return {
-      assetTotal: '',
-      bankArr: [],
-      cash: '',
       currentUID: '',
+      dailyList: [], // 수입/지출
+      assetTotal: '', // 계산된 총 자산
+      bankArr: [],
+      cash: 0, // 현금자산
     };
   },
   created() {
     this.currentUID = this.$store.state.uid; // 로그인한 유저 uid
 
-    this.getAssetsDB();
-    this.getBanksDB();
+    this.getAssetsDB(); // 목표 금액
+    this.getBanksDB(); // 은행별 자산
+    this.getDailyList(); // 수입/지출 목록
   },
   methods: {
     addBtn() {
@@ -56,37 +62,35 @@ export default {
       return addComma(val);
     },
 
-    // assets
+    // 현금 자산 불러오기
     getAssetsDB() {
       this.settingListRef()
         .doc('assets')
-        .get()
-        .then(doc => {
-          // console.log(doc);
-          if (doc.exists) {
-            this.getFirebase();
-          } else {
+        .onSnapshot(snapshot => {
+          // console.log(snapshot);
+          if (snapshot.exists) {
+            const assets = snapshot.data().assets;
+            this.cash = assets.cashAsset;
+          } else if (this.$router.currentRoute.path !== '/main') {
             // 값이 없을 경우
             alert(
               '관리 페이지에서 초기값을 입력해 주세요. 확인을 누르면 해당 페이지로 이동합니다.',
             );
             this.$router.push('/setting');
-          }
-        })
-        .catch(err => {
-          console.log('메인페이지 에러:', err);
+          } else return;
         });
     },
 
-    // banks
+    // 은행 자산 불러오기
     getBanksDB() {
       this.settingListRef()
         .doc('banks')
-        .get()
-        .then(doc => {
-          //console.log(doc);
-          if (doc.exists) {
-            this.getFirebase();
+        .onSnapshot(snapshot => {
+          //console.log(snapshot);
+          if (snapshot.exists) {
+            this.bankArr = snapshot.data().banks;
+            console.log('은행자산 불러오기');
+            this.totalCalculate();
           } else {
             // 값이 없을 경우
             alert(
@@ -94,55 +98,94 @@ export default {
             );
             this.$router.push('/setting');
           }
-        })
-        .catch(err => {
-          console.log('메인페이지 에러:', err);
         });
     },
 
-    //firebase에서 db를 가져온다.
-    getFirebase() {
-      this.settingListRef()
-        .doc('assets')
-        .onSnapshot(snapshot => {
-          if (snapshot.exists) {
-            const assets = snapshot.data().assets;
-            this.cash = assets.cashAsset;
-          }
-        });
+    // dailyList
+    getDailyDB() {
+      return this.mBooRef()
+        .doc('daily')
+        .collection('listAdd');
+    },
 
-      this.settingListRef()
-        .doc('banks')
-        .onSnapshot(snapshot => {
-          // document의 값이 있으면
-          if (snapshot.exists) {
-            const banks = snapshot.data().banks;
-            if (banks) {
-              this.bankArr = banks;
-            }
-            this.totalCalculate();
+    // daily > dailList
+    getDailyList() {
+      const today = newConversionMonth();
+      this.getDailyDB()
+        .doc(today)
+        .onSnapshot(snapShot => {
+          if (snapShot.exists) {
+            this.dailyList = snapShot.data().listData;
+          } else {
+            alert('데일리에서 값을 추가해 주세요.');
           }
         });
     },
 
-    mBooRef() {
-      return moneybooRef(this.currentUID);
-    },
-    // settings> settingList
+    // settingList
     settingListRef() {
       return settingColRef(this.currentUID);
     },
+    // dailyList
+    mBooRef() {
+      return moneybooRef(this.currentUID);
+    },
+
+    // 은행별 수입 지출 현황
+    totalBankAssets(dailyList, bankName, bankAsset) {
+      let price = 0;
+
+      dailyList.forEach(listDB => {
+        let listBank = listDB.bank;
+        let listItem = listDB.item;
+
+        if (listBank === bankName && listItem === 'expend') {
+          price += Number(listDB.price);
+        } else if (listBank === bankName && listItem === 'income') {
+          price += -Number(listDB.price);
+        }
+      });
+
+      return this.makeComma(Number(bankAsset) - price);
+    },
+
     // 총 자산 계산
     totalCalculate() {
-      let bankArr = this.bankArr;
-      let assets = 0;
+      let bankTotal = 0;
+      let dailyTotal = 0;
+      let cashTotal = 0;
 
-      for (let i = 0; i < bankArr.length; i++) {
-        let asset = Number(bankArr[i].asset);
-        assets += asset;
-      }
+      this.dailyList.filter(daily => {
+        let dailyItem = daily.item;
+        let dailyPrice = Number(daily.price);
+        let dailyBank = daily.bank;
 
-      this.assetTotal = Number(this.cash) + assets;
+        // 은행 수입/지출 계산
+        if (dailyBank !== '현금' && dailyItem === 'expend') {
+          dailyTotal += -dailyPrice;
+        } else if (dailyBank !== '현금' && dailyItem === 'income') {
+          dailyTotal += dailyPrice;
+        }
+
+        // 현금 수입/지출 계산
+        if (dailyBank === '현금' && dailyItem === 'expend') {
+          cashTotal += -dailyPrice;
+        } else if (dailyBank === '현금' && dailyItem === 'income') {
+          cashTotal += dailyPrice;
+        }
+      });
+
+      this.cash = Number(this.cash) + cashTotal;
+
+      this.bankArr.filter(banks => {
+        const bankAsset = Number(banks.asset);
+        bankTotal += bankAsset;
+      });
+      console.log('전재산 계산 함수');
+
+      this.assetTotal = bankTotal + this.cash + dailyTotal;
+
+      // 해당 페이지에서 새로고침을 하면 값이 나온다. 다른페이지를 갔다가 해당 페이지에 들어오면 계산된 값이 아닌 초기전재산값이 나온다.
     },
   },
 };

@@ -16,14 +16,11 @@ function yearCheck() {
   return year;
 }
 
-// 해당 월 & 지출 필터
-// function categoryTotal(lists, month) {
-//   lists.filter(val => {
-//     let item = val.item;
-//     let date = Number(val.date.split('')[0]);
+function sortCategory(arr, value) {
+  arr.sort((a, b) => {
+    // 한글 오름차순
+    return a[value] < b[value] ? -1 : a[value] > b[value] ? 1 : 0;
+  });
+}
 
-//     return date == month && item == 'expend';
-//   });
-// }
-
-export { todayCheck, yearCheck };
+export { todayCheck, yearCheck, sortCategory };
