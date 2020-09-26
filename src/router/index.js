@@ -37,6 +37,7 @@ const routes = [
   {
     path: '/daily',
     component: () => import('@/views/DailyPage.vue'),
+    warning,
     meta: {
       requiresAuth: true,
     },
@@ -75,17 +76,21 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  // 인증이 필요한 페이지이고,
-  // 사용자가 로그인하지 않았을때
-  // 로그인 페이지로 이동
+  // 사용자가 로그인하지 않았을때 접근 못하도록 조건
   if (to.meta.requiresAuth && !store.getters.isLogin) {
     from.path === '/registration' ? warning() : next('/');
     return;
   }
-  next();
+
+  setTimeout(() => {
+    next();
+  }, 1000);
+
+  bus.$emit('start:spinner');
 });
 
 function warning() {
   bus.$emit('show:toast', '로그인이 필요한 메뉴입니다.', 'warning');
 }
+
 export default router;

@@ -9,6 +9,7 @@
 import SetAsset from '@/components/setting/SetAsset.vue';
 import SetCategory from '@/components/setting/SetCategory.vue';
 import listMixins from '@/mixins/listMixins.js';
+
 export default {
   components: {
     SetAsset,

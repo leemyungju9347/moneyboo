@@ -78,7 +78,7 @@ import {
   goSignupEvent,
 } from '@/js/registration.js';
 import { passwordValidation, emailValidation } from '@/utils/validation';
-import { moneybooRef } from '@/api/firestore';
+import { settingColRef } from '@/api/firestore';
 import bus from '@/utils/bus';
 
 export default {
@@ -130,6 +130,7 @@ export default {
         // 입력값, 유효성검사가 완료되면
         if (this.userCompleted && this.emailCheck && this.passwordCheck) {
           const response = await this.$store.dispatch('FATCH_LOGIN', userData);
+          const uid = response.user.uid;
 
           console.log(response);
           // this.initForm();
@@ -137,14 +138,78 @@ export default {
             initRegistForm();
           }
           // settings에 데이터 확인하고 라우터 이동
-          this.settingsRef(response.user.uid)
+          // this.settingsRef(response.user.uid)
+          //   .get()
+          //   .then(doc => {
+          //     // settings에 값이 있으면?
+          //     console.log(doc);
+          //     if (doc.exists) {
+          //       this.loginSuccess('main');
+          //     } else {
+          //       this.loginSuccess('setting');
+          //     }
+          //   });
+
+          this.settingListRef(uid)
             .get()
-            .then(doc => {
-              // settings에 값이 있으면?
-              if (doc.exists) {
-                this.loginSuccess('main');
+            .then(snapshot => {
+              console.log('셋팅리스트', snapshot);
+              // snapshot.empty === false 면 col에 값이 있는 것
+
+              // 셋팅리스트에 값이 비어있으면
+              if (snapshot.empty) {
+                console.log(snapshot.empty, '비어있다!!');
+                this.alertMessage =
+                  '첫 로그인 성공 ! 관리페이지에서 목표금액과 자산을 설정해주세요.';
+
+                bus.$emit('show:toast', this.alertMessage, 'check');
+
+                setTimeout(() => {
+                  this.$router.push(`/setting`).catch(err => {
+                    console.log('로그인폼 셋팅즈로 이동하는01', err);
+                  });
+                }, 2500);
+
+                // 셋팅리스트에 값이 있으면
               } else {
-                this.loginSuccess('setting');
+                console.log(snapshot.empty, '값이있다!!!');
+
+                // snapshot.docs.forEach(data => {
+                //   console.log('이건데이터의데이터', data.data());
+
+                //   console.log('에셋 ===>', data.data().assets.length);
+                //   console.log('뱅크 ===>', data.data().banks.length);
+                //   console.log('카테고리 ===>', data.data().categories.length);
+                // });
+
+                if (snapshot.docs.length < 3) {
+                  console.log('3보다 작음');
+
+                  this.alertMessage =
+                    '로그인 성공 ! 관리페이지에서 값을 채워주세요.';
+
+                  bus.$emit('show:toast', this.alertMessage, 'check');
+
+                  setTimeout(() => {
+                    this.$router.push(`/setting`).catch(err => {
+                      console.log('로그인폼 셋팅즈로 이동하는02', err);
+                    });
+                  }, 2500);
+
+                  //값이 다 있으면 '메인페이지로 이동'
+                } else {
+                  console.log('3보다 큼');
+
+                  this.alertMessage = '로그인 성공 ! 메인페이지로 이동합니다.';
+
+                  bus.$emit('show:toast', this.alertMessage, 'check');
+
+                  setTimeout(() => {
+                    this.$router.push('/main').catch(err => {
+                      console.log('로그인폼 메인으로 이동하는', err);
+                    });
+                  }, 2500);
+                }
               }
             });
 
@@ -235,8 +300,8 @@ export default {
       }, 2500);
     },
     // settings DB
-    settingsRef(uid) {
-      return moneybooRef(uid).doc('settings');
+    settingListRef(uid) {
+      return settingColRef(uid);
     },
   },
 };
