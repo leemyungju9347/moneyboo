@@ -563,7 +563,11 @@ export default {
                 });
 
               // 저장 후 안내창 뜨게 함.
-              alert(`'${this.inputCategory.name}' 카테고리가 추가되었습니다.`);
+              let alertData = {
+                show: true,
+                message: `'${this.inputCategory.name}' 카테고리가 추가되었습니다.`,
+              };
+              bus.$emit('sendAlertMessage', alertData);
             }
             this.resetInputCategory();
           })
