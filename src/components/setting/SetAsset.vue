@@ -154,6 +154,7 @@
 import { makeID, addComma, newConversionMonth } from '@/utils/filters.js';
 import { moneybooRef, settingColRef } from '@/api/firestore';
 import firebase from 'firebase';
+import bus from '@/utils/bus';
 
 export default {
   data() {
@@ -235,7 +236,11 @@ export default {
       console.log('아래 내용은 title');
       console.log(title);
       if (isNaN(inputData)) {
-        alert(`'${title}'에 숫자만 입력해주세요.`);
+        let alertData = {
+          show: true,
+          message: `'${title}'에 숫자만 입력해주세요.`,
+        };
+        bus.$emit('sendAlertMessage', alertData);
         return 'notNum';
       }
     },
@@ -266,7 +271,11 @@ export default {
       // asset, bank 모두 true값을 반환할 때만 alert창이 뜨도록 함.
       if (assetSaveErrorCheck === true && bankSaveErrorCheck === true) {
         // 저장되었다는 안내창 뜨게 한 후 새로고침.
-        alert('목표 금액이 수정되었습니다.');
+        let alertData = {
+          show: true,
+          message: '목표 금액이 수정되었습니다.',
+        };
+        bus.$emit('sendAlertMessage', alertData);
         // location.reload();
       }
 
@@ -343,7 +352,11 @@ export default {
 
       // 총 목표금액이 공백일 경우 알림창 뜨게 함.
       if (this.saveAsset.assets.totalGoal === '') {
-        alert("'총 목표 금액'을 입력해 주세요.");
+        let alertData = {
+          show: true,
+          message: "'총 목표 금액'을 입력해 주세요.",
+        };
+        bus.$emit('sendAlertMessage', alertData);
         return;
       }
 
@@ -394,14 +407,22 @@ export default {
 
         // 은행이 선택되었는지 확인.
         if (this.saveAsset.banks[i].bank === '') {
-          alert("'은행'을 선택해 주세요.");
+          let alertData = {
+            show: true,
+            message: "'은행'을 선택해 주세요.",
+          };
+          bus.$emit('sendAlertMessage', alertData);
           return;
         }
         // 은행 별 자산에 숫자만 입력되었는지 확인.
         if (this.checkNum(this.saveAsset.banks[i].asset) === 'notNum') return;
         // 각 은행별 자산이 공백일 경우 알림창 뜨게 함.
         if (this.saveAsset.banks[i].asset === '') {
-          alert("'은행 별 자산 금액'을 입력해 주세요.");
+          let alertData = {
+            show: true,
+            message: "'은행 별 자산 금액'을 입력해 주세요.",
+          };
+          bus.$emit('sendAlertMessage', alertData);
           return;
         }
       }

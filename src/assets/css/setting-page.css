@@ -491,6 +491,13 @@ input {
   background-color: #DB8439;
 }
 
+/* ------ AlertPopup.vue ------ */
+.alert-popup{ border-radius: 10px; width: 400px; height: auto; padding: 10px 0; background-color: #3b3b3b; opacity: 0;  position: absolute; top: -80px; left: 70%; transform: translateX(-70%); transition: all .8s ease; }  
+.alert-popup > p{ color: #f8f4ea; text-align: center; font-size: 17px; }
+.popupShow{ opacity: 1; top: 40px; }
+
+
+
 
 
 /* PC(1024px~) / 태블릿(768px ~ 1023px) / 모바일 (~768px) */
@@ -548,6 +555,17 @@ input {
     margin-left: 15px;
     padding: 10px;
   }
+
+  /* ------ AlertPopup.vue ------ */
+  .alert-popup{ width: 300px; }  
+  .alert-popup > p{ font-size: 15px; }
+  .popupShow{ top: 50px; }
 }
+
+@media screen and (max-width:480px) {
+  /* ------ AlertPopup.vue ------ */
+  .alert-popup{ width: 200px; }  
+}
+
 
 

@@ -55,7 +55,6 @@ export default {
       this.selectedTab = tabNum;
     },
   },
-
 };
 </script>
 
