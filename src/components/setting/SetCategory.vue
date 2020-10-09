@@ -68,7 +68,6 @@
         <ul>
           <li>
             <label for="">
-              <!-- <input type="radio" name="icon" /> -->
               <input
                 type="radio"
                 name="icon"
@@ -478,7 +477,6 @@
         >
           수정
         </button>
-        <!-- <button>수정</button> -->
       </form>
     </div>
   </div>
@@ -502,7 +500,6 @@ export default {
       // 카테고리 클릭 여부 확인용
       categoryCardClick: false,
       currentUid: this.$store.state.uid, // 현재 로그인한 유저의 uid
-      // logMessage: '',
       getCategory: [],
       clickCategory: '',
       editStatus: false,
@@ -590,8 +587,6 @@ export default {
       this.settingListRef()
         .doc('categories')
         .onSnapshot(snapshot => {
-          // console.log(snapshot.data());
-          // console.log(snapshot.data().setCategory);
           // document가 존재하면
           if (snapshot.exists) {
             const categories = snapshot.data().categories;

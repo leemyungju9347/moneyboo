@@ -91,17 +91,7 @@
               }"
               v-if="bankLength !== index && bankAssetClick.index !== index"
             >
-              <span>
-                {{ bankBalance[index] }}원
-                <!-- >{{
-                  matchBankPrice(
-                    getAllListData,
-                    bankList.bank,
-                    bankList.asset,
-                    index,
-                  )
-                }}원 -->
-              </span>
+              <span> {{ bankBalance[index] }}원 </span>
             </span>
             <button
               class="edit"
@@ -193,9 +183,6 @@ export default {
 
     // DailyList.vue의 지출 내역 불러옴.
     this.getBankBalance();
-
-    // // 은행별 잔고 계산.
-    // this.matchBankPrice();
   },
   computed: {},
   methods: {
@@ -233,8 +220,6 @@ export default {
         }
       }
 
-      console.log('아래 내용은 title');
-      console.log(title);
       if (isNaN(inputData)) {
         let alertData = {
           show: true,
@@ -267,7 +252,6 @@ export default {
       // bank 저장
       bankSaveErrorCheck = this.setBankListForm();
 
-      console.log(assetSaveErrorCheck, bankSaveErrorCheck);
       // asset, bank 모두 true값을 반환할 때만 alert창이 뜨도록 함.
       if (assetSaveErrorCheck === true && bankSaveErrorCheck === true) {
         // 저장되었다는 안내창 뜨게 한 후 새로고침.
@@ -291,7 +275,6 @@ export default {
           // document의 값이 있으면
           if (snapshot.exists) {
             const assets = snapshot.data().assets;
-            console.log(assets);
             if (assets) {
               this.saveAsset.assets.totalGoal = this.assetAddComma(
                 // 저장 후 화면에 금액 나타날 때 1000단위 콤마 적용.
@@ -317,7 +300,6 @@ export default {
           // document의 값이 있으면
           if (snapshot.exists) {
             const banks = snapshot.data().banks;
-            console.log(banks);
             if (banks) {
               this.saveAsset.banks = banks;
               this.bankLength = banks.length;
@@ -500,65 +482,11 @@ export default {
         }
       });
 
-      // // 'dailyList'에서 불러온 지출/수입 내역 foreEach로 확인.
-      // this.getAllListData.forEach(listdata => {
-      //   // bankAsset과 같은 은행의 지출 내역 구함.
-      //   for (let i = 0; i < this.saveAsset.banks.length; i++) {
-      //     if (
-      //       listdata.bank === this.saveAsset.banks[i].bank &&
-      //       listdata.item === 'expend'
-      //     ) {
-      //       priceSum += listdata.price * 1;
-      //     } else if (
-      //       // bankAsset과 같은 은행의 수입 내역 구함.
-      //       listdata.bank === this.saveAsset.banks[i].bank &&
-      //       listdata.item === 'income'
-      //     ) {
-      //       priceSum += -listdata.price * 1;
-      //     }
-      //   }
-      // });
-
-      // // this.expenditure 배열에 남은 자산 배열 요소들을 넣어줌.( changeBankAsset()함수에서 사용하기 위함. )
-      // this.expenditure[index] = priceSum;
-      // console.log(this.expenditure);
-
-      console.log(bankArr);
-      console.log(this.saveAsset.banks);
       for (let i = 0; i < bankArr.length; i++) {
-        console.log(bankArr[i].asset);
-        console.log(this.saveAsset.banks[i].asset);
         // bankAsset에서 해당은행사 지출내역 뺴줌.(1000단위로 콤마 찍어줌)
         this.bankBalance[i] = this.assetAddComma(bankArr[i].asset * 1);
       }
-      console.log(this.bankBalance);
     },
-    // matchBankPrice(allListdata, bankAssetName, bankAssetNum, index) {
-    //   // '각 은행 별 사용금액의 총 합' 변수 선언.
-    //   let priceSum = 0;
-
-    //   // 'dailyList'에서 불러온 지출/수입 내역 foreEach로 확인.
-    //   allListdata.forEach(listdata => {
-    //     // bankAsset과 같은 은행의 지출 내역 구함.
-    //     if (listdata.bank === bankAssetName && listdata.item === 'expend') {
-    //       priceSum += listdata.price * 1;
-    //     } else if (
-    //       // bankAsset과 같은 은행의 수입 내역 구함.
-    //       listdata.bank === bankAssetName &&
-    //       listdata.item === 'income'
-    //     ) {
-    //       priceSum += -listdata.price * 1;
-    //     }
-    //   });
-
-    //   // this.expenditure 배열에 남은 자산 배열 요소들을 넣어줌.( changeBankAsset()함수에서 사용하기 위함. )
-    //   this.expenditure[index] = priceSum;
-    //   console.log(this.expenditure);
-
-    //   // bankAsset에서 해당은행사 지출내역 뺴줌.(1000단위로 콤마 찍어줌)
-    //   return this.assetAddComma(this.removeComma(bankAssetNum) * 1 - priceSum);
-    // },
-    // 초기 은행 자산 입력 후, 자산 수정 버튼 클릭 함수.
 
     // 은행 별 자산 [수정]버튼 클릭 시 input창에 남은 금액 뜨게 함.
     editBankAsset(index) {
