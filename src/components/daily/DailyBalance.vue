@@ -2,10 +2,10 @@
   <div class="daily-balance">
     <ul class="daily-balance-cont font-jua">
       <li>
-        오늘의 수입<b>{{ checkTodayPrice(date, 'income') }}원</b>
+        오늘의 수입<b>{{ callCheckDayItem('income') }}원</b>
       </li>
       <li>
-        오늘의 지출<b>{{ checkTodayPrice(date, 'expend') }}원</b>
+        오늘의 지출<b>{{ callCheckDayItem('expend') }}원</b>
       </li>
     </ul>
   </div>
@@ -13,22 +13,22 @@
 
 <script>
 import { mapState } from 'vuex';
-import { addComma, newConversionMonth } from '@/utils/filters';
+import { newConversionMonth } from '@/utils/filters';
 import { moneybooRef } from '@/api/firestore';
+import { conversionDate, checkDayItem } from '@/utils/daily.js';
 
 export default {
   created() {
-    this.getListData();
+    this.getListData(this.uid);
   },
   computed: {
     ...mapState(['uid']), // 현재 로그인한 유저 uid
   },
   data() {
     return {
-      date: this.conversionDate(new Date()),
+      date: conversionDate(new Date()),
       listArrLength: 0,
       getAllListData: [],
-      allIncome: 0,
     };
   },
   methods: {
@@ -53,27 +53,14 @@ export default {
     mbooRef() {
       return moneybooRef(this.uid);
     },
-    // 날짜 정렬
-    conversionDate(date) {
-      // 저장되는 날짜를 한국기준으로 정리해서 저장.
-      let month = date.getMonth();
-      let todayDate = date.getDate();
-
-      return `${month + 1}.${todayDate}`;
-      // 출력 형식 : 7.17
-    },
-    // 오늘의 수입 & 지출 확인 함수
-    checkTodayPrice(date, item) {
-      let copyListData = this.getAllListData;
-      let totalPrice = 0;
-      if (!copyListData) return;
-      for (let i = 0; i < copyListData.length; i++) {
-        if (copyListData[i].date == date && copyListData[i].item == item) {
-          let ppp = Number(copyListData[i].price);
-          totalPrice += ppp;
-        }
-      }
-      return addComma(totalPrice);
+    // 오늘의 수입과 지출을 가져오는 함수
+    callCheckDayItem(item) {
+      return checkDayItem({
+        date: this.date,
+        item: item,
+        data: this.getAllListData,
+        to: 'balance',
+      });
     },
   },
 };
