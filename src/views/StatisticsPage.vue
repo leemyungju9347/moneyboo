@@ -41,9 +41,6 @@ export default {
   created() {
     window.addEventListener('resize', e => (this.size = e.target.innerWidth));
   },
-  computed: {},
-  // div 사이즈 이벤트가 767px 이하일 경우 "show" class명이 붙는다.
-  // button.on 이 붙으면 통계 내용들이 보여진다.
   methods: {
     whatMonth() {
       return todayCheck();
@@ -55,7 +52,6 @@ export default {
       this.selectedTab = tabNum;
     },
   },
-
 };
 </script>
 
