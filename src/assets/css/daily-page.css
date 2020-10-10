@@ -64,8 +64,6 @@
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-
-  /* padding:4px 2%; */
   height: 100%;
   width: 32%;
   padding: 10px 6vw;
@@ -115,7 +113,6 @@
 }
 .daily-list.list-empty {
   font-size: 1.6em;
-  /* color: #9c9c9c; */
   color: #e2c992;
   text-align: center;
   box-shadow: none;

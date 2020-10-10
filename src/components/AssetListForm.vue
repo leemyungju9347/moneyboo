@@ -25,7 +25,7 @@
         <b id="ani-money">{{ makeComma(cash) }} 원</b>
       </div>
 
-      <button @click="addBtn" class="btn big main">추가</button>
+      <button @click.prevent="addBtn" class="btn big main">추가</button>
     </form>
   </div>
 </template>
@@ -49,10 +49,10 @@ export default {
   },
   created() {
     this.currentUID = this.$store.state.uid; // 로그인한 유저 uid
+    this.getDailyList(); // 수입/지출 목록
 
     this.getAssetsDB(); // 목표 금액
     this.getBanksDB(); // 은행별 자산
-    this.getDailyList(); // 수입/지출 목록
   },
   methods: {
     addBtn() {
@@ -154,6 +154,7 @@ export default {
       let bankTotal = 0;
       let dailyTotal = 0;
       let cashTotal = 0;
+      console.log(this.dailyList);
 
       this.dailyList.filter(daily => {
         let dailyItem = daily.item;

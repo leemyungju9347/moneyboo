@@ -2,13 +2,13 @@
   <div class="status-form">
     <!-- 상태 아이콘 -->
     <div class="status-icon-cont">
-      <i v-bind:class="checkIconCondition()"></i>
+      <i v-bind:class="callCheckIconCondition()"></i>
     </div>
     <!-- 로딩 바 -->
     <div class="loading-bar-cont">
-      <div class="loading-bar" v-bind:style="printLoadingBar()">
+      <div class="loading-bar" v-bind:style="callPrintLoadingBar()">
         <b class="bar-number" v-bind:class="{ 'low-bar': totalPercent < 30 }"
-          >{{ totalGoalPercent() }}%</b
+          >{{ callTotalGoalPercent() }}%</b
         >
       </div>
     </div>
@@ -16,21 +16,29 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import { newConversionMonth } from '@/utils/filters';
 import { moneybooRef, settingColRef } from '@/api/firestore';
+import {
+  addExpend,
+  totalGoalPercent,
+  checkIconCondition,
+  printLoadingBar,
+} from '@/utils/statusHeader';
 
 export default {
   created() {
     this.getListData();
     this.getTotalGoal();
   },
+  computed: {
+    ...mapState(['uid']), // 현재 로그인한 유저 uid
+  },
   data() {
     return {
       totalGoal: 0,
       totalExpendPrice: 0,
       totalPercent: 0,
-      currentUid: this.$store.state.uid, // 현재 로그인한 유저 uid
-      listArrLength: 0,
       getAllListData: [],
     };
   },
@@ -61,7 +69,7 @@ export default {
         .onSnapshot(snapshot => {
           if (snapshot.exists) {
             this.getAllListData = snapshot.data().listData;
-            this.addExpend();
+            this.totalExpendPrice = addExpend(this.getAllListData);
           } else {
             return console.log('값이 없습니다!');
           }
@@ -74,64 +82,30 @@ export default {
         .collection('listAdd');
     },
     mbooRef() {
-      return moneybooRef(this.currentUid);
+      return moneybooRef(this.uid);
     },
     settingListRef() {
       // settings document > settingList collection 참조값
-      return settingColRef(this.currentUid);
+      return settingColRef(this.uid);
     },
-    // 지출값 더하는 함수
-    addExpend() {
-      //console.log('addexpend 실행!');
-
-      const copyList = this.getAllListData;
-      let totalPrice = 0;
-
-      if (!copyList) return;
-      for (let i = 0; i < copyList.length; i++) {
-        if (copyList[i].item == 'expend') {
-          let stringToNumber = Number(copyList[i].price);
-          totalPrice += stringToNumber;
-        }
-      }
-      return (this.totalExpendPrice = totalPrice);
+    // 총 목표금액과 현재금액 계산하는 함수를 불러오는 함수
+    callTotalGoalPercent() {
+      return (this.totalPercent = totalGoalPercent(
+        this.totalExpendPrice,
+        this.totalGoal,
+      ));
     },
-    totalGoalPercent() {
-      // 목표금액 퍼센트 계산
-      let percent = 100;
-      if (this.totalExpendPrice >= this.totalGoal) {
-        this.totalPercent = percent;
-        return 100;
-      }
-      percent = (this.totalExpendPrice / this.totalGoal) * 100;
-      percent = percent.toFixed(0);
-      this.totalPercent = percent;
-      return this.totalPercent;
+    //퍼센트에 따른 이모티콘 변화를 불러오는 함수
+    callCheckIconCondition() {
+      return checkIconCondition(this.totalPercent);
     },
-    checkIconCondition() {
-      // 퍼센트에 따른 이모티콘 변화
-      if (this.totalPercent <= 15 || this.totalPercent == 0) {
-        return 'emo-first';
-      } else if (this.totalPercent <= 30) {
-        return 'emo-second';
-      } else if (this.totalPercent <= 50) {
-        return 'emo-third';
-      } else if (this.totalPercent <= 65) {
-        return 'emo-fourth';
-      } else if (this.totalPercent <= 80) {
-        return 'emo-fifth';
-      } else if (this.totalPercent <= 99) {
-        return 'emo-sixth';
-      } else return 'emo-seventh';
-    },
-    printLoadingBar() {
-      // 퍼센트에 따른 로딩바의 변화
-      let barWidth = this.totalPercent * 1.8;
-      if (this.totalExpendPrice >= this.totalGoal) {
-        return { width: '186px' };
-      } else {
-        return { width: `${barWidth}px` };
-      }
+    //퍼센트에 따른 로딩바의 변화를 불러오는 함수
+    callPrintLoadingBar() {
+      return printLoadingBar(
+        this.totalPercent,
+        this.totalExpendPrice,
+        this.totalGoal,
+      );
     },
   },
 };
