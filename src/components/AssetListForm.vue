@@ -25,7 +25,7 @@
         <b id="ani-money">{{ makeComma(cash) }} 원</b>
       </div>
 
-      <button @click="addBtn" class="btn big main">추가</button>
+      <button @click.prevent="addBtn" class="btn big main">추가</button>
     </form>
   </div>
 </template>
@@ -50,9 +50,10 @@ export default {
   created() {
     this.currentUID = this.$store.state.uid; // 로그인한 유저 uid
 
+    this.getDailyList(); // 수입/지출 목록
+
     this.getAssetsDB(); // 목표 금액
     this.getBanksDB(); // 은행별 자산
-    this.getDailyList(); // 수입/지출 목록
   },
   methods: {
     addBtn() {
@@ -70,6 +71,7 @@ export default {
           // console.log(snapshot);
           if (snapshot.exists) {
             const assets = snapshot.data().assets;
+            console.log(snapshot.data());
             this.cash = assets.cashAsset;
           } else if (this.$router.currentRoute.path !== '/main') {
             // 값이 없을 경우
@@ -138,6 +140,7 @@ export default {
       dailyList.forEach(listDB => {
         let listBank = listDB.bank;
         let listItem = listDB.item;
+        console.log('리스트 디비 체크!!!', listDB);
 
         if (listBank === bankName && listItem === 'expend') {
           price += Number(listDB.price);
@@ -145,7 +148,7 @@ export default {
           price += -Number(listDB.price);
         }
       });
-
+      console.log('계산====>', this.makeComma(Number(bankAsset) - price));
       return this.makeComma(Number(bankAsset) - price);
     },
 
@@ -154,6 +157,8 @@ export default {
       let bankTotal = 0;
       let dailyTotal = 0;
       let cashTotal = 0;
+
+      console.log(this.dailyList);
 
       this.dailyList.filter(daily => {
         let dailyItem = daily.item;
