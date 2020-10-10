@@ -83,6 +83,7 @@ export default {
     // console.log(myChart.data.datasets[0].data);
     // myChart.data.labels = Object.keys(this.yearsExpend);
     // console.log('graph mounted');
+
     myChart.update();
     return myChart;
   },
