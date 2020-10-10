@@ -1,29 +1,35 @@
 <template>
   <div class="daily-list" :class="{ 'list-empty': getAllListData.length == 0 }">
     <ul class="daily-list-cont">
+      <!-- 데일리에 등록한 값이 없을때 보여지는 화면 -->
       <li v-if="getAllListData.length == 0">
         등록한 내역이 없습니다.
       </li>
+      <!-- 데일리에 등록한 값이 있을때 보여지는 화면 -->
       <li
         v-else
         class="daily-list-day"
-        v-for="date in sortListDate()"
+        v-for="date in callSortListDate()"
         :key="date"
       >
         <strong class="font-uto">{{ `${addMonth()}.${date}` }}</strong>
         <em class="daily-list-expend"
           >지출 :
-          <b class="list-expend">{{ checkDayItem(date, 'expend') }}원</b></em
+          <b class="list-expend"
+            >{{ callCheckDayItem(date, 'expend') }}원</b
+          ></em
         >
         <em class="daily-list-income"
           >수입 :
-          <b class="list-income">{{ checkDayItem(date, 'income') }}원</b></em
+          <b class="list-income"
+            >{{ callCheckDayItem(date, 'income') }}원</b
+          ></em
         >
         <ul>
-          <li v-for="list in checkMatchDateList(date)" :key="list.id">
+          <li v-for="list in callCheckMatchDateList(date)" :key="list.id">
             <i
               class="category-icon"
-              :class="convertIntoIcon(list.category)"
+              :class="callConvertIntoIcon(list.category)"
             ></i>
             <span class="font-uto"> {{ list.bank }} </span>
             <p class="list-text">{{ list.text }}</p>
@@ -65,6 +71,12 @@ import { addComma, newConversionMonth } from '@/utils/filters';
 import { eventBus } from '@/main';
 import firebase from 'firebase';
 import { moneybooRef, settingColRef } from '@/api/firestore';
+import {
+  sortListDate,
+  checkMatchDateList,
+  checkDayItem,
+  convertIntoIcon,
+} from '@/utils/daily.js';
 
 export default {
   created() {
@@ -79,8 +91,6 @@ export default {
     return {
       listDateArray: [],
       getAllListData: [],
-      listArrLength: 0,
-      logMessage: '',
       getCategory: [],
     };
   },
@@ -96,12 +106,12 @@ export default {
             if (banks) {
               this.getBankAsset = banks;
             }
-          } else if (this.$router.currentRoute.path == '/daily') {
+          } else if (this.$router.currentRoute.path !== '/daily') {
             alert(
               '관리 페이지에서 은행값을 등록해주세요! 관리페이지로 이동합니다.',
             );
             this.$router.push('/setting');
-          }
+          } else return;
         });
     },
     // firestore에 있는 저장된 카테고리 DB 불러오기
@@ -118,8 +128,7 @@ export default {
                 this.getCategory.push(data);
               });
             }
-          } else if (this.$router.currentRoute.path == '/daily') {
-            console.log(this.$router.currentRoute.path);
+          } else {
             alert(
               '관리 페이지에서 카테고리값을 등록해주세요! 관리페이지로 이동합니다.',
             );
@@ -153,53 +162,17 @@ export default {
       return settingColRef(this.uid);
     },
     // 날짜 정렬 함수
-    sortListDate() {
-      // 저장된 객체가 없으면 리턴해서 나가라.
-      if (!this.getAllListData) return;
-
-      let copyListArray = this.getAllListData;
-      let dateArray = [];
-
-      // date만 dateArray 에 할당, '.'을 기준으로 뒷 자리만 dateArray 에 담는다.
-      for (let i = 0; i < copyListArray.length; i++) {
-        dateArray[i] = copyListArray[i].date.split('.')[1];
-      }
-      // dateArray, 즉 입력값이 하나면 그대로 dateArray에 담고 나가라.
-      if (dateArray.length == 1) {
-        return (this.listDateArray = dateArray);
-      }
-      // 1개 이상이라면 내림차순으로 정렬한다. ( 최근 리스트가 가장 위로 올라오게 하기 위함)
-      dateArray.sort(function(a, b) {
-        return b - a;
-      });
-      // 중복값 제거 ( 중복값 세개이상일때 예외처리 해야함)
-      for (let i = 0; i < dateArray.length; i++) {
-        if (dateArray[i] === dateArray[i - 1]) {
-          // 값이 같다면 지워라
-          dateArray.splice(i, 1);
-          // 위에서 splice 로 중복값을 지워줬기 때문에 i값도 빼줘야 dateArray를 순차적으로 돌수있다.
-          i--;
-        }
-      }
-
-      // 중복값이 없다면 this.listDateArray 에 할당후 함수를 빠져나가라.
-      return (this.listDateArray = dateArray);
+    callSortListDate() {
+      return (this.listDateArray = sortListDate(this.getAllListData));
     },
     // 하루 수입, 지출 확인 함수
-    checkDayItem(date, item) {
-      let copyListArray = this.getAllListData;
-      let totalPrice = 0;
-      if (!copyListArray) return;
-      for (let i = 0; i < copyListArray.length; i++) {
-        if (
-          copyListArray[i].item === item &&
-          copyListArray[i].date.split('.')[1] === date
-        ) {
-          let stringToNumber = Number(copyListArray[i].price);
-          totalPrice += stringToNumber;
-        }
-      }
-      return addComma(totalPrice);
+    callCheckDayItem(date, item) {
+      return checkDayItem({
+        date: date,
+        item: item,
+        data: this.getAllListData,
+        to: 'list',
+      });
     },
     // 수정버튼 눌렀을때의 함수
     clickeEditList(data) {
@@ -209,17 +182,8 @@ export default {
       return addComma(price);
     },
     // 카테고리 이름을 아이콘으로 변경해주는함수
-    convertIntoIcon(category) {
-      let copyCategorys = this.getCategory;
-      let categoryIconNum = 0;
-
-      for (let i = 0; i < copyCategorys.length; i++) {
-        if (copyCategorys[i].name == category) {
-          categoryIconNum = i;
-          // 같은걸 찾으면 바로 return 해줘라
-          return copyCategorys[categoryIconNum].icon;
-        }
-      }
+    callConvertIntoIcon(category) {
+      return convertIntoIcon(category, this.getCategory);
     },
     // 삭제버튼을 눌렀을때의 함수
     deleteListData(list) {
@@ -231,15 +195,8 @@ export default {
         });
     },
     // date 에 맞는 list 만 불러오는 함수
-    checkMatchDateList(date) {
-      if (!this.getAllListData) return;
-      let pushArray = [];
-      for (let i = 0; i < this.getAllListData.length; i++) {
-        if (date === this.getAllListData[i].date.split('.')[1]) {
-          pushArray.push(this.getAllListData[i]);
-        }
-      }
-      return pushArray;
+    callCheckMatchDateList(date) {
+      return checkMatchDateList(date, this.getAllListData);
     },
     // 월 만 추가해주고 리턴하는 함수
     addMonth() {

@@ -67,6 +67,12 @@ import { makeDateListID } from '@/utils/filters.js';
 import { eventBus } from '@/main.js';
 import { moneybooRef, settingColRef } from '@/api/firestore';
 import firebase from 'firebase';
+import {
+  conversionDate,
+  checkEmptyList,
+  checkPriceNumber,
+  selectDateConversionMonth,
+} from '@/utils/daily.js';
 
 export default {
   components: { DatePicker },
@@ -160,37 +166,21 @@ export default {
     clickExpendBtn() {
       this.inputControl = 'expend';
     },
-    // 값 입력하지 않았을때 확인 함수
-    checkEmptyList() {
-      if (
-        this.selectCategory === '' ||
-        this.selectBank === '' ||
-        this.price === null ||
-        this.price == ' '
-      ) {
-        alert('값을 선택, 입력해 주세요.');
-        return true;
-      } else return false;
-    },
-    // 금액입력 인풋창에 숫자가 맞는지 확인 함수
-    checkPriceNumber() {
-      // 숫자가 아니면 alert 창을 띄워라
-      if (isNaN(this.price)) {
-        alert('숫자만 입력해주세요');
-        return true;
-      } else return false;
-    },
     // 리스트 제출 함수
     submitList() {
       // 값이 비는지, 숫자가 맞는지 확인을 먼저 해준다.
-      if (this.checkEmptyList() || this.checkPriceNumber()) return;
+      if (
+        checkEmptyList(this.selectCategory, this.selectBank, this.price) ||
+        checkPriceNumber(this.price)
+      )
+        return;
 
       let listData = {};
       // 만약 수정버튼을 눌렀을 때라면,
       if (this.edit === true) {
         listData = {
           id: this.editId,
-          date: this.conversionDate(this.date), // 한국날짜로 변환
+          date: conversionDate(this.date), // 한국날짜로 변환
           item: this.inputControl,
           category: this.selectCategory,
           bank: this.selectBank,
@@ -200,7 +190,7 @@ export default {
       } else {
         listData = {
           id: makeDateListID('l', this.date),
-          date: this.conversionDate(this.date), // 한국날짜로 변환
+          date: conversionDate(this.date), // 한국날짜로 변환
           item: this.inputControl,
           category: this.selectCategory,
           bank: this.selectBank,
@@ -210,7 +200,7 @@ export default {
       }
 
       // firestore에 listData 저장
-      const yearsMonth = this.selectDateConversionMonth(this.date);
+      const yearsMonth = selectDateConversionMonth(this.date);
 
       if (this.edit === true) {
         // 수정했을때 수정후 저장 함수 실행
@@ -239,7 +229,6 @@ export default {
             console.log('listAdd submitList 부분 에러 발생', err);
           });
       }
-
       this.resetData(); // 인풋창의 데이터를 리셋해주는 함수
     },
     resetData() {
@@ -249,14 +238,6 @@ export default {
       this.selectBank = '';
       this.price = null;
       this.listText = '';
-    },
-    conversionDate(date) {
-      // 저장되는 날짜를 한국기준으로 정리해서 저장.
-      let month = date.getMonth();
-      let todayDate = date.getDate();
-
-      return `${month + 1}.${todayDate}`;
-      // 출력 형식 : 7.17
     },
     submitEditList(listData, yearsMonth) {
       // 기존의 배열 삭제
@@ -272,16 +253,6 @@ export default {
         .update({
           listData: firebase.firestore.FieldValue.arrayUnion(listData),
         });
-    },
-    selectDateConversionMonth(date) {
-      const year = String(new Date(date).getFullYear()).substr(2, 2);
-
-      const month =
-        new Date(date).getMonth() < 10
-          ? `0${new Date(date).getMonth() + 1}`
-          : new Date(date).getMonth() + 1;
-
-      return `${year}.${month}`;
     },
   },
 };
