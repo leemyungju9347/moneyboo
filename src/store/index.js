@@ -1,15 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import {
-  getTotalGoal,
-  getCashGoal,
-  getCashAsset,
-  getBanksCookieBank,
-  getBanksCookieAsset,
-  getBanksCookieId,
-  getCategoryCookieName,
-  getCategoryCookieIcon,
-  getCategoryCookieId,
   getUserEmail,
   getUserUid,
   getUserNickname,
@@ -22,20 +13,6 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    totalGoal: getTotalGoal() || '',
-    cashGoal: getCashGoal() || '',
-    cashAsset: getCashAsset() || '',
-    bankAsset: {
-      bank: getBanksCookieBank() || [],
-      asset: getBanksCookieAsset() || [],
-      id: getBanksCookieId() || [],
-    },
-
-    categorys: {
-      name: getCategoryCookieName() || [],
-      icon: getCategoryCookieIcon() || [],
-      id: getCategoryCookieId() || [],
-    },
     // 로그인/회원가입
     email: getUserEmail() || '',
     uid: getUserUid() || '',
