@@ -68,7 +68,6 @@
         <ul>
           <li>
             <label for="">
-              <!-- <input type="radio" name="icon" /> -->
               <input
                 type="radio"
                 name="icon"
@@ -478,7 +477,6 @@
         >
           수정
         </button>
-        <!-- <button>수정</button> -->
       </form>
     </div>
   </div>
@@ -489,6 +487,7 @@
 import { makeID } from '@/utils/filters.js';
 import { moneybooRef, settingColRef } from '@/api/firestore';
 import firebase from 'firebase';
+import bus from '@/utils/bus';
 export default {
   data() {
     return {
@@ -501,7 +500,6 @@ export default {
       // 카테고리 클릭 여부 확인용
       categoryCardClick: false,
       currentUid: this.$store.state.uid, // 현재 로그인한 유저의 uid
-      // logMessage: '',
       getCategory: [],
       clickCategory: '',
       editStatus: false,
@@ -522,9 +520,17 @@ export default {
     },
     clickAddCategory() {
       if (this.inputCategory.name === '') {
-        alert('카테고리명을 입력해주세요.');
+        let alertData = {
+          show: true,
+          message: '카테고리명을 입력해주세요.',
+        };
+        bus.$emit('sendAlertMessage', alertData);
       } else if (this.inputCategory.icon === '') {
-        alert('아이콘을 선택해주세요.');
+        let alertData = {
+          show: true,
+          message: '아이콘을 선택해주세요.',
+        };
+        bus.$emit('sendAlertMessage', alertData);
       } else {
         // cookie에 저장할 때 함께 저장할 각각의 id생성.
         this.inputCategory.id = makeID('category');
@@ -554,7 +560,11 @@ export default {
                 });
 
               // 저장 후 안내창 뜨게 함.
-              alert(`'${this.inputCategory.name}' 카테고리가 추가되었습니다.`);
+              let alertData = {
+                show: true,
+                message: `'${this.inputCategory.name}' 카테고리가 추가되었습니다.`,
+              };
+              bus.$emit('sendAlertMessage', alertData);
             }
             this.resetInputCategory();
           })
@@ -577,8 +587,6 @@ export default {
       this.settingListRef()
         .doc('categories')
         .onSnapshot(snapshot => {
-          // console.log(snapshot.data());
-          // console.log(snapshot.data().setCategory);
           // document가 존재하면
           if (snapshot.exists) {
             const categories = snapshot.data().categories;
@@ -619,9 +627,17 @@ export default {
     // 수정할 카테고리명을 고친 후, 카테고리생성박스 우측 제일 아래 [수정] 버튼을 클릭 했을 경우.
     clickEditCategory(category) {
       if (this.inputCategory.name === '') {
-        alert('카테고리명을 입력해주세요.');
+        let alertData = {
+          show: true,
+          message: '카테고리명을 입력해주세요.',
+        };
+        bus.$emit('sendAlertMessage', alertData);
       } else if (this.inputCategory.icon === '') {
-        alert('아이콘을 선택해주세요.');
+        let alertData = {
+          show: true,
+          message: '아이콘을 선택해주세요.',
+        };
+        bus.$emit('sendAlertMessage', alertData);
       } else {
         this.settingListRef()
           .doc('categories')
@@ -639,9 +655,11 @@ export default {
         this.editStatus = false;
 
         // 저장 후 안내창 뜨게 함.
-        alert(
-          `'${category.name}' 카테고리가 '${this.inputCategory.name}' 카테고리로 수정 되었습니다.`,
-        );
+        let alertData = {
+          show: true,
+          message: `'${category.name}' 카테고리가 '${this.inputCategory.name}' 카테고리로 수정 되었습니다.`,
+        };
+        bus.$emit('sendAlertMessage', alertData);
 
         this.resetInputCategory();
       }

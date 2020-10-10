@@ -8,6 +8,7 @@
     ></router-view>
     <LoadingSpinner :loading="loadingStatus"></LoadingSpinner>
     <ToastPopup></ToastPopup>
+    <AlertPopup></AlertPopup>
   </div>
 </template>
 
@@ -18,6 +19,7 @@ import { saveAuth } from '@/utils/cookies.js';
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue';
 import ToastPopup from '@/components/common/ToastPopup.vue';
 import bus from '@/utils/bus.js';
+import AlertPopup from '@/components/setting/AlertPopup.vue';
 
 export default {
   components: {
@@ -25,6 +27,7 @@ export default {
     StatusHeader,
     LoadingSpinner,
     ToastPopup,
+    AlertPopup,
   },
   data() {
     return {
