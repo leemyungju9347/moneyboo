@@ -145,7 +145,6 @@ import { makeID, addComma /*newConversionMonth*/ } from '@/utils/filters.js';
 import { moneybooRef, settingColRef } from '@/api/firestore';
 import firebase from 'firebase';
 import bus from '@/utils/bus';
-
 export default {
   data() {
     return {
@@ -177,10 +176,8 @@ export default {
     if (this.saveAsset.banks === []) {
       this.saveAsset.banks.push({ bank: '', asset: '', id: '' });
     }
-
     // firstore에서 asset DB 가져오기
     this.getFirebase();
-
     // DailyList.vue의 지출 내역 불러옴.
     this.getBankBalance();
   },
@@ -203,7 +200,6 @@ export default {
     checkNum(inputData) {
       // 콤마 있으면 지워줌.
       inputData = this.removeComma(inputData);
-
       let title = '';
       if (inputData === this.saveAsset.assets.totalGoal) {
         title = '총 목표 금액';
@@ -219,7 +215,6 @@ export default {
           title = '은행 별 자산';
         }
       }
-
       if (isNaN(inputData)) {
         let alertData = {
           show: true,
@@ -235,7 +230,6 @@ export default {
     clickRemoveBank(bankList) {
       // 삭제 전 은행 별 자산 금액에 콤마를 제거해 줌.(firebase에 저장된 은행자산 데이터와 형식 맞추기 위함.)
       bankList.asset = this.removeComma(bankList.asset);
-
       // 클릭한 은행 별 자산 삭제.
       this.settingListRef()
         .doc('banks')
@@ -245,13 +239,11 @@ export default {
       // asset, bankasset이 모두 완벽하게 입력 되었는지 확인하기 위한 변수 선언.
       let assetSaveErrorCheck = false;
       let bankSaveErrorCheck = false;
-
       // (asset, bank 저장 시 input에 제대로 입력했을 때에만 true가 반환되도록 해줌.)
       // 에셋리스트 저장
       assetSaveErrorCheck = this.saveAssetListForm();
       // bank 저장
       bankSaveErrorCheck = this.setBankListForm();
-
       // asset, bank 모두 true값을 반환할 때만 alert창이 뜨도록 함.
       if (assetSaveErrorCheck === true && bankSaveErrorCheck === true) {
         // 저장되었다는 안내창 뜨게 한 후 새로고침.
@@ -262,7 +254,6 @@ export default {
         bus.$emit('sendAlertMessage', alertData);
         // location.reload();
       }
-
       this.bankAssetClick = false;
     },
     // created()에서 사용할 함수(추가, 수정, 삭제 된 데이터 화면에 바로 반영되도록.)
@@ -291,7 +282,6 @@ export default {
             }
           }
         });
-
       // banks
       this.settingListRef()
         .doc('banks')
@@ -303,7 +293,6 @@ export default {
             if (banks) {
               this.saveAsset.banks = banks;
               this.bankLength = banks.length;
-
               // 저장 후 화면에 금액 나타날 때 1000단위 콤마 적용.
               for (let i = 0; i < banks.length; i++) {
                 this.saveAsset.banks[i].asset = this.assetAddComma(
@@ -326,12 +315,10 @@ export default {
       this.saveAsset.assets.cashGoal = this.removeComma(
         this.saveAsset.assets.cashGoal,
       );
-
       // 숫자만 입력했는지 확인.
       if (this.checkNum(this.saveAsset.assets.totalGoal) === 'notNum') return;
       if (this.checkNum(this.saveAsset.assets.cashAsset) === 'notNum') return;
       if (this.checkNum(this.saveAsset.assets.cashGoal) === 'notNum') return;
-
       // 총 목표금액이 공백일 경우 알림창 뜨게 함.
       if (this.saveAsset.assets.totalGoal === '') {
         let alertData = {
@@ -341,7 +328,6 @@ export default {
         bus.$emit('sendAlertMessage', alertData);
         return;
       }
-
       // '현금 목표금액', '현금 자산'을 입력하지 않았을 경우 '0'원으로 저장 함.
       if (this.saveAsset.assets.cashAsset === '') {
         this.saveAsset.assets.cashAsset = 0;
@@ -349,7 +335,6 @@ export default {
       if (this.saveAsset.assets.cashGoal === '') {
         this.saveAsset.assets.cashGoal = 0;
       }
-
       console.log(this.saveAsset.assets);
       // 숫자만 입력되었으면 입력값 저장.
       this.settingListRef()
@@ -362,7 +347,6 @@ export default {
             this.settingListRef()
               .doc('assets')
               .update({ assets: this.saveAsset.assets });
-
             // asset doc이 없다면?
           } else {
             this.settingListRef()
@@ -375,7 +359,6 @@ export default {
         .catch(err => {
           console.log('여기는 setAsset.vue에서 saveAssetListForm', err);
         });
-
       // asset의 input칸들이 제대로 입력되었을 경우 true반환.
       return true;
     },
@@ -386,7 +369,6 @@ export default {
         this.saveAsset.banks[i].asset = this.removeComma(
           this.saveAsset.banks[i].asset,
         );
-
         // 은행이 선택되었는지 확인.
         if (this.saveAsset.banks[i].bank === '') {
           let alertData = {
@@ -408,7 +390,6 @@ export default {
           return;
         }
       }
-
       this.settingListRef()
         .doc('banks')
         .get()
@@ -420,7 +401,6 @@ export default {
               .update({
                 banks: this.saveAsset.banks,
               });
-
             // banks doc이 없다면
           } else {
             this.settingListRef()
@@ -434,10 +414,12 @@ export default {
           console.log('SetAsset.vue 에 있는 setBankListForm', err);
         });
 
+      // 수정 끝나면 은행별 자산 비활성박스 덮어씌워진 css 제거.
+      this.editCssReset();
+
       // bank의 input칸들이 제대로 입력되었을 경우 true반환.
       return true;
     },
-
     // DailyList.vue의 지출 내역 불러옴.
     getBankBalance() {
       // listAdd collection 하위에 있는 document 전체를 불러옴
@@ -457,11 +439,9 @@ export default {
           console.log('daily의 지출 내역을 불러올 수 없음.', err);
         });
     },
-
     // 각 은행 별 자산 사용 후 남은 금액.
     matchBankPrice() {
       console.log('은행 남은 자산액 구하는 함수 돈다!!!');
-
       let bankArr = [];
       for (let i = 0; i < this.saveAsset.banks.length; i++) {
         let bankArrCont = {
@@ -471,7 +451,6 @@ export default {
         bankArr[i] = bankArrCont;
       }
       console.log(bankArr);
-
       // 'dailyList'에서 불러온 지출/수입 내역 foreEach로 확인.
       this.getAllListData.forEach(listdata => {
         // bankAsset과 같은 은행의 지출 내역 구함.
@@ -487,25 +466,43 @@ export default {
           }
         }
       });
-
       for (let i = 0; i < bankArr.length; i++) {
         // bankAsset에서 해당은행사 지출내역 뺴줌.(1000단위로 콤마 찍어줌)
         this.bankBalance[i] = this.assetAddComma(bankArr[i].asset * 1);
       }
     },
-
     // 은행 별 자산 [수정]버튼 클릭 시 input창에 남은 금액 뜨게 함.
     editBankAsset(index) {
       for (let i = 0; i < this.saveAsset.banks.length; i++) {
         this.saveAsset.banks[index].asset = this.bankBalance[index];
       }
-
       this.bankAssetClick = {
         index: index,
         click: true,
       };
+      this.editCssChange();
     },
-
+    editCssChange() {
+      const target = event.target.parentNode.children[0].value;
+      const lis = event.target.parentNode.parentNode.children;
+      lis.forEach(li => {
+        const liBank = li.children[0].value;
+        if (target !== liBank) {
+          li.classList.add('disabled');
+        }
+      });
+      const editBtn = document.querySelector('.set-asset > form > .btn');
+      editBtn.classList.add('colorChange');
+    },
+    editCssReset() {
+      const lis = document.querySelectorAll('.set-asset ul > li');
+      const editBtn = document.querySelector('.set-asset > form > .btn');
+      console.log(lis);
+      lis.forEach(li => {
+        li.classList.remove('disabled');
+      });
+      editBtn.classList.remove('colorChange');
+    },
     assetAddComma(asset) {
       return addComma(asset);
     },

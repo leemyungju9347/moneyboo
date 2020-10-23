@@ -104,6 +104,16 @@ strong {
   background-color: rgba(226, 201, 146, 0.2) /*#e2c992*/;
   position: relative;
 }
+.set-asset > form > .credit-goal-cont > ul > li.disabled:after{
+  content: '';
+  display: block;
+  width: 100%;
+  height: 100px;
+  background-color: rgba(175, 175, 173, 0.7);
+  position: absolute;
+  top: 0;
+  left: 0;
+}
 
 /* ---은행별자산 입력 칸 추가해 달라는 안내문구 start--- */
 .set-asset > form > .credit-goal-cont > ul > li.explanationLi{
@@ -203,6 +213,9 @@ strong {
   color: #fff;
   background-color: #348f6c;
   float: right;
+}
+.set-asset > form > button.colorChange{
+  background-color: #DB8439;
 }
 
 input {
