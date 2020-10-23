@@ -81,7 +81,8 @@
               v-if="
                 bankLength === index ||
                   (bankAssetClick.index === index &&
-                    bankAssetClick.click === true)
+                    bankAssetClick.click === true) ||
+                  newBank === true
               "
             />
             <span
@@ -89,7 +90,11 @@
               :class="{
                 show: bankLength !== index && bankAssetClick.index !== index,
               }"
-              v-if="bankLength !== index && bankAssetClick.index !== index"
+              v-if="
+                bankLength !== index &&
+                  bankAssetClick.index !== index &&
+                  newBank === false
+              "
             >
               <span> {{ bankBalance[index] }}원 </span>
             </span>
@@ -98,7 +103,11 @@
               :class="{
                 hide: bankAssetClick.index === index,
               }"
-              v-if="saveAsset.banks[index].asset !== '' && bankLength !== index"
+              v-if="
+                saveAsset.banks[index].asset !== '' &&
+                  bankLength !== index &&
+                  newBank === false
+              "
               @click.prevent="editBankAsset(index)"
             >
               수정
@@ -169,13 +178,14 @@ export default {
         index: '',
         click: false,
       },
+      newBank: false,
     };
   },
   created() {
     // 페이지 로딩 시 기본적으로 은행 별 자산 입력 칸 하나 생성시켜줌.
-    if (this.saveAsset.banks === []) {
-      this.saveAsset.banks.push({ bank: '', asset: '', id: '' });
-    }
+    // if (this.saveAsset.banks === []) {
+    //   this.saveAsset.banks.push({ bank: '', asset: '', id: '' });
+    // }
     // firstore에서 asset DB 가져오기
     this.getFirebase();
     // DailyList.vue의 지출 내역 불러옴.
@@ -226,6 +236,7 @@ export default {
     },
     clickAddBank() {
       this.saveAsset.banks.push({ bank: '', asset: '', id: makeID('bank') });
+      this.newBank = true;
     },
     clickRemoveBank(bankList) {
       // 삭제 전 은행 별 자산 금액에 콤마를 제거해 줌.(firebase에 저장된 은행자산 데이터와 형식 맞추기 위함.)
@@ -416,7 +427,8 @@ export default {
 
       // 수정 끝나면 은행별 자산 비활성박스 덮어씌워진 css 제거.
       this.editCssReset();
-
+      // 수정 끝나면 this.newBank = false로 체인지.(새로운 은행별 자산 입력칸 생성 시 input창 보이도록 했던 기능 끔.)
+      this.newBank = false;
       // bank의 input칸들이 제대로 입력되었을 경우 true반환.
       return true;
     },
@@ -482,6 +494,7 @@ export default {
       };
       this.editCssChange();
     },
+
     editCssChange() {
       const target = event.target.parentNode.children[0].value;
       const lis = event.target.parentNode.parentNode.children;
@@ -503,6 +516,7 @@ export default {
       });
       editBtn.classList.remove('colorChange');
     },
+
     assetAddComma(asset) {
       return addComma(asset);
     },
