@@ -141,7 +141,7 @@
 </template>
 
 <script>
-import { makeID, addComma, newConversionMonth } from '@/utils/filters.js';
+import { makeID, addComma /*newConversionMonth*/ } from '@/utils/filters.js';
 import { moneybooRef, settingColRef } from '@/api/firestore';
 import firebase from 'firebase';
 import bus from '@/utils/bus';
@@ -161,7 +161,7 @@ export default {
       bankLength: 0, // 저장된 은행 개수 위해 필요.
       expenditure: [],
       currentUid: this.$store.state.uid, // 현재 로그인한 유저의 uid
-      // 은행 별 지출 금액 데이터 불러옴(from DailyList)
+      // 은행 별 지출 금액 데이터 불러옴(from DailyList) - 모든 달(month)의 내역 불러옴.
       getAllListData: [], // (현재 얼마남았는지 나타내는 tag에서 사용.)
       // 은행 별 잔고(화면 출력용)
       bankBalance: [],
@@ -440,18 +440,24 @@ export default {
 
     // DailyList.vue의 지출 내역 불러옴.
     getBankBalance() {
-      const yearsMonth = newConversionMonth();
-
       // listAdd collection 하위에 있는 document 전체를 불러옴
       this.dailyListAddRef()
-        .doc(yearsMonth)
-        .onSnapshot(snapshot => {
-          console.log(snapshot);
-          snapshot.exists
-            ? (this.getAllListData = snapshot.data().listData)
-            : console.log('값이 없습니다!');
+        .get()
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            // 월별 지출내역 배열 겟.
+            const monthListData = doc.data().listData;
+            monthListData.forEach(ele => {
+              // 월별 지출내역을 월로 나누지 않고 배열로 생성.
+              this.getAllListData.push(ele);
+            });
+          });
+        })
+        .catch(err => {
+          console.log('daily의 지출 내역을 불러올 수 없음.', err);
         });
     },
+
     // 각 은행 별 자산 사용 후 남은 금액.
     matchBankPrice() {
       console.log('은행 남은 자산액 구하는 함수 돈다!!!');
