@@ -16,11 +16,4 @@ function yearCheck() {
   return year;
 }
 
-function sortCategory(arr, value) {
-  arr.sort((a, b) => {
-    // 한글 오름차순
-    return a[value] < b[value] ? -1 : a[value] > b[value] ? 1 : 0;
-  });
-}
-
-export { todayCheck, yearCheck, sortCategory };
+export { todayCheck, yearCheck };

@@ -1,22 +1,41 @@
 <template>
   <div class="statistics-list">
-    <ul>
-      <li v-for="value in cList" :key="value.id">
-        <b>{{ value.category }}</b>
-        <span>{{ getComma(value.price) }} 원</span>
-      </li>
-    </ul>
+    <template v-if="selectedChart === ''">
+      <ul ref="ul">
+        <li v-for="(value, idx) in cList" :key="value.id" :id="idx">
+          <b
+            ><i :style="{ backgroundColor: bgColors[idx] }"></i
+            >{{ value.category }}</b
+          >
+          <span>{{ getComma(value.price) }} 원</span>
+        </li>
+      </ul>
+    </template>
+    <template v-if-else="selectedChart !== ''">
+      <ul ref="ul">
+        <li
+          v-for="(value, idx) in cDetail[selectedChart]"
+          :key="value.id"
+          :id="idx"
+        >
+          <b
+            ><i :style="{ backgroundColor: hbgColors[selectedNum] }"></i
+            >{{ value.text }}</b
+          >
+          <span>{{ getComma(value.price) }} 원</span>
+        </li>
+      </ul>
+    </template>
   </div>
 </template>
 
 <script>
 import { addComma, newConversionMonth } from '@/utils/filters';
-import { sortCategory } from '@/utils/statistics.js';
 import { moneybooRef } from '@/api/firestore';
 import { eventBus } from '../../main';
 
 export default {
-  props: [],
+  props: ['selectedChart', 'selectedNum', 'roundData', 'bgColors', 'hbgColors'],
   data() {
     return {
       dailyList: [],
@@ -72,13 +91,13 @@ export default {
       mExpend = listData.filter(expend => expend.item === 'expend');
 
       this.sameCategory(mExpend, 'category');
-      this.sortCategory(mExpend, 'category');
 
       this.calculate(mExpend);
-      this.Percentage();
+      this.sortCategory(this.cList);
+      eventBus.$emit('category-list', this.cList);
     },
 
-    // 같은 카테고리 디테일을 보고 싶을때
+    // 같은 카테고리 상세내용 정리한 함수
     sameCategory(ctArr, value) {
       return ctArr.reduce((acc, obj) => {
         let key = obj[value];
@@ -87,11 +106,13 @@ export default {
           text: obj.text,
           price: Number(obj.price),
         };
+
         if (!acc[key]) {
           acc[key] = [scObj];
         } else {
           acc[key].push(scObj);
         }
+
         return (this.cDetail = acc);
       }, {});
     },
@@ -111,36 +132,22 @@ export default {
             price: Number(acc[key].price) + Number(obj.price),
           };
         }
+
         return (this.cList = acc);
       }, {});
     },
 
     // 카테고리 원하는 순서로 저장하기
-    sortCategory(arr, value) {
-      return sortCategory(arr, value);
-    },
-
-    // 각 지출 백분율 구하기
-    Percentage() {
-      const cList = this.cList;
-
-      let pieP = [];
-      let EPprice = [];
-      let totalNum = 0;
-
-      for (let key in cList) {
-        let price = cList[key].price;
-        totalNum += price;
-        EPprice.push(price);
+    sortCategory(obj) {
+      let sortObj = [];
+      for (let value in obj) {
+        sortObj.push(obj[value]);
       }
 
-      EPprice.sort((a, b) => a - b);
-      EPprice.filter(el => pieP.push(Math.round((el / totalNum) * 100)));
-
-      this.pPrice = pieP;
-
-      eventBus.$emit('percentage', this.pPrice);
-      // console.log('this is percentage');
+      sortObj.sort((a, b) => {
+        return a.price > b.price ? -1 : a.price < b.price ? 1 : 0;
+      });
+      this.cList = sortObj;
     },
   },
 };

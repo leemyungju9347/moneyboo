@@ -33,7 +33,6 @@
 <script>
 import { addComma, newConversionMonth } from '@/utils/filters.js';
 import { moneybooRef, settingColRef } from '@/api/firestore';
-// firebase를 사용하기 위해서 불러와야 한다.
 
 export default {
   data() {
@@ -151,9 +150,6 @@ export default {
       let bankTotal = 0;
       let dailyTotal = 0;
       let cashTotal = 0;
-      console.log(this.dailyList);
-
-      console.log(this.dailyList); // 처음 호명 했을때 dailyList를 불러오지 못한다.
 
       this.dailyList.map(daily => {
         let dailyItem = daily.item;
@@ -183,7 +179,6 @@ export default {
       });
 
       this.assetTotal = bankTotal + this.cash + dailyTotal;
-      // 해당 페이지에서 새로고침을 하면 값이 나온다. 다른페이지를 갔다가 해당 페이지에 들어오면 계산된 값이 아닌 초기전재산값이 나온다.
     },
   },
 };
