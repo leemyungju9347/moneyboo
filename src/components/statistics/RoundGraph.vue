@@ -1,22 +1,28 @@
 <template>
   <div class="round-graph-cont" :class="{ on: selectedTab === 0 }">
-    <!-- v-show="selectedTab === 1" -->
     <div class="round-graph">
       <h3>{{ whatMonth() }}월</h3>
       <div id="canvas-holder">
         <canvas ref="rGraph"></canvas>
       </div>
     </div>
-    {{ percentage }}
-    <ListOfMonth></ListOfMonth>
+    <ListOfMonth
+      :bgColors="bgColor"
+      :selectedChart="selectedChart"
+      :selectedNum="selectedNum"
+      :hbgColors="hBgColor"
+    ></ListOfMonth>
   </div>
-  <!-- 내용 리스트 -->
 </template>
 
 <script>
 import { todayCheck } from '@/utils/statistics.js';
 import ListOfMonth from '@/components/statistics/ListOfMonth.vue';
 import { eventBus } from '../../main';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+
+let roundData = null;
+let myChart = null;
 
 export default {
   props: ['selectedTab', 'size'],
@@ -25,72 +31,101 @@ export default {
   },
   data() {
     return {
+      categoryList: {},
       percentage: [],
+      selectedChart: '',
+      selectedNum: 0,
+      bgColor: [
+        '#16A085',
+        '#45B39D',
+        '#73C6B6',
+        '#A2D9CE',
+        '#D0ECE7',
+        '#E8F6F3',
+        '#ECEDED',
+      ],
+      hBgColor: [
+        '#cccb91',
+        '#d2d29f',
+        '#d9d8ad',
+        '#dfdfba',
+        '#e6e5c8',
+        '#ececd6',
+        '#f2f2e4',
+        '#f9f9f1',
+      ],
     };
   },
   created() {
-    eventBus.$on('percentage', value => {
-      this.percentage = value;
+    eventBus.$once('category-list', list => {
+      this.categoryList = list;
+      this.Percentage(this.categoryList);
+      this.roundChartDataUpdate(myChart, roundData, this.categoryList);
     });
   },
   mounted() {
-    // mounted 부분에서 this를 찍으면 data의 값이 잘 반영 되는데 this.pPrice를 찍으면 [__ob__: Observer] 이런 결과가 나온다.
-    // JSON.parse(JSON.stringfy(this.pPrice)) 를 해보면 빈 배열이 나온다.
-    // 순서는 created한후 mounted가 된다.
-    // 문제가 뭔지를 모르겠다...........
-
     const ctx = this.$refs.rGraph;
-    //chart default값 설정하기
+
     this.$_Chart.defaults.global.defaultFontColor = '#3b3b3b';
     this.$_Chart.defaults.global.defaultFontFamily = 'Jua';
-
-    let myChart = new this.$_Chart(ctx, {
+    roundData = {
       type: 'pie',
       data: {
-        labels: [], // 마우스가 근처에 오면 해당 카테고리 이름이 나온다.
+        labels: [],
         datasets: [
           {
-            data: [10, 20, 30],
-            backgroundColor: [
-              'rgb(224, 242, 241)',
-              'rgb(178, 223, 219)',
-              'rgb(128, 203, 196)',
-              'rgb(77, 182, 172)',
-              'rgb(38, 166, 154)',
-            ],
-            borderWidth: 0.5,
+            data: [],
+            backgroundColor: this.bgColor,
+            hoverBackgroundColor: this.hBgColor,
+            borderWidth: 1,
             borderAlign: 'innner',
           },
         ],
       },
 
       options: {
-        // 추가하고 싶은 옵션이 있을경우 사용
         responsive: true,
         maintainAspectRatio: false,
-        legend: false, // label의 색상을 알려주는 것.
-
-        pieceLabel: {
-          mode: 'label',
-          position: 'border',
-          fontSize: 11,
-          fontStyle: 'bold',
+        legend: false,
+        tooltips: {
+          mode: 'point',
+          callbacks: {
+            label: (tooltipItem, data) => {
+              let index = tooltipItem.index;
+              return (tooltipItem.labels = data.labels[index]);
+            },
+          },
         },
+        hover: { animationDuration: 0 },
         animation: {
           animateScale: true,
+          duration: 1300,
         },
-
-        scales: {},
+        // labels.plugin. chart.js
+        plugin: [ChartDataLabels],
+        plugins: {
+          datalabels: {
+            color: 'white',
+            anchor: 'end',
+            offset: '9',
+            align: 'start',
+            borderColor: '#fff',
+            font: {
+              weigth: 'bold',
+              size: '15',
+            },
+            formatter: value => {
+              return value + '%';
+            },
+          },
+        },
+        events: ['click'],
+        onClick: this.clickHandler,
       },
-    });
+    };
 
-    //data 값 setting하기
-    // console.log(myChart.data.datasets[0].data);
-    //myChart.data.datasets[0].data = this.percentage;
-    // myChart.data.labels = Object.keys(this.cList);
-    // console.log('graph mounted');
-    myChart.update();
-    return myChart;
+    myChart = new this.$_Chart(ctx, roundData);
+    // console.log(myChart);
   },
   computed: {
     whatMonth() {
@@ -98,8 +133,46 @@ export default {
     },
   },
   methods: {
-    function() {
-      console.log('sdlkfjlsdjkf');
+    // 각 지출 백분율 구하기
+    Percentage(cList) {
+      let pieP = [];
+      let EPprice = [];
+      let totalNum = 0;
+
+      for (let key in cList) {
+        let price = cList[key].price;
+        totalNum += price;
+        EPprice.push(price);
+      }
+
+      EPprice.sort((a, b) => b - a);
+      EPprice.filter(el => pieP.push(Math.round((el / totalNum) * 100)));
+
+      this.percentage = pieP;
+    },
+
+    // 차트 데이터와 라벨
+    roundChartDataUpdate(myChart, roundData, cList) {
+      roundData.data.datasets[0].data = this.percentage;
+
+      for (let num in cList) {
+        roundData.data.labels.push(cList[num].category);
+      }
+
+      myChart.update();
+    },
+
+    clickHandler(context, el) {
+      try {
+        let target = el[0]._model.label;
+
+        if (target !== this.selectedChart) {
+          this.selectedChart = target;
+          this.selectedNum = el[0]._index;
+        } else return;
+      } catch (error) {
+        this.selectedChart = '';
+      }
     },
   },
 };
