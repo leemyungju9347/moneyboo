@@ -2,8 +2,11 @@
   <div id="yearList" class="statistics-list">
     <ul>
       <li v-for="(mon, idx) in yearsExpend" :key="idx">
-        <b>{{ mon.month }}월</b>
-        <span>{{ mon.expend }} 원</span>
+        <b
+          ><i :style="{ backgroundColor: bgColors[idx] }"></i
+          >{{ mon.month }}월</b
+        >
+        <span>{{ addComma(mon.expend) }} 원</span>
       </li>
     </ul>
   </div>
@@ -15,17 +18,22 @@ import { moneybooRef } from '@/api/firestore';
 import { eventBus } from '../../main';
 
 export default {
+  props: ['bgColors'],
   data() {
     return {
       currentUID: '',
       yearsList: [], // dailyList데이터
-      yearsExpend: {},
+      yearsExpend: [],
     };
   },
   created() {
     this.currentUID = this.$store.state.uid;
     this.getDailyDB();
-    addComma();
+  },
+  computed: {
+    addComma() {
+      return addComma;
+    },
   },
   methods: {
     mBooRef() {
@@ -51,8 +59,13 @@ export default {
 
       let exArr = flattened.filter(exp => exp.item === 'expend');
 
-      exArr.map(el => (el.date = el.date.substr(0, 1)));
+      // 몇월인지 ?
+      exArr.map(el => {
+        el.date =
+          el.date.length > 4 ? el.date.substr(0, 2) : el.date.substr(0, 1);
+      });
 
+      // 각 월별 총 지출
       let monthTotal = exArr.reduce((acc, crr) => {
         const key = crr.date;
 
@@ -70,7 +83,10 @@ export default {
         return acc;
       }, {});
 
-      this.yearsExpend = monthTotal;
+      for (let list in monthTotal) {
+        this.yearsExpend.push(monthTotal[list]);
+      }
+
       eventBus.$emit('monthExpend', this.yearsExpend);
     },
   },

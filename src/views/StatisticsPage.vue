@@ -39,6 +39,7 @@ export default {
   },
 
   created() {
+    this.$parent.loadingStatus = false;
     window.addEventListener('resize', e => (this.size = e.target.innerWidth));
   },
   methods: {
@@ -59,7 +60,6 @@ export default {
 .statistics-nav {
   display: none;
   justify-content: flex-end;
-  margin-bottom: 20px;
   position: static;
   padding: 0;
 }
