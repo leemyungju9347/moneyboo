@@ -1,0 +1,294 @@
+/* daily-balance */
+.daily-page-wrap {
+  overflow-y: scroll;
+}
+.daily-balance {
+  padding: 30px 6%;
+}
+.daily-balance-cont {
+  display: flex;
+  justify-content: space-between;
+}
+.daily-balance li {
+  width: 40%;
+  max-width: 340px;
+  height: 96px;
+  border-radius: 20px;
+  color: #3b3b3b;
+  font-size: 1.6em;
+  text-align: center;
+}
+.daily-balance li:first-child {
+  margin-left: 5%;
+  background-color: #dfeffa;
+}
+.daily-balance li:last-child {
+  margin-right: 5%;
+  background-color: #faeff3;
+}
+.daily-balance li > b {
+  display: block;
+  position: relative;
+  z-index: 10;
+  font-size: 1.6em;
+}
+
+/* daily-list-add */
+
+.daily-list-add {
+  padding: 30px 50px;
+  margin-bottom: 5px;
+  border-radius: 1em;
+  background-color: #ffffff;
+  text-align: left;
+  box-shadow: 5px 5px 5px 5px #f9fafc;
+}
+.daily-list-add .add-cont > button {
+  color: #9c9c9c;
+  font-size: 1.5em;
+  font-weight: bold;
+  border: none;
+  background-color: transparent;
+}
+.daily-list-add .add-cont > button.inputOn {
+  color: #348f6c;
+}
+.daily-list-add > form >  div {
+  position: relative;
+  text-align: center;
+  padding-top: 10px;
+}
+
+.daily-list-add select, .daily-list-add .what-date {
+  /* select 초기화 */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  height: 100%;
+  width: 32%;
+  padding: 10px 6vw;
+  margin: 0 2px;
+  border:none;
+  background-color: #3f9c79;
+  color: #ffffff;
+  border-radius: 10px;
+  border-bottom: 2px solid #fdfaf3;
+}
+.daily-list-add input {
+  padding:4px 2%;
+  margin: 0 2px;
+  border:none;
+  border-bottom: 2px solid #3f9c79;
+  background-color: #fdfaf3;
+  border-radius: 10px;
+}
+.daily-list-add input.price-box {
+  margin-top: 5px;
+  width: 20vw;
+}
+.daily-list-add input.text-box {
+  margin-top: 10px;
+  width: 20vw;
+}
+/* 달력 플러그인  */
+.daily-list-add input.vc-appearance-none {
+  width: 20vw;
+}
+.daily-list-add .list-add-btn {
+  padding:4px 2%;
+  margin-left: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #e2c992;
+  color: #fdfaf3;
+  height: 40px;
+}
+
+
+/* daily-list */
+
+.daily-list {
+  padding: 20px 50px;
+  box-shadow: 5px 5px 5px 5px #f9fafc;
+}
+.daily-list.list-empty {
+  font-size: 1.6em;
+  color: #e2c992;
+  text-align: center;
+  box-shadow: none;
+}
+.daily-list .daily-list-day {
+  padding: 10px 0;
+  border-bottom: 2px solid #f1f5f4;
+}
+.daily-list .daily-list-day ul {
+  margin: 24px 0 14px;
+}
+.daily-list .daily-list-day strong,
+.daily-list .daily-list-day em {
+  font-size: 1.4em;
+  font-weight: bold;
+}
+.daily-list .daily-list-day em {
+  margin: 0 10px;
+  border-radius: 12px;
+}
+.daily-list .daily-list-income {
+  background-color: #eff9ff;
+}
+.daily-list .daily-list-expend {
+  background-color: #faeff3;
+}
+.daily-list .list-income {
+  color: #abd1e6;
+}
+.daily-list .list-expend {
+  color: #e9c8d1;
+}
+.daily-list-day li > * {
+  display: inline-block;
+  text-align: center;
+}
+.daily-list-day li {
+  padding-top: 26px;
+}
+.daily-list-day li:first-child {
+  padding-top: 0;
+}
+.daily-list-day li i.category-icon.fas{
+  width: 15%;
+  color: #e2c992;
+  font-size: 1.5em;
+  position: relative;
+}
+.daily-list-day li span {
+  width: 20%;
+}
+.daily-list-day li b {
+  width: 20%;
+}
+.daily-list-day li b a {
+  padding: 5px 10px;
+}
+.daily-list-day li p {
+  width: 30%;
+  color: #3f9c79;
+}
+.daily-list-day li .list-delete {
+  width: 10%;
+  padding: 0;
+  border: none;
+  background: none;
+}
+.daily-list-day li .list-delete i {
+  color: #348f6c;
+}
+
+/* PC : 1024px ~
+테블릿 : 768 ~ 1023px
+모바일 : ~ 768px */
+
+/* 태블릿사이즈 */
+@media screen and (max-width:1023px){
+  
+}
+
+/* 모바일사이즈 */
+@media screen and (max-width:768px){
+  .daily-balance-cont {
+    display: block;
+  }
+  .daily-balance li {
+    width: 100%;
+  }
+  .daily-balance li:first-child {
+    margin: 0 auto;
+    margin-bottom: 5%;
+  }
+  .daily-balance li:last-child {
+    margin: 0 auto;
+  }
+  .daily-list-add {
+    padding: 30px 6%
+  }
+
+  .daily-list-add .add-cont > button {
+    font-size:2em;
+  }
+
+  .daily-list-add input.vc-appearance-none {
+    width: 60vw;
+  }
+
+  .daily-list-add select, .daily-list-add .what-date {
+    height: 100%;
+    width: 60vw;
+    margin-top: 10px;
+  }
+  .daily-list-add input.price-box, .daily-list-add input.text-box {
+    margin-top: 10px;
+    width: 60vw;
+  }
+
+  .daily-list-day li {
+    padding-top: 0;
+    position: relative;
+    height: 8vh;
+  }
+  .daily-list-day li > * {
+    padding: 1vh 0;
+    vertical-align: middle;
+  }
+  .daily-list-day li i.category-icon.fas {
+    width: 20%;
+  }
+  .daily-list-day li span {
+    width: 30%;
+    position: absolute;
+    left: 20%;
+  }
+  .daily-list-day li p {
+    width: 30%;
+    padding-top: 4vh;
+  }
+  .daily-list-day li b {
+    width: 40%;
+  }
+  .daily-list-add .list-add-btn {
+    position: absolute;
+    top: -36px;
+    right: 10px;
+  }
+  .daily-list {
+    padding:20px 30px;
+  }
+
+
+}
+
+/* 모바일사이즈 */
+@media screen and (max-width:480px){
+  .daily-list .daily-list-day b {
+    border-radius: 12px;
+  }
+  .daily-list .daily-list-income > b{
+    background-color: #eff9ff;
+  }
+  .daily-list .daily-list-expend > b{
+    background-color: #faeff3;
+  }
+  .daily-list .daily-list-day em {
+    display: block;
+    background-color: transparent;
+    font-weight: bold;
+  }
+
+  .daily-list-day li p {
+    font-size: 0.8em;
+    overflow: scroll;
+  }
+
+  .daily-list-day li b a {
+    padding: 0;
+  }
+}

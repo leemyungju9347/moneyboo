@@ -6,11 +6,13 @@
 
 <script>
 import MyInfoForm from '@/components/MyInfoForm.vue';
+import listMixins from '@/mixins/listMixins.js';
 
 export default {
   components: {
     MyInfoForm,
   },
+  mixins: [listMixins],
 };
 </script>
 

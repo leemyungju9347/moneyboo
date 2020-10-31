@@ -1,0 +1,3 @@
+// -------- SetAsset.vue -------
+
+export {};

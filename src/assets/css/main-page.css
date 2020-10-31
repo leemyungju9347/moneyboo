@@ -1,0 +1,252 @@
+.asset-list-form {
+	position: absolute;
+	width: 70%;
+	height: 73%;
+	min-height: 549px;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%,-50%);
+}
+
+.asset-list-form em {
+	font-weight: 600;
+	color: #3b3b3b;
+}
+.asset-list-form span {
+	font-weight: 600;
+	color: #3b3b3b91;
+}
+.asset-list-form > form {
+	height: 100%;
+}
+.asset-list-form > form > div {
+	border-radius: 20px;
+	padding: 30px;
+	box-sizing: border-box;
+	box-shadow: 0px 5px 24px -26px rgb(192, 192, 190);
+}
+
+.total-asset-cont,
+.cash-asset-cont,
+.credit-asset-cont ul > li {
+	display: flex;
+}
+
+.credit-asset-cont,
+.cash-asset-cont {
+		background-color: #348f6c2f ;
+}
+
+.asset-list-form > form > div + div {
+	margin-top: 15px;
+}
+
+.asset-list-form > form em {
+		font-size: 2em;
+}
+
+
+/* 총 자산 ---------------------------------------------------------------*/
+.total-asset-cont {
+	background-color: #348f6c67;
+	height: 18%;
+}
+.total-asset-cont b{
+	padding-top: 7px;
+}
+.total-asset-cont  > * {display: block;}
+.total-asset-cont strong,
+.credit-asset-cont ul > li > span,
+.cash-asset-cont em {
+	width: 20%;
+	font-size: 2.3em;
+	font-weight: bold;
+	margin: 0;
+}
+
+.total-asset-cont b,
+.cash-asset-cont span,
+.credit-asset-cont ul > li > b,
+.cash-asset-cont b {
+	width: 80%;
+	text-align: right;
+	font-size: 2em;
+}
+
+
+/* 은행 ----------------------------------------------------------------*/
+.asset-list-form > form > div.credit-asset-cont{
+	height: 40%; 
+	padding-right: 10px 
+}
+.credit-asset-cont > ul {
+	overflow-y: scroll;
+	height:80% ;padding-right: 10px;
+}
+.credit-asset-cont  em { display:block; padding-bottom: 10px;}
+.credit-asset-cont ul > li + li {margin-top: 10px;}
+.credit-asset-cont ul > li > span {font-size: 1.5em;}
+
+
+/* 현금 ---------------------------------------------------------------*/
+.asset-list-form > form > div.cash-asset-cont{height: 18%;}
+
+
+/* btn main -----------------------------------------------------------*/
+.btn.main {
+	position: absolute;
+	right: 30px; 
+	bottom: 10px;
+	font-weight: bold;
+	cursor: pointer;
+	background-color: transparent;
+	padding: 0;
+	font-size: 3em;
+	transition :linear .3s;
+	border: 0;
+	background-color: rgba(206, 172, 118, 0.582);
+	color: #fff;
+	font-family: 'Jua';
+	padding:7px 30px 0  !important;
+}
+.btn.main:hover {
+	background-color: rgb(206, 172, 118);
+}
+
+
+/* @media query -------------------------------------------------  */
+
+/* 테블릿 세로 */
+@media screen and (min-width:768px) and (max-width:1023px){
+	.total-asset-cont strong {
+		font-size: 2em;
+	}
+
+	.asset-list-form > form em {
+		font-size: 1.7em;
+	}
+
+	.total-asset-cont b {padding-top: 0;}
+	
+	.asset-list-form > form > div {
+		padding: 20px;
+	}
+
+	.total-asset-cont,
+	.asset-list-form > form > div.cash-asset-cont {
+		height: fit-content;
+	}
+}
+
+
+/* 모바일 가로, 테블릿 세로 */
+@media screen and (min-width:480px) and (max-width:767px) { 
+	.asset-list-form {
+		height: 70%;
+		min-height: 0;
+	}
+	.total-asset-cont strong {
+		font-size: 1.3em;
+		width: 40%;
+	}
+
+	.total-asset-cont b, 
+	.cash-asset-cont span, 
+	.credit-asset-cont ul > li > b, 
+	.cash-asset-cont b {
+		font-size: 1.2em;
+	}
+	.total-asset-cont b {
+		padding-top: 0;
+	}
+	.asset-list-form > form em {
+		font-size: 1.3em;
+	}
+	.asset-list-form > form > div {
+		padding: 20px;
+	}
+	.credit-asset-cont ul > li > span{
+		font-size: 1.3em;
+		width: 40%;
+	}
+	.asset-list-form > form > div.credit-asset-cont {
+		height: 40%;
+	}
+
+	.asset-list-form > form > div
+	.credit-asset-cont {
+		height: 30%;
+	}
+
+	.total-asset-cont,
+	.asset-list-form > form > div.cash-asset-cont {
+		height: fit-content;
+	}
+
+	.btn.main {
+		right: 10px;
+		bottom: 20px;
+		font-size: 2em;
+	}
+}
+/* 모바일 가로, 모바일 세로*/
+@media screen and (max-width:479px) { 
+	.asset-list-form {
+		min-height: 489px;
+	}
+
+	.asset-list-form > form {
+		height:80%;
+	}
+	.asset-list-form > form > div.credit-asset-cont {
+		height: 50%;
+	}
+
+	.asset-list-form > form > div {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+	}
+
+	.credit-asset-cont ul > li {
+		display: flex;
+		flex-direction: column;
+		border-bottom: 1px solid #348f6c2f;
+	}
+	.total-asset-cont strong,	.asset-list-form > form em{
+		font-size: 1.4em;
+	
+	}
+	.total-asset-cont strong, .credit-asset-cont ul > li > span, .cash-asset-cont em {
+
+		width: 100%;
+	}
+	.total-asset-cont b, .cash-asset-cont span, .credit-asset-cont ul > li > b, .cash-asset-cont b {
+		font-size: 1.4em;
+		width: 100%;
+	}
+	.asset-list-form > form > div {
+		padding: 15px;
+	}
+	.total-asset-cont b {
+		padding-top: 0;
+	}
+
+	.total-asset-cont,	
+	.asset-list-form > form > div.cash-asset-cont {
+		height: 20%;
+	}
+	
+	.credit-asset-cont ul > li > span {
+		font-size: 1.3em;
+	}
+
+
+	button.btn.main{
+		right: 0;
+		width: 100%;
+		border-radius: 14px;
+		font-size: 2em;
+	}
+
+}
