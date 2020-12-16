@@ -68,6 +68,7 @@ export default {
         .onSnapshot(snapshot => {
           if (snapshot.exists) {
             const assets = snapshot.data().assets;
+            console.log(snapshot.data());
             this.cash = assets.cashAsset;
           } else if (this.$router.currentRoute.path !== '/main') {
             // 값이 없을 경우
@@ -134,6 +135,7 @@ export default {
       dailyList.forEach(listDB => {
         let listBank = listDB.bank;
         let listItem = listDB.item;
+        console.log('리스트 디비 체크!!!', listDB);
 
         if (listBank === bankName && listItem === 'expend') {
           price += Number(listDB.price);
@@ -141,7 +143,7 @@ export default {
           price += -Number(listDB.price);
         }
       });
-
+      console.log('계산====>', this.makeComma(Number(bankAsset) - price));
       return this.makeComma(Number(bankAsset) - price);
     },
 
