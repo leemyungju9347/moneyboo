@@ -1,66 +1,51 @@
-// SetAsset.vue
-function saveTotal(total) {
-  console.log(total);
-  document.cookie = `totalGoal = ${total}`;
+// Registration.vue
+// save
+function saveAuth(name, value) {
+  document.cookie = `${name}=${value}`;
 }
 
-function saveCash(cash) {
-  document.cookie = `cashGoal = ${cash}`;
-}
-
-function saveBankAsset(bankAsset) {
-  document.cookie = `bankAsset = ${bankAsset}`;
-}
-
-// SetCategory.vue
-function saveCategory(newCategory) {
-  console.log(newCategory);
-  // 1. cookie에 category목록이 있을 경우
-  if (!getCategory()) {
-    console.log(newCategory);
-    document.cookie = `category = {${newCategory}}`;
-  }
-  // 2. cookie에 category목록이 없을 경우
-  else if (getCategory()) {
-    console.log('이미 category에 목록이 있음.');
-    console.log(getCategory());
-    document.cookie = `category = ${getCategory()}{${newCategory}}`;
-  }
-}
-
-// store에서 사용.
-function getTotal() {
+// get user email
+function getUserEmail() {
   return document.cookie.replace(
-    /(?:(?:^|.*;\s*)totalGoal\s*=\s*([^;]*).*$)|^.*$/,
+    /(?:(?:^|.*;\s*)user_email\s*=\s*([^;]*).*$)|^.*$/,
     '$1',
   );
 }
-function getCash() {
+
+// get user uid
+function getUserUid() {
   return document.cookie.replace(
-    /(?:(?:^|.*;\s*)cashGoal\s*=\s*([^;]*).*$)|^.*$/,
+    /(?:(?:^|.*;\s*)user_uid\s*=\s*([^;]*).*$)|^.*$/,
     '$1',
   );
 }
-function getBankAsset() {
+
+// get user nickname
+function getUserNickname() {
   return document.cookie.replace(
-    /(?:(?:^|.*;\s*)bankAsset\s*=\s*([^;]*).*$)|^.*$/,
+    /(?:(?:^|.*;\s*)user_nickname\s*=\s*([^;]*).*$)|^.*$/,
     '$1',
   );
 }
-function getCategory() {
+
+// get router path
+function getCurrentRouter() {
   return document.cookie.replace(
-    /(?:(?:^|.*;\s*)category\s*=\s*([^;]*).*$)|^.*$/,
+    /(?:(?:^|.*;\s*)cur_path\s*=\s*([^;]*).*$)|^.*$/,
     '$1',
   );
+}
+
+// delete
+function deleteCookie(value) {
+  document.cookie = `${value}=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
 }
 
 export {
-  saveTotal,
-  saveCash,
-  saveBankAsset,
-  saveCategory,
-  getTotal,
-  getCash,
-  getBankAsset,
-  getCategory,
+  saveAuth,
+  getUserEmail,
+  getUserUid,
+  getUserNickname,
+  deleteCookie,
+  getCurrentRouter,
 };

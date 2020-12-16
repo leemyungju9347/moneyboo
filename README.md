@@ -1,24 +1,10 @@
-# account
+![ppt1](img/ppt1.png)
+![ppt2](img/ppt2.png)
+![ppt3](img/ppt3.png)
+![ppt4](img/ppt4.png)
+![ppt5](img/ppt5.png)
+![ppt6](img/ppt6.png)
+![ppt7](img/ppt7.png)
 
-## Project setup
-```
-npm install
-```
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
