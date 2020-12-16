@@ -1,6 +1,5 @@
 <template>
   <div class="bar-graph-cont" :class="{ on: selectedTab === 1 }">
-    <!-- v-show="selectedTab === 0" -->
     <div class="bar-graph">
       <h3>{{ whatYear() }}</h3>
       <div id="canvas-holder">
@@ -8,9 +7,7 @@
       </div>
     </div>
 
-    <!-- 년도 리스트 -->
-    <ListOfyears></ListOfyears>
-    {{ yearsExpend }}
+    <ListOfyears :bgColors="bgColor"></ListOfyears>
   </div>
 </template>
 
@@ -18,6 +15,9 @@
 import { yearCheck } from '@/utils/statistics.js';
 import ListOfyears from '@/components/statistics/ListOfyears.vue';
 import { eventBus } from '../../main';
+
+let barData = null;
+let myChart = null;
 
 export default {
   props: ['selectedTab', 'size'],
@@ -27,11 +27,26 @@ export default {
   data() {
     return {
       yearsExpend: {},
+      bgColor: [
+        '#E8F8F5',
+        '#D1F2EB',
+        '#A3E4D7',
+        '#76D7C4',
+        '#48C9B0',
+        '#1ABC9C',
+        '#17A589',
+        '#148F77',
+        '#117864',
+        '#0E6251',
+        '#0C5345',
+        '#0A4236',
+      ],
     };
   },
   created() {
-    eventBus.$on('monthExpend', value => {
-      return (this.yearsExpend = value);
+    eventBus.$once('monthExpend', value => {
+      this.yearsExpend = value;
+      this.barChartDataUpdate(myChart, barData, this.yearsExpend);
     });
   },
   mounted() {
@@ -40,56 +55,60 @@ export default {
     this.$_Chart.defaults.global.defaultFontColor = '#3b3b3b';
     this.$_Chart.defaults.global.defaultFontFamily = 'Jua';
 
-    let myChart = new this.$_Chart(ctx, {
-      // The type of chart we want to create
+    barData = {
       type: 'horizontalBar',
-
-      // The data for our dataset
       data: {
-        // 이름.
-        labels: ['1월', '2월', '3월', '4월', '5월', '6월', '7월'],
+        labels: [],
         datasets: [
           {
+            data: [],
             label: '2020년 지출내역',
-            backgroundColor: [
-              'rgb(178,223,219,0.3)',
-              'rgb(178,223,219,0.3)',
-              'rgb(178,223,219,0.3)',
-              'rgb(178,223,219,0.3)',
-              'rgb(178,223,219,0.3)',
-              'rgb(178,223,219,0.3)',
-              'rgb(178,223,219,0.3)',
-              'rgb(178,223,219,0.3)',
-            ],
-            borderColor: 'rgb(178,223,219)',
+            backgroundColor: this.bgColor,
+            borderColor: this.backgroundColor,
             maxBarThickness: 40,
             borderWidth: 1.2,
             minBarThickness: 17,
-            data: [15, 20, 30, 40, 50, 60, 70],
           },
         ],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        legend: {
-          display: false,
+        legend: false,
+        tooltips: {
+          callbacks: {
+            label: tooltipItem => {
+              return (tooltipItem.labels = `${tooltipItem.xLabel} 원`);
+            },
+          },
+        },
+        animation: {
+          animateScale: true,
+          duration: 1500,
+        },
+        hover: false,
+        plugins: {
+          datalabels: {
+            display: false,
+          },
         },
       },
-    });
-    //data 값 setting하기
-    // console.log(this.yearsExpend);
-    // myChart.data.datasets[0].data = this.yearsExpend
-    // console.log(myChart.data.datasets[0].data);
-    // myChart.data.labels = Object.keys(this.yearsExpend);
-    // console.log('graph mounted');
-
-    myChart.update();
-    return myChart;
+    };
+    myChart = new this.$_Chart(ctx, barData);
   },
   methods: {
     whatYear() {
       return yearCheck();
+    },
+    barChartDataUpdate(myChart, barData, yList) {
+      for (let num in yList) {
+        let month = yList[num].month;
+        let monthExpend = yList[num].expend;
+
+        barData.data.labels.push(`${month} 월`);
+        barData.data.datasets[0].data.push(monthExpend);
+      }
+      myChart.update();
     },
   },
 };
